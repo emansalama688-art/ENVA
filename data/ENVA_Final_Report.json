@@ -1,0 +1,35 @@
+{
+    "project": "ENVA DEMO FINAL",
+    "study_area": "Kafr El-Dawwar",
+    "current_year": 2026,
+    "classification_method": "Rule-Based Classification",
+    "validation_points": 200,
+    "classes": {
+        "1": "Water",
+        "2": "Vegetation",
+        "3": "Urban",
+        "4": "Bare Soil"
+    },
+    "statistics": [
+        {
+            "Class_ID": 0,
+            "Class_Name": "Unknown",
+            "Area_km2": 50.058
+        },
+        {
+            "Class_ID": 2,
+            "Class_Name": "Vegetation",
+            "Area_km2": 470.348
+        },
+        {
+            "Class_ID": 3,
+            "Class_Name": "Urban",
+            "Area_km2": 0.051
+        },
+        {
+            "Class_ID": 4,
+            "Class_Name": "Bare Soil",
+            "Area_km2": 83.956
+        }
+    ]
+}
