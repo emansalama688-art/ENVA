@@ -265,10 +265,7 @@ html(
     height=900,
     scrolling=True
 )
-            html_string,
-            height=650,
-            scrolling=True
-        )
+           
 
         st.success("✅ Interactive map loaded successfully.")
 
