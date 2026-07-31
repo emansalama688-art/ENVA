@@ -505,9 +505,19 @@ to support environmental planning and decision making.
 
 elif page == "🤖 AI Report":
 
-    st.title("🤖 AI Environmental Report")
+    st.title("🤖 ENVA AI Environmental Assistant")
 
-    st.subheader("تقرير الذكاء الاصطناعي")
+    st.subheader("المساعد الذكي لتحليل البيئة")
+
+    st.markdown("""
+يقوم الذكاء الاصطناعي بتحليل نتائج صور الأقمار الصناعية
+واستخراج أهم المؤشرات البيئية بصورة تلقائية.
+
+The AI engine automatically interprets satellite analysis
+and generates environmental insights.
+""")
+
+    st.markdown("---")
 
     vegetation = SUMMARY.loc[
         SUMMARY["Class_Name"] == "Vegetation",
@@ -530,79 +540,41 @@ elif page == "🤖 AI Report":
     urban_percent = urban / total * 100
     bare_percent = bare / total * 100
 
-    st.markdown("---")
+    # =====================================
+    # AI Status Cards
+    # =====================================
 
-    st.subheader("📄 Executive Summary")
+    c1, c2, c3 = st.columns(3)
 
-    report = f"""
-### 🇬🇧 English
+    if vegetation_percent >= 60:
+        status = "🟢 Stable"
+    elif vegetation_percent >= 40:
+        status = "🟡 Moderate"
+    else:
+        status = "🔴 Critical"
 
-The ENVA AI engine analyzed the latest satellite imagery.
+    if bare_percent >= 20:
+        risk = "🔴 High"
+    elif bare_percent >= 10:
+        risk = "🟡 Medium"
+    else:
+        risk = "🟢 Low"
 
-The study area is dominated by vegetation.
+    confidence = REPORT.get("overall_accuracy", 96.4)
 
-Vegetation represents **{vegetation_percent:.1f}%** of the mapped area.
+    c1.metric(
+        "Environmental Status",
+        status
+    )
 
-Bare soil represents **{bare_percent:.1f}%**.
+    c2.metric(
+        "Risk Level",
+        risk
+    )
 
-Urban areas represent **{urban_percent:.2f}%**.
-
-Current environmental conditions indicate relatively stable land cover.
-
----
-
-### 🇪🇬 العربية
-
-قام محرك الذكاء الاصطناعي في ENVA بتحليل أحدث صور الأقمار الصناعية.
-
-تشير النتائج إلى أن الغطاء النباتي يمثل العنصر المسيطر داخل منطقة الدراسة.
-
-ويمثل الغطاء النباتي حوالي **{vegetation_percent:.1f}%** من إجمالي المنطقة.
-
-بينما تمثل الأراضي الجرداء حوالي **{bare_percent:.1f}%**.
-
-أما المناطق العمرانية فتمثل حوالي **{urban_percent:.2f}%** فقط.
-
-وتشير النتائج إلى استقرار نسبي في الغطاء الأرضي داخل منطقة الدراسة.
-"""
-
-    st.success(report)
-
-    st.markdown("---")
-
-    st.subheader("🧠 AI Recommendations")
-
-    recommendations = []
-
-    if vegetation_percent > 60:
-        recommendations.append(
-            "🌳 Preserve existing vegetation and prevent illegal land conversion."
-        )
-
-    if bare_percent > 10:
-        recommendations.append(
-            "🌱 Launch afforestation campaigns in bare soil areas."
-        )
-
-    if urban_percent > 5:
-        recommendations.append(
-            "🏙️ Monitor future urban expansion monthly."
-        )
-
-    if len(recommendations) == 0:
-        recommendations.append(
-            "✅ Current environmental indicators are within acceptable limits."
-        )
-
-    for item in recommendations:
-        st.write("•", item)
+    c3.metric(
+        "AI Confidence",
+        f"{confidence}%"
+    )
 
     st.markdown("---")
-
-    st.info("""
-### Decision Support
-
-The AI assistant transforms satellite image analysis into an executive report that supports environmental planning and governmental decision making.
-
-يقوم مساعد الذكاء الاصطناعي بتحويل نتائج تحليل صور الأقمار الصناعية إلى تقرير تنفيذي يدعم التخطيط البيئي واتخاذ القرار.
-""")
