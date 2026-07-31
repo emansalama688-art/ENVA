@@ -578,3 +578,93 @@ and generates environmental insights.
     )
 
     st.markdown("---")
+# =====================================
+# AI ENVIRONMENTAL ASSESSMENT
+# =====================================
+
+st.subheader("🧠 AI Environmental Assessment")
+
+if vegetation_percent >= 70:
+
+    ai_text = """
+### 🌿 Environmental Interpretation
+
+The study area is environmentally healthy.
+
+Vegetation is the dominant land cover,
+indicating a stable ecosystem with relatively low environmental pressure.
+
+Urban expansion remains limited.
+
+Current satellite observations suggest that
+the environmental condition is suitable for sustainable development.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+تشير نتائج الذكاء الاصطناعي إلى أن المنطقة تتمتع بحالة بيئية جيدة.
+
+يسيطر الغطاء النباتي على معظم مساحة المنطقة،
+مما يعكس استقرارًا بيئيًا وانخفاض الضغوط البشرية.
+
+ولا يزال التوسع العمراني محدودًا،
+وهو ما يساعد على الحفاظ على الموارد الطبيعية.
+"""
+
+elif vegetation_percent >= 50:
+
+    ai_text = """
+### 🌿 Environmental Interpretation
+
+The environmental condition is acceptable.
+
+Vegetation is still dominant,
+however continuous monitoring is recommended
+to detect any future land cover changes.
+
+Urban development should be monitored periodically.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+تشير النتائج إلى أن الوضع البيئي جيد بصورة عامة.
+
+ورغم سيطرة الغطاء النباتي،
+فإن المتابعة الدورية ضرورية
+لاكتشاف أي تغيرات مستقبلية.
+
+كما يوصى بمراقبة التوسع العمراني باستمرار.
+"""
+
+else:
+
+    ai_text = """
+### ⚠ Environmental Interpretation
+
+The AI engine detected a decline in vegetation.
+
+This may indicate environmental degradation,
+urban expansion,
+or increasing land degradation.
+
+Immediate monitoring is recommended.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+اكتشف الذكاء الاصطناعي انخفاضًا واضحًا في الغطاء النباتي.
+
+وقد يشير ذلك إلى
+التوسع العمراني،
+أو تدهور الأراضي،
+أو انخفاض جودة البيئة.
+
+يوصى بإجراء متابعة عاجلة.
+"""
+
+st.success(ai_text)
+
+st.markdown("---")
