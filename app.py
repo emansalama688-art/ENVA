@@ -751,3 +751,135 @@ for item in recommendations:
     st.write(item)
 
 st.markdown("---")
+# ==========================================================
+# AI DECISION SUPPORT
+# ==========================================================
+
+st.subheader("🧠 AI Decision Support")
+
+# -----------------------------------------
+# Sustainability Score
+# -----------------------------------------
+
+sustainability_score = round(
+    vegetation_percent
+    - (bare_percent * 0.5)
+    - (urban_percent * 0.3),
+    1
+)
+
+sustainability_score = max(0, min(100, sustainability_score))
+
+# -----------------------------------------
+# Environmental Risk
+# -----------------------------------------
+
+risk_score = round(
+    bare_percent * 1.5
+    + urban_percent,
+    1
+)
+
+# -----------------------------------------
+# Risk Level
+# -----------------------------------------
+
+if risk_score < 20:
+
+    risk_level = "🟢 LOW"
+
+elif risk_score < 40:
+
+    risk_level = "🟡 MODERATE"
+
+else:
+
+    risk_level = "🔴 HIGH"
+
+# -----------------------------------------
+# Final Decision
+# -----------------------------------------
+
+if sustainability_score >= 70:
+
+    decision = """
+### ✅ AI Final Decision
+
+The study area is environmentally stable.
+
+No urgent intervention is required.
+
+Routine environmental monitoring is recommended.
+
+---
+
+### القرار النهائي
+
+المنطقة مستقرة بيئيًا.
+
+لا توجد حاجة إلى تدخل عاجل.
+
+يوصى فقط بالمتابعة الدورية.
+"""
+
+elif sustainability_score >= 50:
+
+    decision = """
+### ⚠ AI Final Decision
+
+The study area is environmentally acceptable.
+
+Preventive environmental actions are recommended.
+
+---
+
+### القرار النهائي
+
+الوضع البيئي جيد بصورة عامة.
+
+يوصى باتخاذ إجراءات وقائية للحفاظ على الموارد الطبيعية.
+"""
+
+else:
+
+    decision = """
+### 🚨 AI Final Decision
+
+Environmental intervention is recommended.
+
+Restoration and afforestation programs should be considered.
+
+---
+
+### القرار النهائي
+
+يوصى بتدخل بيئي عاجل.
+
+ينصح بتنفيذ برامج إعادة التأهيل والتشجير.
+"""
+
+# -----------------------------------------
+# Display Metrics
+# -----------------------------------------
+
+c1, c2 = st.columns(2)
+
+c1.metric(
+    "🌍 Sustainability Score",
+    f"{sustainability_score}/100"
+)
+
+c2.metric(
+    "⚠ Environmental Risk",
+    risk_level
+)
+
+st.markdown("---")
+
+st.success(decision)
+
+st.markdown("---")
+
+st.caption(
+    "Generated automatically by ENVA AI Decision Support Engine."
+)
