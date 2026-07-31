@@ -258,7 +258,13 @@ This page displays the interactive land cover map generated from satellite image
 
             html_string = f.read()
 
-        st.components.v1.html(
+        from streamlit.components.v1 import html
+
+html(
+    html_string,
+    height=900,
+    scrolling=True
+)
             html_string,
             height=650,
             scrolling=True
