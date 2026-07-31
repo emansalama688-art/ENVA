@@ -668,3 +668,86 @@ Immediate monitoring is recommended.
 st.success(ai_text)
 
 st.markdown("---")
+# =====================================
+# AI SMART RECOMMENDATIONS
+# =====================================
+
+st.subheader("🎯 AI Smart Recommendations")
+
+recommendations = []
+
+# ---------------------------------------------------
+# Vegetation
+# ---------------------------------------------------
+
+if vegetation_percent >= 70:
+
+    recommendations.append(
+        "🌳 Preserve existing vegetation and protect agricultural land."
+    )
+
+elif vegetation_percent >= 50:
+
+    recommendations.append(
+        "🌱 Increase vegetation monitoring every season."
+    )
+
+else:
+
+    recommendations.append(
+        "🚨 Immediate vegetation restoration is recommended."
+    )
+
+# ---------------------------------------------------
+# Bare Soil
+# ---------------------------------------------------
+
+if bare_percent >= 20:
+
+    recommendations.append(
+        "🌾 Launch large-scale afforestation projects in bare soil regions."
+    )
+
+elif bare_percent >= 10:
+
+    recommendations.append(
+        "🌱 Prioritize tree planting in degraded land."
+    )
+
+# ---------------------------------------------------
+# Urban
+# ---------------------------------------------------
+
+if urban_percent >= 15:
+
+    recommendations.append(
+        "🏙️ Monitor urban expansion using monthly satellite imagery."
+    )
+
+else:
+
+    recommendations.append(
+        "🏡 Urban growth is currently under acceptable limits."
+    )
+
+# ---------------------------------------------------
+# Water
+# ---------------------------------------------------
+
+recommendations.append(
+    "💧 Continue monitoring water resources using Sentinel imagery."
+)
+
+recommendations.append(
+    "🛰️ Update environmental monitoring every month."
+)
+
+recommendations.append(
+    "🤖 AI recommends maintaining continuous satellite observation."
+)
+
+for item in recommendations:
+
+    st.write(item)
+
+st.markdown("---")
