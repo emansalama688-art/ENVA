@@ -260,12 +260,11 @@ This page displays the interactive land cover map generated from satellite image
 
         from streamlit.components.v1 import html
 
-html(
-    html_string,
-    height=900,
-    scrolling=True
-)
-           
+        html(
+            html_string,
+            height=900,
+            scrolling=True
+        )
 
         st.success("✅ Interactive map loaded successfully.")
 
