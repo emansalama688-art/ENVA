@@ -289,3 +289,108 @@ This page displays the interactive land cover map generated from satellite image
 
 يمكن استخدام الخريطة للتكبير والتصغير واستعراض المناطق المختلفة.
 """)
+# ======================================================
+# ANALYTICS DASHBOARD
+# ======================================================
+
+elif page == "📊 Dashboard":
+
+    st.title("📊 Environmental Analytics Dashboard")
+
+    st.subheader("لوحة التحليلات البيئية")
+
+    st.markdown("""
+هذه الصفحة تعرض الإحصاءات البيئية المستخرجة من تحليل صور الأقمار الصناعية.
+
+This dashboard summarizes the environmental indicators extracted from satellite imagery.
+    """)
+
+    st.markdown("---")
+
+    # ===========================
+    # KPI
+    # ===========================
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    total_area = SUMMARY["Area_km2"].sum()
+
+    vegetation = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Vegetation",
+        "Area_km2"
+    ].sum()
+
+    urban = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Urban",
+        "Area_km2"
+    ].sum()
+
+    bare = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Bare Soil",
+        "Area_km2"
+    ].sum()
+
+    c1.metric("📍 Study Area", REPORT["study_area"])
+
+    c2.metric("🛰️ Classes", len(SUMMARY))
+
+    c3.metric("🌳 Vegetation", f"{vegetation:.2f} km²")
+
+    c4.metric("📐 Total Area", f"{total_area:.2f} km²")
+
+    st.markdown("---")
+
+    # ===========================
+    # LAND COVER TABLE
+    # ===========================
+
+    st.subheader("Land Cover Statistics")
+
+    st.dataframe(
+        SUMMARY,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+    # ===========================
+    # SIMPLE BAR CHART
+    # ===========================
+
+    st.subheader("Land Cover Distribution")
+
+    chart_data = SUMMARY.set_index("Class_Name")["Area_km2"]
+
+    st.bar_chart(chart_data)
+
+    st.markdown("---")
+
+    # ===========================
+    # AI INSIGHTS
+    # ===========================
+
+    st.subheader("🤖 AI Insights")
+
+    if vegetation > bare:
+
+        st.success("""
+Vegetation is the dominant land cover.
+
+الغطاء النباتي يمثل المساحة الأكبر داخل منطقة الدراسة.
+""")
+
+    if bare > urban:
+
+        st.info("""
+Bare soil is larger than urban expansion.
+
+الأراضي الجرداء ما زالت أكبر من التوسع العمراني.
+""")
+
+    if urban < vegetation:
+
+        st.success("""
+Urban expansion is still limited.
+
+التوسع العمراني ما زال محدودًا مقارنة بالغطاء النباتي.
+""")
