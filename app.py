@@ -1,12 +1,13 @@
-
 import streamlit as st
 import pandas as pd
 import json
+import plotly.express as px
+import plotly.graph_objects as go
 from pathlib import Path
 
-# ------------------------------------------------------------
+# ======================================================
 # PAGE CONFIG
-# ------------------------------------------------------------
+# ======================================================
 
 st.set_page_config(
     page_title="ENVA",
@@ -15,134 +16,130 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ------------------------------------------------------------
-# PATHS
-# ------------------------------------------------------------
-
-ROOT = Path(__file__).parent
-DATA = ROOT / "data"
-
-# ------------------------------------------------------------
+# ======================================================
 # LOAD DATA
-# ------------------------------------------------------------
+# ======================================================
 
-with open(DATA / "ENVA_Final_Report.json", encoding="utf-8") as f:
-    REPORT = json.load(f)
+DATA_PATH = Path("data")
 
-SUMMARY = pd.read_csv(DATA / "ENVA_Final_Summary.csv")
-
-# ------------------------------------------------------------
-# HEADER
-# ------------------------------------------------------------
-
-st.title("🌍 ENVA")
-
-st.subheader(
-"المنظومة الوطنية الذكية للرصد البيئي وتحليل صور الأقمار الصناعية ودعم اتخاذ القرار"
+REPORT = json.load(
+    open(
+        DATA_PATH / "ENVA_Final_Report.json",
+        encoding="utf-8"
+    )
 )
 
-st.divider()
+SUMMARY = pd.read_csv(
+    DATA_PATH / "ENVA_Final_Summary.csv"
+)
 
-col1, col2, col3 = st.columns(3)
+# ======================================================
+# CUSTOM STYLE
+# ======================================================
 
-col1.metric("Study Area", REPORT["study_area"])
-col2.metric("Current Year", REPORT["current_year"])
-col3.metric("Land Cover Classes", len(SUMMARY))
+st.markdown("""
+<style>
 
-st.divider()
+.main{
+    background-color:#f5f7fa;
+}
 
-st.success("ENVA Dashboard Ready")
+h1,h2,h3{
+    color:#145A32;
+}
 
+div[data-testid="metric-container"]{
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    border:1px solid #dddddd;
+    box-shadow:0px 2px 8px rgba(0,0,0,0.08);
+}
 
-# ============================================================
-# LAND COVER CHARTS
-# ============================================================
+.sidebar .sidebar-content{
+    background:#145A32;
+}
 
-st.subheader("📊 Land Cover Statistics")
+</style>
+""",unsafe_allow_html=True)
+# ======================================================
+# SIDEBAR
+# ======================================================
 
-try:
+st.sidebar.image(
+    "https://img.icons8.com/fluency/96/earth-planet.png",
+    width=90
+)
 
-    chart_df = SUMMARY.copy()
+st.sidebar.title("🌍 ENVA")
 
-    numeric_cols = chart_df.select_dtypes(include="number").columns
+page = st.sidebar.radio(
+    "Navigation",
+    [
+        "🏠 Home",
+        "🛰️ Satellite Analysis",
+        "🌍 Interactive Map",
+        "📊 Dashboard",
+        "🤖 AI Report",
+        "🌳 Smart Afforestation",
+        "🚨 Early Warning",
+        "📥 Reports"
+    ]
+)
 
-    if len(numeric_cols) > 0:
+# ======================================================
+# HOME PAGE
+# ======================================================
 
-        st.bar_chart(
-            chart_df[numeric_cols]
-        )
+if page == "🏠 Home":
 
-        st.line_chart(
-            chart_df[numeric_cols]
-        )
+    st.title("🌍 ENVA")
 
-        st.area_chart(
-            chart_df[numeric_cols]
-        )
+    st.subheader(
+        "المنظومة الوطنية الذكية للرصد البيئي وتحليل صور الأقمار الصناعية ودعم اتخاذ القرار"
+    )
 
-    else:
+    st.caption(
+        "National Intelligent Platform for Environmental Monitoring, Satellite Image Analysis & Decision Support"
+    )
 
-        st.info("No numeric columns available for visualization.")
+    st.markdown("---")
 
-except Exception as e:
+    st.markdown("""
+### 📖 About ENVA
 
-    st.error(e)
-
-st.divider()
-
-
-
-# ============================================================
-# PROJECT SUMMARY
-# ============================================================
-
-st.subheader("📋 ENVA Project Summary")
-
-st.markdown(f"""
-### Study Area
-
-**{REPORT["study_area"]}**
+ENVA is an intelligent environmental platform designed to support
+decision makers using satellite imagery, artificial intelligence,
+GIS technologies and environmental analytics.
 
 ---
 
-### Current Year
+### نبذة عن المشروع
 
-**{REPORT["current_year"]}**
-
----
-
-### Overall Accuracy
-
-**{REPORT.get("overall_accuracy", 96.4)}%**
-
----
-
-### Number of Land Cover Classes
-
-**{len(SUMMARY)}**
+يعتمد المشروع على تحليل صور الأقمار الصناعية باستخدام الذكاء الاصطناعي
+لرصد التغيرات البيئية ودعم متخذي القرار من خلال لوحة معلومات ذكية.
 """)
 
-st.divider()
+    st.markdown("---")
 
-# ============================================================
-# DOWNLOAD REPORT
-# ============================================================
+    c1, c2, c3, c4 = st.columns(4)
 
-REPORT_PATH = DATA / "ENVA_Final_Report.json"
+    c1.metric(
+        "📍 Study Area",
+        REPORT["study_area"]
+    )
 
-if REPORT_PATH.exists():
+    c2.metric(
+        "📅 Current Year",
+        REPORT["current_year"]
+    )
 
-    with open(REPORT_PATH, "rb") as file:
+    c3.metric(
+        "🎯 Accuracy",
+        f'{REPORT.get("overall_accuracy",96.4)} %'
+    )
 
-        st.download_button(
-
-            label="📥 Download Final Report",
-
-            data=file,
-
-            file_name="ENVA_Final_Report.json",
-
-            mime="application/json"
-
-        )
-
+    c4.metric(
+        "🛰️ Land Cover Classes",
+        len(SUMMARY)
+    )
