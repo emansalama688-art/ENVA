@@ -83,6 +83,7 @@ page = st.sidebar.radio(
         "🤖 AI Report",
         "🌳 Smart Afforestation",
         "🚨 Early Warning",
+        "🌳 Smart Afforestation",
         "📥 Reports"
     ]
 )
@@ -883,3 +884,19 @@ st.markdown("---")
 st.caption(
     "Generated automatically by ENVA AI Decision Support Engine."
 )
+elif page == "🌳 Smart Afforestation":
+
+    st.title("🌳 Smart Afforestation")
+
+    st.subheader("التشجير الذكي")
+
+    st.markdown("""
+يقوم ENVA بتحليل نتائج صور الأقمار الصناعية
+واقتراح برنامج تشجير ذكي لدعم مبادرة
+100 Million Trees.
+
+ENVA automatically recommends an intelligent
+afforestation plan based on satellite imagery.
+""")
+
+    st.markdown("---")
