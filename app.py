@@ -394,3 +394,108 @@ Urban expansion is still limited.
 
 التوسع العمراني ما زال محدودًا مقارنة بالغطاء النباتي.
 """)
+# ======================================================
+# AI ENVIRONMENTAL REPORT
+# ======================================================
+
+elif page == "🤖 AI Report":
+
+    st.title("🤖 AI Environmental Report")
+
+    st.subheader("تقرير الذكاء الاصطناعي")
+
+    vegetation = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Vegetation",
+        "Area_km2"
+    ].sum()
+
+    urban = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Urban",
+        "Area_km2"
+    ].sum()
+
+    bare = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Bare Soil",
+        "Area_km2"
+    ].sum()
+
+    total = SUMMARY["Area_km2"].sum()
+
+    vegetation_percent = vegetation / total * 100
+    urban_percent = urban / total * 100
+    bare_percent = bare / total * 100
+
+    st.markdown("---")
+
+    st.markdown("## 📄 Executive Summary")
+
+    st.success(f"""
+
+### 🇬🇧 English
+
+The AI environmental analysis indicates that the study area is dominated by vegetation.
+
+Vegetation covers **{vegetation_percent:.1f}%** of the total mapped area.
+
+Urban land occupies approximately **{urban_percent:.1f}%**, indicating relatively limited urban expansion.
+
+Bare soil represents **{bare_percent:.1f}%** of the study area.
+
+Overall environmental conditions appear stable based on the current satellite observations.
+
+---
+
+### 🇪🇬 العربية
+
+يشير تحليل الذكاء الاصطناعي إلى أن الغطاء النباتي يمثل العنصر المسيطر داخل منطقة الدراسة.
+
+يمثل الغطاء النباتي حوالي **{vegetation_percent:.1f}%** من إجمالي المساحة.
+
+ويمثل العمران حوالي **{urban_percent:.1f}%** فقط، وهو ما يشير إلى أن التوسع العمراني ما زال محدودًا.
+
+بينما تمثل الأراضي الجرداء حوالي **{bare_percent:.1f}%** من المنطقة.
+
+وتشير النتائج الحالية إلى أن الوضع البيئي مستقر اعتمادًا على بيانات الأقمار الصناعية.
+
+""")
+
+    st.markdown("---")
+
+    st.subheader("🧠 AI Recommendations")
+
+    recommendations = []
+
+    if vegetation_percent > 50:
+        recommendations.append(
+            "🌳 Preserve vegetation and prevent illegal land conversion."
+        )
+
+    if bare_percent > 10:
+        recommendations.append(
+            "🌱 Prioritize afforestation programs in bare soil regions."
+        )
+
+    if urban_percent > 20:
+        recommendations.append(
+            "🏙️ Monitor urban expansion using monthly satellite imagery."
+        )
+
+    if len(recommendations) == 0:
+        recommendations.append(
+            "✅ Environmental indicators are within acceptable limits."
+        )
+
+    for rec in recommendations:
+        st.write(rec)
+
+    st.markdown("---")
+
+    st.info("""
+### Decision Support
+
+ENVA AI automatically summarizes environmental indicators
+to support environmental planning and decision making.
+
+يقوم الذكاء الاصطناعي في ENVA بتحويل نتائج تحليل صور الأقمار الصناعية
+إلى تقرير مفهوم يساعد متخذي القرار.
+""")
