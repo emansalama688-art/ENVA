@@ -1,0 +1,14 @@
+{
+    "Project": "ENVA DEMO FINAL",
+    "Study_Area": "Kafr El-Dawwar",
+    "Current_Year": 2026,
+    "Classification_Method": "Rule-Based Classification",
+    "Validation_Points": 200,
+    "Recommended_Afforestation_Area_km2": 58.77,
+    "Recommended_Tree": "Casuarina equisetifolia",
+    "Arabic_Name": "الكازورينا",
+    "Estimated_Trees": 2350800,
+    "Annual_Carbon_ton": 51717.6,
+    "Estimated_Cost_EGP": "587,700,000",
+    "Implementation_Priority": "Immediate"
+}

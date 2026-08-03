@@ -1,0 +1,38 @@
+{
+    "Site_Selection": {
+        "Total Bare Soil Area (km²)": 83.96,
+        "Recommended Afforestation Area (km²)": 58.77,
+        "Selection Method": "AI Rule-Based Site Selection"
+    },
+    "Tree_Information": {
+        "Recommended Tree": "Casuarina equisetifolia",
+        "Arabic Name": "الكازورينا",
+        "Reason": "Suitable for coastal and Delta regions, tolerates salinity and drought, fast growing, acts as a windbreak, and has high carbon sequestration potential."
+    },
+    "Tree_Estimation": {
+        "Recommended Area (ha)": 5877.0,
+        "Tree Density (Trees/ha)": 400,
+        "Estimated Number of Trees": 2350800
+    },
+    "Carbon_Report": {
+        "Estimated Trees": 2350800,
+        "Average Carbon per Tree (kg/year)": 22,
+        "Estimated Annual Carbon (kg CO₂)": 51717600,
+        "Estimated Annual Carbon (ton CO₂)": 51717.6
+    },
+    "Impact_Report": {
+        "Estimated Trees": 2350800,
+        "Estimated Annual Carbon (ton CO₂)": 51717.6,
+        "Estimated Total Cost (EGP)": "587,700,000",
+        "Estimated Implementation Period": "3 Years"
+    },
+    "AI_Summary": {
+        "Priority": "High",
+        "Recommended Species": "Casuarina equisetifolia",
+        "Arabic Name": "الكازورينا",
+        "Recommended Afforestation Area (km²)": 58.77,
+        "Estimated Trees": 2350800,
+        "Estimated Annual Carbon (ton CO₂)": 51717.6,
+        "Implementation Priority": "Immediate"
+    }
+}
