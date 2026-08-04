@@ -82,6 +82,7 @@ page = st.sidebar.radio(
         "📊 Dashboard",
         "🤖 AI Report",
         "🚨 Early Warning",
+        "🌳 Smart Afforestation",
         "📥 Reports"
     ]
 )
