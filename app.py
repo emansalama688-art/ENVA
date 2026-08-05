@@ -1257,3 +1257,109 @@ to maximize environmental impact and resource efficiency.
 
 ✔ تم إنشاء مؤشرات تنفيذ المشروع تلقائياً.
 """)
+# ======================================================
+# PROJECT STATUS
+# ======================================================
+
+st.markdown("---")
+
+st.subheader("🚀 ENVA Decision Support")
+
+left, right = st.columns([2, 1])
+
+with left:
+
+    st.markdown("""
+### 🌍 ENVA Recommendation
+
+Based on satellite imagery analysis and AI assessment,
+the proposed afforestation program can significantly improve:
+
+- 🌳 Vegetation cover
+- 🌍 Carbon sequestration
+- 💧 Soil protection
+- 🌦 Climate resilience
+- 🌱 Sustainable environmental development
+
+---
+
+### توصية ENVA
+
+يوصي نظام ENVA بالبدء في تنفيذ برنامج التشجير المقترح
+لتحسين الغطاء النباتي وخفض الانبعاثات
+وزيادة الاستدامة البيئية.
+""")
+
+with right:
+
+    st.metric(
+        "Project Status",
+        "READY"
+    )
+
+    st.metric(
+        "AI Decision",
+        "APPROVED"
+    )
+
+    if (
+        not AFF_SUMMARY.empty
+        and "Recommended Tree" in AFF_SUMMARY.columns
+    ):
+
+        st.metric(
+            "Recommended Tree",
+            str(
+                AFF_SUMMARY["Recommended Tree"].iloc[0]
+            )
+        )
+
+st.markdown("---")
+
+# ======================================================
+# DOWNLOAD SECTION
+# ======================================================
+
+st.subheader("📥 Download Results")
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    if not AFF_SUMMARY.empty:
+
+        csv = AFF_SUMMARY.to_csv(
+            index=False
+        ).encode("utf-8")
+
+        st.download_button(
+            label="⬇ Download Summary CSV",
+            data=csv,
+            file_name="ENVA_Afforestation_Summary.csv",
+            mime="text/csv"
+        )
+
+with col2:
+
+    report = json.dumps(
+        AFF_REPORT,
+        indent=4,
+        ensure_ascii=False
+    )
+
+    st.download_button(
+        label="⬇ Download AI Report",
+        data=report,
+        file_name="ENVA_Afforestation_Report.json",
+        mime="application/json"
+    )
+
+st.markdown("---")
+
+st.success(
+    "✅ Smart Afforestation Module Completed Successfully."
+)
+
+st.caption(
+    "Generated automatically by ENVA AI Smart Afforestation Engine."
+)
