@@ -698,3 +698,145 @@ Immediate monitoring is recommended.
         st.write(item)
 
     st.markdown("---")
+        # ==========================================================
+    # AI DECISION SUPPORT
+    # ==========================================================
+
+    st.subheader("🧠 AI Decision Support")
+
+    # =====================================
+    # Sustainability Score
+    # =====================================
+
+    sustainability_score = round(
+        vegetation_percent
+        - (bare_percent * 0.5)
+        - (urban_percent * 0.3),
+        1
+    )
+
+    sustainability_score = max(
+        0,
+        min(100, sustainability_score)
+    )
+
+    # =====================================
+    # Environmental Risk Score
+    # =====================================
+
+    risk_score = round(
+        (bare_percent * 1.5)
+        + urban_percent,
+        1
+    )
+
+    # =====================================
+    # Risk Level
+    # =====================================
+
+    if risk_score < 20:
+        risk_level = "🟢 LOW"
+
+    elif risk_score < 40:
+        risk_level = "🟡 MODERATE"
+
+    else:
+        risk_level = "🔴 HIGH"
+
+    # =====================================
+    # Final AI Decision
+    # =====================================
+
+    if sustainability_score >= 70:
+
+        decision = """
+### ✅ AI Final Decision
+
+The study area is environmentally stable.
+
+No urgent intervention is required.
+
+Routine environmental monitoring is recommended.
+
+---
+
+### 🇪🇬 القرار النهائي
+
+المنطقة مستقرة بيئيًا.
+
+لا توجد حاجة إلى تدخل عاجل.
+
+يوصى بالمتابعة الدورية فقط.
+"""
+
+    elif sustainability_score >= 50:
+
+        decision = """
+### ⚠ AI Final Decision
+
+The study area is environmentally acceptable.
+
+Preventive environmental actions are recommended.
+
+---
+
+### 🇪🇬 القرار النهائي
+
+الوضع البيئي جيد بصورة عامة.
+
+يوصى باتخاذ إجراءات وقائية للحفاظ على الموارد الطبيعية.
+"""
+
+    else:
+
+        decision = """
+### 🚨 AI Final Decision
+
+Environmental intervention is recommended.
+
+Restoration and afforestation programs should be considered.
+
+---
+
+### 🇪🇬 القرار النهائي
+
+يوصى بتدخل بيئي عاجل.
+
+ينصح بتنفيذ برامج إعادة التأهيل والتشجير.
+"""
+
+    # =====================================
+    # Metrics
+    # =====================================
+
+    col1, col2 = st.columns(2)
+
+    col1.metric(
+        "🌍 Sustainability Score",
+        f"{sustainability_score}/100"
+    )
+
+    col2.metric(
+        "⚠ Environmental Risk",
+        risk_level
+    )
+
+    st.markdown("---")
+
+    st.success(decision)
+
+    st.markdown("---")
+
+    st.info("""
+### Decision Support
+
+ENVA AI automatically summarizes environmental indicators
+to support environmental planning and decision making.
+
+يقوم الذكاء الاصطناعي بتحويل نتائج تحليل صور الأقمار الصناعية
+إلى تقرير واضح يساعد متخذي القرار.
+""")
+
+    st.caption(
+        "Generated automatically by ENVA AI Decision Support Engine."
+    )
