@@ -985,3 +985,166 @@ and sustainable land management.
 يقوم نظام ENVA AI بتحليل الظروف البيئية
 لتحديد المناطق المناسبة للتشجير وإعادة تأهيل الأراضي.
 """)
+    st.info("""
+### 🌳 Smart Afforestation Decision Support
+
+ENVA AI analyzes environmental conditions
+to identify suitable areas for vegetation restoration
+and sustainable land management.
+
+يقوم نظام ENVA AI بتحليل الظروف البيئية
+لتحديد المناطق المناسبة للتشجير وإعادة تأهيل الأراضي.
+""")
+
+    st.markdown("---")
+
+
+    # =====================================
+    # AFFORESTATION PRIORITY ANALYSIS
+    # =====================================
+
+    st.subheader("🗺️ Afforestation Priority")
+
+
+    if "Priority" in AFF_SUMMARY.columns:
+
+
+        priority_count = (
+            AFF_SUMMARY["Priority"]
+            .astype(str)
+            .value_counts()
+            .reset_index()
+        )
+
+
+        priority_count.columns = [
+            "Priority",
+            "Count"
+        ]
+
+
+        st.bar_chart(
+            priority_count.set_index("Priority")
+        )
+
+
+    else:
+
+        st.info(
+            "Priority layer is not available."
+        )
+
+
+    st.markdown("---")
+
+
+    # =====================================
+    # RECOMMENDED ACTIONS
+    # =====================================
+
+    st.subheader("🎯 Recommended Actions")
+
+
+    actions = []
+
+
+    if "Priority" in AFF_SUMMARY.columns:
+
+
+        priority_values = (
+            AFF_SUMMARY["Priority"]
+            .astype(str)
+        )
+
+
+        high = (
+            priority_values
+            .str.contains(
+                "High",
+                case=False,
+                na=False
+            )
+            .sum()
+        )
+
+
+        medium = (
+            priority_values
+            .str.contains(
+                "Medium",
+                case=False,
+                na=False
+            )
+            .sum()
+        )
+
+
+        low = (
+            priority_values
+            .str.contains(
+                "Low",
+                case=False,
+                na=False
+            )
+            .sum()
+        )
+
+
+        if high > 0:
+
+            actions.append(
+                "🌳 Start afforestation immediately in High Priority areas."
+            )
+
+
+        if medium > 0:
+
+            actions.append(
+                "🌱 Schedule seasonal planting for Medium Priority areas."
+            )
+
+
+        if low > 0:
+
+            actions.append(
+                "🌿 Continue monitoring Low Priority locations."
+            )
+
+
+    else:
+
+        actions.append(
+            "📡 Waiting for AI priority classification."
+        )
+
+
+    if len(actions) == 0:
+
+        actions.append(
+            "✅ No priority-based actions detected."
+        )
+
+
+    for item in actions:
+
+        st.write(item)
+
+
+    st.markdown("---")
+
+
+    # =====================================
+    # FINAL AI RECOMMENDATION
+    # =====================================
+
+    st.success("""
+### ✅ AI Recommendation
+
+ENVA recommends implementing afforestation
+according to the generated priority levels
+to maximize environmental impact and resource efficiency.
+
+يوصي نظام ENVA بتنفيذ التشجير
+وفق مستويات الأولوية
+لتحقيق أفضل أثر بيئي واستغلال أمثل للموارد.
+""")
