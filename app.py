@@ -1148,3 +1148,166 @@ to maximize environmental impact and resource efficiency.
 وفق مستويات الأولوية
 لتحقيق أفضل أثر بيئي واستغلال أمثل للموارد.
 """)
+    # =====================================
+    # CARBON SEQUESTRATION
+    # =====================================
+
+    st.subheader("🌍 Estimated Carbon Sequestration")
+
+
+    carbon = AFF_REPORT.get(
+        "Carbon_Report",
+        {}
+    )
+
+
+    c1, c2 = st.columns(2)
+
+
+    estimated_trees = carbon.get(
+        "Estimated Trees",
+        0
+    )
+
+
+    annual_carbon = carbon.get(
+        "Estimated Annual Carbon (ton CO₂)",
+        0
+    )
+
+
+    c1.metric(
+        "🌱 Estimated Trees",
+        f"{int(estimated_trees):,}"
+    )
+
+
+    c2.metric(
+        "🌍 Annual CO₂",
+        f"{float(annual_carbon):,.1f} ton"
+    )
+
+
+    st.markdown("---")
+
+
+    # =====================================
+    # PROJECT IMPACT
+    # =====================================
+
+    st.subheader("📈 Project Impact")
+
+
+    impact = AFF_REPORT.get(
+        "Impact_Report",
+        {}
+    )
+
+
+    col1, col2 = st.columns(2)
+
+
+    col1.metric(
+        "💰 Estimated Cost",
+        impact.get(
+            "Estimated Total Cost (EGP)",
+            "N/A"
+        )
+    )
+
+
+    col2.metric(
+        "📅 Implementation Period",
+        impact.get(
+            "Estimated Implementation Period",
+            "N/A"
+        )
+    )
+
+
+    st.markdown("---")
+
+
+    # =====================================
+    # AFFORESTATION DISTRIBUTION
+    # =====================================
+
+    st.subheader("📊 Afforestation Distribution")
+
+
+    if (
+        "Priority" in AFF_SUMMARY.columns
+        and len(AFF_SUMMARY) > 0
+    ):
+
+
+        pie = (
+            AFF_SUMMARY["Priority"]
+            .astype(str)
+            .value_counts()
+            .reset_index()
+        )
+
+
+        pie.columns = [
+            "Priority",
+            "Count"
+        ]
+
+
+        fig = px.pie(
+            pie,
+            names="Priority",
+            values="Count",
+            hole=0.45,
+            title="Afforestation Priority Distribution"
+        )
+
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+
+
+    else:
+
+        st.info(
+            "Priority information not available."
+        )
+
+
+    st.markdown("---")
+
+
+    # =====================================
+    # FINAL SUMMARY
+    # =====================================
+
+    st.success("""
+### 🌳 Smart Afforestation Summary
+
+✔ Suitable locations identified
+
+✔ Recommended tree species selected
+
+✔ Estimated number of trees calculated
+
+✔ Annual carbon sequestration estimated
+
+✔ Project implementation indicators generated automatically.
+
+---
+
+### ملخص التشجير الذكي
+
+✔ تم تحديد المناطق المناسبة للتشجير.
+
+✔ تم اختيار النوع الأنسب من الأشجار.
+
+✔ تم تقدير عدد الأشجار المطلوب.
+
+✔ تم حساب كمية الكربون السنوية.
+
+✔ تم إنشاء مؤشرات تنفيذ المشروع تلقائياً.
+""")
