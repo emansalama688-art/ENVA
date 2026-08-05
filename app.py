@@ -394,111 +394,6 @@ Urban expansion is still limited.
 
 التوسع العمراني ما زال محدودًا مقارنة بالغطاء النباتي.
 """)
-# ======================================================
-# AI ENVIRONMENTAL REPORT
-# ======================================================
-
-elif page == "🤖 AI Report":
-
-    st.title("🤖 AI Environmental Report")
-
-    st.subheader("تقرير الذكاء الاصطناعي")
-
-    vegetation = SUMMARY.loc[
-        SUMMARY["Class_Name"] == "Vegetation",
-        "Area_km2"
-    ].sum()
-
-    urban = SUMMARY.loc[
-        SUMMARY["Class_Name"] == "Urban",
-        "Area_km2"
-    ].sum()
-
-    bare = SUMMARY.loc[
-        SUMMARY["Class_Name"] == "Bare Soil",
-        "Area_km2"
-    ].sum()
-
-    total = SUMMARY["Area_km2"].sum()
-
-    vegetation_percent = vegetation / total * 100
-    urban_percent = urban / total * 100
-    bare_percent = bare / total * 100
-
-    st.markdown("---")
-
-    st.markdown("## 📄 Executive Summary")
-
-    st.success(f"""
-
-### 🇬🇧 English
-
-The AI environmental analysis indicates that the study area is dominated by vegetation.
-
-Vegetation covers **{vegetation_percent:.1f}%** of the total mapped area.
-
-Urban land occupies approximately **{urban_percent:.1f}%**, indicating relatively limited urban expansion.
-
-Bare soil represents **{bare_percent:.1f}%** of the study area.
-
-Overall environmental conditions appear stable based on the current satellite observations.
-
----
-
-### 🇪🇬 العربية
-
-يشير تحليل الذكاء الاصطناعي إلى أن الغطاء النباتي يمثل العنصر المسيطر داخل منطقة الدراسة.
-
-يمثل الغطاء النباتي حوالي **{vegetation_percent:.1f}%** من إجمالي المساحة.
-
-ويمثل العمران حوالي **{urban_percent:.1f}%** فقط، وهو ما يشير إلى أن التوسع العمراني ما زال محدودًا.
-
-بينما تمثل الأراضي الجرداء حوالي **{bare_percent:.1f}%** من المنطقة.
-
-وتشير النتائج الحالية إلى أن الوضع البيئي مستقر اعتمادًا على بيانات الأقمار الصناعية.
-
-""")
-
-    st.markdown("---")
-
-    st.subheader("🧠 AI Recommendations")
-
-    recommendations = []
-
-    if vegetation_percent > 50:
-        recommendations.append(
-            "🌳 Preserve vegetation and prevent illegal land conversion."
-        )
-
-    if bare_percent > 10:
-        recommendations.append(
-            "🌱 Prioritize afforestation programs in bare soil regions."
-        )
-
-    if urban_percent > 20:
-        recommendations.append(
-            "🏙️ Monitor urban expansion using monthly satellite imagery."
-        )
-
-    if len(recommendations) == 0:
-        recommendations.append(
-            "✅ Environmental indicators are within acceptable limits."
-        )
-
-    for rec in recommendations:
-        st.write(rec)
-
-    st.markdown("---")
-
-    st.info("""
-### Decision Support
-
-ENVA AI automatically summarizes environmental indicators
-to support environmental planning and decision making.
-
-يقوم الذكاء الاصطناعي في ENVA بتحويل نتائج تحليل صور الأقمار الصناعية
-إلى تقرير مفهوم يساعد متخذي القرار.
-""")
 # ==========================================================
 # AI ENVIRONMENTAL REPORT
 # ==========================================================
@@ -519,32 +414,90 @@ and generates environmental insights.
 
     st.markdown("---")
 
-    vegetation = SUMMARY.loc[
-        SUMMARY["Class_Name"] == "Vegetation",
-        "Area_km2"
-    ].sum()
+    # =====================================
+    # Load Statistics
+    # =====================================
 
-    urban = SUMMARY.loc[
-        SUMMARY["Class_Name"] == "Urban",
-        "Area_km2"
-    ].sum()
+    vegetation = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Vegetation",
+            "Area_km2"
+        ].sum()
+    )
 
-    bare = SUMMARY.loc[
-        SUMMARY["Class_Name"] == "Bare Soil",
-        "Area_km2"
-    ].sum()
+    urban = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Urban",
+            "Area_km2"
+        ].sum()
+    )
 
-    total = SUMMARY["Area_km2"].sum()
+    bare = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Bare Soil",
+            "Area_km2"
+        ].sum()
+    )
 
-    vegetation_percent = vegetation / total * 100
-    urban_percent = urban / total * 100
-    bare_percent = bare / total * 100
+    total = float(
+        SUMMARY["Area_km2"].sum()
+    )
+
+    # =====================================
+    # Prevent ZeroDivisionError
+    # =====================================
+
+    if total > 0:
+
+        vegetation_percent = vegetation / total * 100
+        urban_percent = urban / total * 100
+        bare_percent = bare / total * 100
+
+    else:
+
+        vegetation_percent = 0.0
+        urban_percent = 0.0
+        bare_percent = 0.0
+
+    # =====================================
+    # Executive Summary
+    # =====================================
+
+    st.markdown("## 📄 Executive Summary")
+
+    st.success(f"""
+### 🇬🇧 English
+
+The AI environmental analysis indicates that vegetation is the dominant land cover.
+
+🌳 Vegetation: **{vegetation_percent:.1f}%**
+
+🏙️ Urban: **{urban_percent:.1f}%**
+
+🟤 Bare Soil: **{bare_percent:.1f}%**
+
+Overall environmental conditions appear stable based on the current satellite observations.
+
+---
+
+### 🇪🇬 العربية
+
+يشير تحليل الذكاء الاصطناعي إلى أن الغطاء النباتي هو العنصر المسيطر داخل منطقة الدراسة.
+
+🌳 الغطاء النباتي: **{vegetation_percent:.1f}%**
+
+🏙️ العمران: **{urban_percent:.1f}%**
+
+🟤 الأراضي الجرداء: **{bare_percent:.1f}%**
+
+تشير النتائج الحالية إلى أن الوضع البيئي مستقر اعتمادًا على بيانات الأقمار الصناعية.
+""")
+
+    st.markdown("---")
 
     # =====================================
     # AI Status Cards
     # =====================================
-
-    c1, c2, c3 = st.columns(3)
 
     if vegetation_percent >= 60:
         status = "🟢 Stable"
@@ -562,324 +515,21 @@ and generates environmental insights.
 
     confidence = REPORT.get("overall_accuracy", 96.4)
 
-    c1.metric(
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric(
         "Environmental Status",
         status
     )
 
-    c2.metric(
+    col2.metric(
         "Risk Level",
         risk
     )
 
-    c3.metric(
+    col3.metric(
         "AI Confidence",
         f"{confidence}%"
     )
 
     st.markdown("---")
-# =====================================
-# AI ENVIRONMENTAL ASSESSMENT
-# =====================================
-
-st.subheader("🧠 AI Environmental Assessment")
-
-if vegetation_percent >= 70:
-
-    ai_text = """
-### 🌿 Environmental Interpretation
-
-The study area is environmentally healthy.
-
-Vegetation is the dominant land cover,
-indicating a stable ecosystem with relatively low environmental pressure.
-
-Urban expansion remains limited.
-
-Current satellite observations suggest that
-the environmental condition is suitable for sustainable development.
-
----
-
-### 🇪🇬 التفسير البيئي
-
-تشير نتائج الذكاء الاصطناعي إلى أن المنطقة تتمتع بحالة بيئية جيدة.
-
-يسيطر الغطاء النباتي على معظم مساحة المنطقة،
-مما يعكس استقرارًا بيئيًا وانخفاض الضغوط البشرية.
-
-ولا يزال التوسع العمراني محدودًا،
-وهو ما يساعد على الحفاظ على الموارد الطبيعية.
-"""
-
-elif vegetation_percent >= 50:
-
-    ai_text = """
-### 🌿 Environmental Interpretation
-
-The environmental condition is acceptable.
-
-Vegetation is still dominant,
-however continuous monitoring is recommended
-to detect any future land cover changes.
-
-Urban development should be monitored periodically.
-
----
-
-### 🇪🇬 التفسير البيئي
-
-تشير النتائج إلى أن الوضع البيئي جيد بصورة عامة.
-
-ورغم سيطرة الغطاء النباتي،
-فإن المتابعة الدورية ضرورية
-لاكتشاف أي تغيرات مستقبلية.
-
-كما يوصى بمراقبة التوسع العمراني باستمرار.
-"""
-
-else:
-
-    ai_text = """
-### ⚠ Environmental Interpretation
-
-The AI engine detected a decline in vegetation.
-
-This may indicate environmental degradation,
-urban expansion,
-or increasing land degradation.
-
-Immediate monitoring is recommended.
-
----
-
-### 🇪🇬 التفسير البيئي
-
-اكتشف الذكاء الاصطناعي انخفاضًا واضحًا في الغطاء النباتي.
-
-وقد يشير ذلك إلى
-التوسع العمراني،
-أو تدهور الأراضي،
-أو انخفاض جودة البيئة.
-
-يوصى بإجراء متابعة عاجلة.
-"""
-
-st.success(ai_text)
-
-st.markdown("---")
-# =====================================
-# AI SMART RECOMMENDATIONS
-# =====================================
-
-st.subheader("🎯 AI Smart Recommendations")
-
-recommendations = []
-
-# ---------------------------------------------------
-# Vegetation
-# ---------------------------------------------------
-
-if vegetation_percent >= 70:
-
-    recommendations.append(
-        "🌳 Preserve existing vegetation and protect agricultural land."
-    )
-
-elif vegetation_percent >= 50:
-
-    recommendations.append(
-        "🌱 Increase vegetation monitoring every season."
-    )
-
-else:
-
-    recommendations.append(
-        "🚨 Immediate vegetation restoration is recommended."
-    )
-
-# ---------------------------------------------------
-# Bare Soil
-# ---------------------------------------------------
-
-if bare_percent >= 20:
-
-    recommendations.append(
-        "🌾 Launch large-scale afforestation projects in bare soil regions."
-    )
-
-elif bare_percent >= 10:
-
-    recommendations.append(
-        "🌱 Prioritize tree planting in degraded land."
-    )
-
-# ---------------------------------------------------
-# Urban
-# ---------------------------------------------------
-
-if urban_percent >= 15:
-
-    recommendations.append(
-        "🏙️ Monitor urban expansion using monthly satellite imagery."
-    )
-
-else:
-
-    recommendations.append(
-        "🏡 Urban growth is currently under acceptable limits."
-    )
-
-# ---------------------------------------------------
-# Water
-# ---------------------------------------------------
-
-recommendations.append(
-    "💧 Continue monitoring water resources using Sentinel imagery."
-)
-
-recommendations.append(
-    "🛰️ Update environmental monitoring every month."
-)
-
-recommendations.append(
-    "🤖 AI recommends maintaining continuous satellite observation."
-)
-
-for item in recommendations:
-
-    st.write(item)
-
-st.markdown("---")
-# ==========================================================
-# AI DECISION SUPPORT
-# ==========================================================
-
-st.subheader("🧠 AI Decision Support")
-
-# -----------------------------------------
-# Sustainability Score
-# -----------------------------------------
-
-sustainability_score = round(
-    vegetation_percent
-    - (bare_percent * 0.5)
-    - (urban_percent * 0.3),
-    1
-)
-
-sustainability_score = max(0, min(100, sustainability_score))
-
-# -----------------------------------------
-# Environmental Risk
-# -----------------------------------------
-
-risk_score = round(
-    bare_percent * 1.5
-    + urban_percent,
-    1
-)
-
-# -----------------------------------------
-# Risk Level
-# -----------------------------------------
-
-if risk_score < 20:
-
-    risk_level = "🟢 LOW"
-
-elif risk_score < 40:
-
-    risk_level = "🟡 MODERATE"
-
-else:
-
-    risk_level = "🔴 HIGH"
-
-# -----------------------------------------
-# Final Decision
-# -----------------------------------------
-
-if sustainability_score >= 70:
-
-    decision = """
-### ✅ AI Final Decision
-
-The study area is environmentally stable.
-
-No urgent intervention is required.
-
-Routine environmental monitoring is recommended.
-
----
-
-### القرار النهائي
-
-المنطقة مستقرة بيئيًا.
-
-لا توجد حاجة إلى تدخل عاجل.
-
-يوصى فقط بالمتابعة الدورية.
-"""
-
-elif sustainability_score >= 50:
-
-    decision = """
-### ⚠ AI Final Decision
-
-The study area is environmentally acceptable.
-
-Preventive environmental actions are recommended.
-
----
-
-### القرار النهائي
-
-الوضع البيئي جيد بصورة عامة.
-
-يوصى باتخاذ إجراءات وقائية للحفاظ على الموارد الطبيعية.
-"""
-
-else:
-
-    decision = """
-### 🚨 AI Final Decision
-
-Environmental intervention is recommended.
-
-Restoration and afforestation programs should be considered.
-
----
-
-### القرار النهائي
-
-يوصى بتدخل بيئي عاجل.
-
-ينصح بتنفيذ برامج إعادة التأهيل والتشجير.
-"""
-
-# -----------------------------------------
-# Display Metrics
-# -----------------------------------------
-
-c1, c2 = st.columns(2)
-
-c1.metric(
-    "🌍 Sustainability Score",
-    f"{sustainability_score}/100"
-)
-
-c2.metric(
-    "⚠ Environmental Risk",
-    risk_level
-)
-
-st.markdown("---")
-
-st.success(decision)
-
-st.markdown("---")
-
-st.caption(
-    "Generated automatically by ENVA AI Decision Support Engine."
-)
