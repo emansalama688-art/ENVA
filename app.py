@@ -840,3 +840,148 @@ to support environmental planning and decision making.
     st.caption(
         "Generated automatically by ENVA AI Decision Support Engine."
     )
+# ======================================================
+# SMART AFFORESTATION
+# ======================================================
+
+elif page == "🌳 Smart Afforestation":
+
+    st.title("🌳 Smart Afforestation")
+
+    st.subheader("التشجير الذكي")
+
+    st.markdown("""
+تستخدم هذه الصفحة نتائج تحليل الذكاء الاصطناعي
+لتحديد مناطق الأولوية للتشجير وتحسين التخطيط البيئي.
+
+This module uses AI-based analysis to support
+smart afforestation planning and environmental restoration.
+""")
+
+    st.markdown("---")
+
+
+    # =====================================
+    # LOAD AFFORESTATION DATA
+    # =====================================
+
+    try:
+
+        AFF_REPORT = json.load(
+            open(
+                DATA_PATH / "ENVA_Afforestation_Report.json",
+                encoding="utf-8"
+            )
+        )
+
+
+        AFF_SUMMARY = pd.read_csv(
+            DATA_PATH / "ENVA_Afforestation_Summary.csv"
+        )
+
+
+        st.success(
+            "✅ Smart Afforestation data loaded successfully"
+        )
+
+
+    except Exception as e:
+
+        st.error(
+            f"❌ Error loading Smart Afforestation files:\n\n{e}"
+        )
+
+        st.stop()
+
+
+
+    # =====================================
+    # AI SUMMARY
+    # =====================================
+
+    st.subheader("🤖 AI Afforestation Summary")
+
+    if "AI_Summary" in AFF_REPORT:
+
+        st.json(
+            AFF_REPORT["AI_Summary"]
+        )
+
+    else:
+
+        st.warning(
+            "AI Summary is not available in the report file."
+        )
+
+
+    st.markdown("---")
+
+
+    # =====================================
+    # AFFORESTATION TABLE
+    # =====================================
+
+    st.subheader("🌱 Afforestation Analysis Summary")
+
+
+    st.dataframe(
+        AFF_SUMMARY,
+        use_container_width=True
+    )
+
+
+    st.markdown("---")
+
+
+    # =====================================
+    # BASIC INDICATORS
+    # =====================================
+
+    st.subheader("📊 Afforestation Indicators")
+
+
+    c1, c2, c3 = st.columns(3)
+
+
+    c1.metric(
+        "📍 Analysis Records",
+        len(AFF_SUMMARY)
+    )
+
+
+    if "Area_km2" in AFF_SUMMARY.columns:
+
+        total_aff_area = AFF_SUMMARY["Area_km2"].sum()
+
+        c2.metric(
+            "🌳 Target Area",
+            f"{total_aff_area:.2f} km²"
+        )
+
+    else:
+
+        c2.metric(
+            "🌳 Target Area",
+            "N/A"
+        )
+
+
+    c3.metric(
+        "🤖 AI Status",
+        "Ready"
+    )
+
+
+    st.markdown("---")
+
+
+    st.info("""
+### 🌳 Smart Afforestation Decision Support
+
+ENVA AI analyzes environmental conditions
+to identify suitable areas for vegetation restoration
+and sustainable land management.
+
+يقوم نظام ENVA AI بتحليل الظروف البيئية
+لتحديد المناطق المناسبة للتشجير وإعادة تأهيل الأراضي.
+""")
