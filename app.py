@@ -533,3 +533,168 @@ Overall environmental conditions appear stable based on the current satellite ob
     )
 
     st.markdown("---")
+    # =====================================
+    # AI ENVIRONMENTAL ASSESSMENT
+    # =====================================
+
+    st.subheader("🧠 AI Environmental Assessment")
+
+    if vegetation_percent >= 70:
+
+        ai_text = """
+### 🌿 Environmental Interpretation
+
+The study area is environmentally healthy.
+
+Vegetation is the dominant land cover,
+indicating a stable ecosystem with relatively low environmental pressure.
+
+Urban expansion remains limited.
+
+Current satellite observations suggest that
+the environmental condition is suitable for sustainable development.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+تشير نتائج الذكاء الاصطناعي إلى أن المنطقة تتمتع بحالة بيئية جيدة.
+
+يسيطر الغطاء النباتي على معظم مساحة المنطقة،
+مما يعكس استقرارًا بيئيًا وانخفاض الضغوط البشرية.
+
+ولا يزال التوسع العمراني محدودًا،
+وهو ما يساعد على الحفاظ على الموارد الطبيعية.
+"""
+
+    elif vegetation_percent >= 50:
+
+        ai_text = """
+### 🌿 Environmental Interpretation
+
+The environmental condition is acceptable.
+
+Vegetation is still dominant,
+however continuous monitoring is recommended
+to detect any future land cover changes.
+
+Urban development should be monitored periodically.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+تشير النتائج إلى أن الوضع البيئي جيد بصورة عامة.
+
+ورغم سيطرة الغطاء النباتي،
+فإن المتابعة الدورية ضرورية
+لاكتشاف أي تغيرات مستقبلية.
+
+كما يوصى بمراقبة التوسع العمراني باستمرار.
+"""
+
+    else:
+
+        ai_text = """
+### ⚠ Environmental Interpretation
+
+The AI engine detected a decline in vegetation.
+
+This may indicate environmental degradation,
+urban expansion,
+or increasing land degradation.
+
+Immediate monitoring is recommended.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+اكتشف الذكاء الاصطناعي انخفاضًا واضحًا في الغطاء النباتي.
+
+وقد يشير ذلك إلى
+التوسع العمراني،
+أو تدهور الأراضي،
+أو انخفاض جودة البيئة.
+
+يوصى بإجراء متابعة عاجلة.
+"""
+
+    st.success(ai_text)
+
+    st.markdown("---")
+
+    # =====================================
+    # AI SMART RECOMMENDATIONS
+    # =====================================
+
+    st.subheader("🎯 AI Smart Recommendations")
+
+    recommendations = []
+
+    # Vegetation
+
+    if vegetation_percent >= 70:
+
+        recommendations.append(
+            "🌳 Preserve existing vegetation and protect agricultural land."
+        )
+
+    elif vegetation_percent >= 50:
+
+        recommendations.append(
+            "🌱 Increase vegetation monitoring every season."
+        )
+
+    else:
+
+        recommendations.append(
+            "🚨 Immediate vegetation restoration is recommended."
+        )
+
+    # Bare Soil
+
+    if bare_percent >= 20:
+
+        recommendations.append(
+            "🌾 Launch large-scale afforestation projects in bare soil regions."
+        )
+
+    elif bare_percent >= 10:
+
+        recommendations.append(
+            "🌱 Prioritize tree planting in degraded land."
+        )
+
+    # Urban
+
+    if urban_percent >= 15:
+
+        recommendations.append(
+            "🏙️ Monitor urban expansion using monthly satellite imagery."
+        )
+
+    else:
+
+        recommendations.append(
+            "🏡 Urban growth is currently under acceptable limits."
+        )
+
+    # Water
+
+    recommendations.append(
+        "💧 Continue monitoring water resources using Sentinel imagery."
+    )
+
+    recommendations.append(
+        "🛰️ Update environmental monitoring every month."
+    )
+
+    recommendations.append(
+        "🤖 AI recommends maintaining continuous satellite observation."
+    )
+
+    for item in recommendations:
+        st.write(item)
+
+    st.markdown("---")
