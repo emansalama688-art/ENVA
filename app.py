@@ -999,44 +999,36 @@ and sustainable land management.
     st.markdown("---")
 
 
+       # =====================================
+    # AFFORESTATION ANALYSIS
     # =====================================
-    # AFFORESTATION PRIORITY ANALYSIS
-    # =====================================
 
-    st.subheader("🗺️ Afforestation Priority")
+    st.subheader("🗺️ Afforestation Analysis")
 
 
-    if "Priority" in AFF_SUMMARY.columns:
+    if len(AFF_SUMMARY) > 0:
 
 
-        priority_count = (
-            AFF_SUMMARY["Priority"]
-            .astype(str)
-            .value_counts()
-            .reset_index()
-        )
-
-
-        priority_count.columns = [
-            "Priority",
-            "Count"
+        chart_data = AFF_SUMMARY[
+            [
+                "Recommended Area (km²)",
+                "Estimated Trees"
+            ]
         ]
 
 
         st.bar_chart(
-            priority_count.set_index("Priority")
+            chart_data.set_index(
+                "Recommended Area (km²)"
+            )
         )
 
 
     else:
 
         st.info(
-            "Priority layer is not available."
+            "Afforestation analysis data is not available."
         )
-
-
-    st.markdown("---")
-
 
     # =====================================
     # RECOMMENDED ACTIONS
@@ -1048,91 +1040,45 @@ and sustainable land management.
     actions = []
 
 
-    if "Priority" in AFF_SUMMARY.columns:
+    if "Recommended Tree" in AFF_SUMMARY.columns:
 
+        tree = AFF_SUMMARY[
+            "Recommended Tree"
+        ].iloc[0]
 
-        priority_values = (
-            AFF_SUMMARY["Priority"]
-            .astype(str)
-        )
-
-
-        high = (
-            priority_values
-            .str.contains(
-                "High",
-                case=False,
-                na=False
-            )
-            .sum()
-        )
-
-
-        medium = (
-            priority_values
-            .str.contains(
-                "Medium",
-                case=False,
-                na=False
-            )
-            .sum()
-        )
-
-
-        low = (
-            priority_values
-            .str.contains(
-                "Low",
-                case=False,
-                na=False
-            )
-            .sum()
-        )
-
-
-        if high > 0:
-
-            actions.append(
-                "🌳 Start afforestation immediately in High Priority areas."
-            )
-
-
-        if medium > 0:
-
-            actions.append(
-                "🌱 Schedule seasonal planting for Medium Priority areas."
-            )
-
-
-        if low > 0:
-
-            actions.append(
-                "🌿 Continue monitoring Low Priority locations."
-            )
-
-
-    else:
 
         actions.append(
-            "📡 Waiting for AI priority classification."
+            f"🌳 Use recommended species: {tree}"
         )
 
 
-    if len(actions) == 0:
+    if "Recommended Area (km²)" in AFF_SUMMARY.columns:
+
+        area = AFF_SUMMARY[
+            "Recommended Area (km²)"
+        ].iloc[0]
+
 
         actions.append(
-            "✅ No priority-based actions detected."
+            f"🌱 Implement afforestation program on {area} km²."
+        )
+
+
+    if "Estimated Trees" in AFF_SUMMARY.columns:
+
+        trees = AFF_SUMMARY[
+            "Estimated Trees"
+        ].iloc[0]
+
+
+        actions.append(
+            f"🌲 Estimated planting capacity: {int(trees):,} trees."
         )
 
 
     for item in actions:
 
         st.write(item)
-
-
-    st.markdown("---")
-
-
     # =====================================
     # FINAL AI RECOMMENDATION
     # =====================================
