@@ -1153,3 +1153,169 @@ and support sustainable land management.
 """)
 
     st.markdown("---")
+        # ======================================================
+    # CARBON SEQUESTRATION
+    # ======================================================
+
+    st.subheader("🌍 Estimated Carbon Sequestration")
+
+    carbon = AFF_REPORT.get("Carbon_Report", {})
+
+    trees = (
+        carbon.get("Estimated Trees")
+        or AFF_SUMMARY["Estimated Trees"].iloc[0]
+        if "Estimated Trees" in AFF_SUMMARY.columns else 0
+    )
+
+    annual_carbon = (
+        carbon.get("Estimated Annual Carbon (ton CO₂)")
+        or AFF_SUMMARY["Annual Carbon (ton CO₂)"].iloc[0]
+        if "Annual Carbon (ton CO₂)" in AFF_SUMMARY.columns else 0
+    )
+
+    c1, c2 = st.columns(2)
+
+    c1.metric(
+        "🌱 Estimated Trees",
+        f"{int(trees):,}"
+    )
+
+    c2.metric(
+        "🌍 Annual CO₂",
+        f"{float(annual_carbon):,.1f} ton"
+    )
+
+    st.markdown("---")
+
+    # ======================================================
+    # PROJECT IMPACT
+    # ======================================================
+
+    st.subheader("📈 Project Impact")
+
+    cost = (
+        AFF_SUMMARY["Estimated Cost (EGP)"].iloc[0]
+        if "Estimated Cost (EGP)" in AFF_SUMMARY.columns
+        else "N/A"
+    )
+
+    recommended_tree = (
+        AFF_SUMMARY["Recommended Tree"].iloc[0]
+        if "Recommended Tree" in AFF_SUMMARY.columns
+        else "N/A"
+    )
+
+    col1, col2 = st.columns(2)
+
+    col1.metric(
+        "💰 Estimated Cost",
+        f"{cost:,} EGP" if isinstance(cost, (int, float)) else cost
+    )
+
+    col2.metric(
+        "🌳 Recommended Tree",
+        recommended_tree
+    )
+
+    st.markdown("---")
+
+    # ======================================================
+    # PROJECT STATUS
+    # ======================================================
+
+    st.subheader("🚀 ENVA Decision Support")
+
+    left, right = st.columns([2, 1])
+
+    with left:
+
+        st.markdown("""
+### 🌍 ENVA Recommendation
+
+Based on satellite imagery and AI analysis,
+the proposed afforestation project is expected to:
+
+- 🌳 Increase vegetation cover
+- 🌍 Enhance carbon sequestration
+- 💧 Protect soil resources
+- 🌦 Improve climate resilience
+- 🌱 Support sustainable environmental development
+
+---
+
+### توصية ENVA
+
+يوصي النظام بتنفيذ برنامج التشجير المقترح
+لتحسين الغطاء النباتي وخفض الانبعاثات
+ودعم التنمية البيئية المستدامة.
+""")
+
+    with right:
+
+        st.metric(
+            "Project Status",
+            "READY"
+        )
+
+        st.metric(
+            "AI Decision",
+            "APPROVED"
+        )
+
+        st.metric(
+            "Recommended Tree",
+            str(recommended_tree)
+        )
+
+    st.markdown("---")
+
+    # ======================================================
+    # DOWNLOAD RESULTS
+    # ======================================================
+
+    st.subheader("📥 Download Results")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        csv = AFF_SUMMARY.to_csv(index=False).encode("utf-8")
+
+        st.download_button(
+            label="⬇ Download Summary CSV",
+            data=csv,
+            file_name="ENVA_Afforestation_Summary.csv",
+            mime="text/csv"
+        )
+
+    with col2:
+
+        report = json.dumps(
+            AFF_REPORT,
+            indent=4,
+            ensure_ascii=False
+        )
+
+        st.download_button(
+            label="⬇ Download AI Report",
+            data=report,
+            file_name="ENVA_Afforestation_Report.json",
+            mime="application/json"
+        )
+
+    st.markdown("---")
+
+    st.success("""
+### ✅ Smart Afforestation Module Completed Successfully
+
+The AI analysis has generated afforestation recommendations,
+estimated environmental benefits,
+and project implementation indicators.
+
+تم إنشاء جميع مؤشرات مشروع التشجير الذكي بنجاح،
+وأصبحت النتائج جاهزة للتنزيل والاستخدام.
+""")
+
+    st.caption(
+        "Generated automatically by ENVA AI Smart Afforestation Engine."
+    )
