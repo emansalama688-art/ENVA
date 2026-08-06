@@ -851,515 +851,187 @@ elif page == "🌳 Smart Afforestation":
     st.subheader("التشجير الذكي")
 
     st.markdown("""
-تستخدم هذه الصفحة نتائج تحليل الذكاء الاصطناعي
-لتحديد مناطق الأولوية للتشجير وتحسين التخطيط البيئي.
+تستخدم هذه الصفحة نتائج الذكاء الاصطناعي وصور الأقمار الصناعية
+لتحديد المناطق المناسبة للتشجير وتحسين الغطاء النباتي
+ودعم التنمية البيئية المستدامة.
 
-This module uses AI-based analysis to support
-smart afforestation planning and environmental restoration.
+This module uses AI-based satellite analysis
+to identify suitable afforestation areas
+and support sustainable environmental planning.
 """)
 
     st.markdown("---")
 
-
-    # =====================================
-    # LOAD AFFORESTATION DATA
-    # =====================================
+    # ======================================================
+    # LOAD DATA
+    # ======================================================
 
     try:
 
-        AFF_REPORT = json.load(
-            open(
-                DATA_PATH / "ENVA_Afforestation_Report.json",
-                encoding="utf-8"
-            )
-        )
+        with open(
+            DATA_PATH / "ENVA_Afforestation_Report.json",
+            encoding="utf-8"
+        ) as f:
 
+            AFF_REPORT = json.load(f)
 
         AFF_SUMMARY = pd.read_csv(
             DATA_PATH / "ENVA_Afforestation_Summary.csv"
         )
 
-
-        st.success(
-            "✅ Smart Afforestation data loaded successfully"
-        )
-
-
     except Exception as e:
 
         st.error(
-            f"❌ Error loading Smart Afforestation files:\n\n{e}"
+            f"❌ Error loading Smart Afforestation files\n\n{e}"
         )
 
         st.stop()
 
-
-
-    # =====================================
-    # AI SUMMARY
-    # =====================================
-
-    st.subheader("🤖 AI Afforestation Summary")
-
-    if "AI_Summary" in AFF_REPORT:
-
-        st.json(
-            AFF_REPORT["AI_Summary"]
-        )
-
-    else:
-
-        st.warning(
-            "AI Summary is not available in the report file."
-        )
-
+    st.success("✅ Smart Afforestation data loaded successfully.")
 
     st.markdown("---")
 
+    # ======================================================
+    # AI SUMMARY
+    # ======================================================
 
-    # =====================================
-    # AFFORESTATION TABLE
-    # =====================================
+    st.subheader("🤖 AI Summary")
 
-    st.subheader("🌱 Afforestation Analysis Summary")
+    ai_summary = AFF_REPORT.get("AI_Summary")
 
+    if ai_summary:
+
+        st.json(ai_summary)
+
+    else:
+
+        st.info(
+            "AI summary is not available."
+        )
+
+    st.markdown("---")
+
+    # ======================================================
+    # SUMMARY TABLE
+    # ======================================================
+
+    st.subheader("📋 Afforestation Summary")
 
     st.dataframe(
         AFF_SUMMARY,
         use_container_width=True
     )
 
-
     st.markdown("---")
 
+    # ======================================================
+    # MAIN INDICATORS
+    # ======================================================
 
-    # =====================================
-    # BASIC INDICATORS
-    # =====================================
+    st.subheader("📊 Key Indicators")
 
-    st.subheader("📊 Afforestation Indicators")
+    area = float(
+        AFF_SUMMARY.get(
+            "Recommended Area (km²)",
+            pd.Series([0])
+        ).iloc[0]
+    )
 
+    trees = int(
+        AFF_SUMMARY.get(
+            "Estimated Trees",
+            pd.Series([0])
+        ).iloc[0]
+    )
+
+    carbon = float(
+        AFF_SUMMARY.get(
+            "Annual Carbon (ton CO₂)",
+            pd.Series([0])
+        ).iloc[0]
+    )
 
     c1, c2, c3 = st.columns(3)
 
-
     c1.metric(
-        "📍 Analysis Records",
-        len(AFF_SUMMARY)
+        "🌱 Target Area",
+        f"{area:.2f} km²"
     )
 
-
-    if "Area_km2" in AFF_SUMMARY.columns:
-
-        total_aff_area = AFF_SUMMARY["Area_km2"].sum()
-
-        c2.metric(
-            "🌳 Target Area",
-            f"{total_aff_area:.2f} km²"
-        )
-
-    else:
-
-        c2.metric(
-            "🌳 Target Area",
-            "N/A"
-        )
-
+    c2.metric(
+        "🌳 Estimated Trees",
+        f"{trees:,}"
+    )
 
     c3.metric(
-        "🤖 AI Status",
-        "Ready"
+        "🌍 Annual CO₂",
+        f"{carbon:,.1f} ton"
     )
 
+    st.markdown("---")
+
+    # ======================================================
+    # DECISION SUPPORT
+    # ======================================================
+
+    st.subheader("🧠 Smart Afforestation Decision Support")
+
+    st.info("""
+ENVA AI analyzes satellite imagery to recommend
+the most suitable afforestation strategy.
+
+The generated recommendations improve vegetation,
+increase carbon sequestration,
+and support sustainable environmental management.
+
+---
+
+يقوم نظام ENVA بتحليل صور الأقمار الصناعية
+لتحديد أفضل مواقع التشجير.
+
+وتساعد النتائج في زيادة الغطاء النباتي،
+ورفع معدل امتصاص الكربون،
+ودعم التنمية البيئية المستدامة.
+""")
 
     st.markdown("---")
 
-
-    st.info("""
-### 🌳 Smart Afforestation Decision Support
-
-ENVA AI analyzes environmental conditions
-to identify suitable areas for vegetation restoration
-and sustainable land management.
-
-يقوم نظام ENVA AI بتحليل الظروف البيئية
-لتحديد المناطق المناسبة للتشجير وإعادة تأهيل الأراضي.
-""")
-    st.info("""
-### 🌳 Smart Afforestation Decision Support
-
-ENVA AI analyzes environmental conditions
-to identify suitable areas for vegetation restoration
-and sustainable land management.
-
-يقوم نظام ENVA AI بتحليل الظروف البيئية
-لتحديد المناطق المناسبة للتشجير وإعادة تأهيل الأراضي.
-""")
-
-    st.markdown("---")
-
-
-       # =====================================
-    # AFFORESTATION ANALYSIS
-    # =====================================
-
-    st.subheader("🗺️ Afforestation Analysis")
-
-
-    if len(AFF_SUMMARY) > 0:
-
-
-        chart_data = AFF_SUMMARY[
-            [
-                "Recommended Area (km²)",
-                "Estimated Trees"
-            ]
-        ]
-
-
-        st.bar_chart(
-            chart_data.set_index(
-                "Recommended Area (km²)"
-            )
-        )
-
-
-    else:
-
-        st.info(
-            "Afforestation analysis data is not available."
-        )
-
-    # =====================================
+    # ======================================================
     # RECOMMENDED ACTIONS
-    # =====================================
+    # ======================================================
 
     st.subheader("🎯 Recommended Actions")
 
-
     actions = []
 
+    if area > 0:
+
+        actions.append(
+            f"🌱 Afforest approximately {area:.2f} km²."
+        )
+
+    if trees > 0:
+
+        actions.append(
+            f"🌳 Plant approximately {trees:,} trees."
+        )
 
     if "Recommended Tree" in AFF_SUMMARY.columns:
 
-        tree = AFF_SUMMARY[
-            "Recommended Tree"
-        ].iloc[0]
-
-
         actions.append(
-            f"🌳 Use recommended species: {tree}"
+            f"🌲 Recommended species: {AFF_SUMMARY['Recommended Tree'].iloc[0]}"
         )
 
+    actions.append(
+        "🛰️ Continue monitoring using Sentinel satellite imagery."
+    )
 
-    if "Recommended Area (km²)" in AFF_SUMMARY.columns:
-
-        area = AFF_SUMMARY[
-            "Recommended Area (km²)"
-        ].iloc[0]
-
-
-        actions.append(
-            f"🌱 Implement afforestation program on {area} km²."
-        )
-
-
-    if "Estimated Trees" in AFF_SUMMARY.columns:
-
-        trees = AFF_SUMMARY[
-            "Estimated Trees"
-        ].iloc[0]
-
-
-        actions.append(
-            f"🌲 Estimated planting capacity: {int(trees):,} trees."
-        )
-
+    actions.append(
+        "🌍 Update the environmental assessment periodically."
+    )
 
     for item in actions:
 
         st.write(item)
-    # =====================================
-    # FINAL AI RECOMMENDATION
-    # =====================================
-
-    st.success("""
-### ✅ AI Recommendation
-
-ENVA recommends implementing afforestation
-according to the generated priority levels
-to maximize environmental impact and resource efficiency.
-
-يوصي نظام ENVA بتنفيذ التشجير
-وفق مستويات الأولوية
-لتحقيق أفضل أثر بيئي واستغلال أمثل للموارد.
-""")
-    # =====================================
-    # CARBON SEQUESTRATION
-    # =====================================
-
-    st.subheader("🌍 Estimated Carbon Sequestration")
-
-
-    carbon = AFF_REPORT.get(
-        "Carbon_Report",
-        {}
-    )
-
-
-    c1, c2 = st.columns(2)
-
-
-    estimated_trees = carbon.get(
-        "Estimated Trees",
-        0
-    )
-
-
-    annual_carbon = carbon.get(
-        "Estimated Annual Carbon (ton CO₂)",
-        0
-    )
-
-
-    c1.metric(
-        "🌱 Estimated Trees",
-        f"{int(estimated_trees):,}"
-    )
-
-
-    c2.metric(
-        "🌍 Annual CO₂",
-        f"{float(annual_carbon):,.1f} ton"
-    )
-
 
     st.markdown("---")
-
-
-    # =====================================
-    # PROJECT IMPACT
-    # =====================================
-
-    st.subheader("📈 Project Impact")
-
-
-    impact = AFF_REPORT.get(
-        "Impact_Report",
-        {}
-    )
-
-
-    col1, col2 = st.columns(2)
-
-
-    col1.metric(
-        "💰 Estimated Cost",
-        impact.get(
-            "Estimated Total Cost (EGP)",
-            "N/A"
-        )
-    )
-
-
-    col2.metric(
-        "📅 Implementation Period",
-        impact.get(
-            "Estimated Implementation Period",
-            "N/A"
-        )
-    )
-
-
-    st.markdown("---")
-
-
-    # =====================================
-    # AFFORESTATION DISTRIBUTION
-    # =====================================
-
-    st.subheader("📊 Afforestation Distribution")
-
-
-    if (
-        "Priority" in AFF_SUMMARY.columns
-        and len(AFF_SUMMARY) > 0
-    ):
-
-
-        pie = (
-            AFF_SUMMARY["Priority"]
-            .astype(str)
-            .value_counts()
-            .reset_index()
-        )
-
-
-        pie.columns = [
-            "Priority",
-            "Count"
-        ]
-
-
-        fig = px.pie(
-            pie,
-            names="Priority",
-            values="Count",
-            hole=0.45,
-            title="Afforestation Priority Distribution"
-        )
-
-
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
-
-
-    else:
-
-        st.info(
-            "Priority information not available."
-        )
-
-
-    st.markdown("---")
-
-
-    # =====================================
-    # FINAL SUMMARY
-    # =====================================
-
-    st.success("""
-### 🌳 Smart Afforestation Summary
-
-✔ Suitable locations identified
-
-✔ Recommended tree species selected
-
-✔ Estimated number of trees calculated
-
-✔ Annual carbon sequestration estimated
-
-✔ Project implementation indicators generated automatically.
-
----
-
-### ملخص التشجير الذكي
-
-✔ تم تحديد المناطق المناسبة للتشجير.
-
-✔ تم اختيار النوع الأنسب من الأشجار.
-
-✔ تم تقدير عدد الأشجار المطلوب.
-
-✔ تم حساب كمية الكربون السنوية.
-
-✔ تم إنشاء مؤشرات تنفيذ المشروع تلقائياً.
-""")
-# ======================================================
-# PROJECT STATUS
-# ======================================================
-
-st.markdown("---")
-
-st.subheader("🚀 ENVA Decision Support")
-
-left, right = st.columns([2, 1])
-
-with left:
-
-    st.markdown("""
-### 🌍 ENVA Recommendation
-
-Based on satellite imagery analysis and AI assessment,
-the proposed afforestation program can significantly improve:
-
-- 🌳 Vegetation cover
-- 🌍 Carbon sequestration
-- 💧 Soil protection
-- 🌦 Climate resilience
-- 🌱 Sustainable environmental development
-
----
-
-### توصية ENVA
-
-يوصي نظام ENVA بالبدء في تنفيذ برنامج التشجير المقترح
-لتحسين الغطاء النباتي وخفض الانبعاثات
-وزيادة الاستدامة البيئية.
-""")
-
-with right:
-
-    st.metric(
-        "Project Status",
-        "READY"
-    )
-
-    st.metric(
-        "AI Decision",
-        "APPROVED"
-    )
-
-    if (
-        not AFF_SUMMARY.empty
-        and "Recommended Tree" in AFF_SUMMARY.columns
-    ):
-
-        st.metric(
-            "Recommended Tree",
-            str(
-                AFF_SUMMARY["Recommended Tree"].iloc[0]
-            )
-        )
-
-st.markdown("---")
-
-# ======================================================
-# DOWNLOAD SECTION
-# ======================================================
-
-st.subheader("📥 Download Results")
-
-col1, col2 = st.columns(2)
-
-with col1:
-
-    if not AFF_SUMMARY.empty:
-
-        csv = AFF_SUMMARY.to_csv(
-            index=False
-        ).encode("utf-8")
-
-        st.download_button(
-            label="⬇ Download Summary CSV",
-            data=csv,
-            file_name="ENVA_Afforestation_Summary.csv",
-            mime="text/csv"
-        )
-
-with col2:
-
-    report = json.dumps(
-        AFF_REPORT,
-        indent=4,
-        ensure_ascii=False
-    )
-
-    st.download_button(
-        label="⬇ Download AI Report",
-        data=report,
-        file_name="ENVA_Afforestation_Report.json",
-        mime="application/json"
-    )
-
-st.markdown("---")
-
-st.success(
-    "✅ Smart Afforestation Module Completed Successfully."
-)
-
-st.caption(
-    "Generated automatically by ENVA AI Smart Afforestation Engine."
-)
