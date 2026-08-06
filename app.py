@@ -1035,3 +1035,121 @@ and support sustainable environmental management.
         st.write(item)
 
     st.markdown("---")
+        # ======================================================
+    # AFFORESTATION SUMMARY TABLE
+    # ======================================================
+
+    st.subheader("🌱 Afforestation Analysis Summary")
+
+    st.dataframe(
+        AFF_SUMMARY,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+    # ======================================================
+    # BASIC INDICATORS
+    # ======================================================
+
+    st.subheader("📊 Afforestation Indicators")
+
+    col1, col2, col3 = st.columns(3)
+
+    records = len(AFF_SUMMARY)
+
+    recommended_area = (
+        AFF_SUMMARY["Recommended Area (km²)"].sum()
+        if "Recommended Area (km²)" in AFF_SUMMARY.columns
+        else 0
+    )
+
+    estimated_trees = (
+        AFF_SUMMARY["Estimated Trees"].sum()
+        if "Estimated Trees" in AFF_SUMMARY.columns
+        else 0
+    )
+
+    col1.metric(
+        "📄 Analysis Records",
+        records
+    )
+
+    col2.metric(
+        "🌳 Recommended Area",
+        f"{recommended_area:.2f} km²"
+    )
+
+    col3.metric(
+        "🌱 Estimated Trees",
+        f"{int(estimated_trees):,}"
+    )
+
+    st.markdown("---")
+
+    # ======================================================
+    # AI DECISION SUPPORT
+    # ======================================================
+
+    st.subheader("🤖 AI Decision Support")
+
+    st.info("""
+ENVA AI analyzes satellite imagery to determine the best locations
+for afforestation according to environmental suitability.
+
+يقوم الذكاء الاصطناعي بتحليل صور الأقمار الصناعية
+لتحديد أفضل المناطق المناسبة للتشجير.
+""")
+
+    st.markdown("---")
+
+    # ======================================================
+    # RECOMMENDED ACTIONS
+    # ======================================================
+
+    st.subheader("🎯 Recommended Actions")
+
+    actions = []
+
+    if "Recommended Tree" in AFF_SUMMARY.columns:
+        tree = str(AFF_SUMMARY["Recommended Tree"].iloc[0])
+        actions.append(f"🌳 Recommended tree species: {tree}")
+
+    if "Recommended Area (km²)" in AFF_SUMMARY.columns:
+        area = float(AFF_SUMMARY["Recommended Area (km²)"].iloc[0])
+        actions.append(f"🌱 Afforest approximately {area:.2f} km².")
+
+    if "Estimated Trees" in AFF_SUMMARY.columns:
+        trees = int(AFF_SUMMARY["Estimated Trees"].iloc[0])
+        actions.append(f"🌲 Plant approximately {trees:,} trees.")
+
+    if "Annual Carbon (ton CO₂)" in AFF_SUMMARY.columns:
+        carbon = float(AFF_SUMMARY["Annual Carbon (ton CO₂)"].iloc[0])
+        actions.append(f"🌍 Expected annual CO₂ sequestration: {carbon:,.1f} tons.")
+
+    for action in actions:
+        st.write(action)
+
+    st.markdown("---")
+
+    # ======================================================
+    # AI RECOMMENDATION
+    # ======================================================
+
+    st.success("""
+### ✅ AI Recommendation
+
+The proposed afforestation program is environmentally suitable
+and is expected to improve vegetation cover,
+increase carbon sequestration,
+and support sustainable land management.
+
+---
+
+### التوصية النهائية
+
+يوصي نظام ENVA بالبدء في تنفيذ برنامج التشجير
+لتحسين الغطاء النباتي وزيادة الاستدامة البيئية.
+""")
+
+    st.markdown("---")
