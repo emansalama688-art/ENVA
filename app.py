@@ -1588,3 +1588,526 @@ elif page == "🔮 Future Expansion":
     st.success(
         "🌱 ENVA Future Vision — Building Environmental Intelligence for Better Decisions"
     )
+# ======================================================
+# ENVA FUTURE ARCHITECTURE
+# ======================================================
+
+st.markdown("---")
+
+st.header("🧠 ENVA Future Architecture")
+
+st.markdown("""
+<div style="
+    text-align:center;
+    color:#94a3b8;
+    font-size:17px;
+    margin-bottom:25px;
+">
+    From environmental data to intelligent action
+    <br>
+    <span style="color:#a7f3d0;">
+        من البيانات البيئية إلى الذكاء والقرار والتنفيذ
+    </span>
+</div>
+""", unsafe_allow_html=True)
+
+
+st.markdown("""
+<style>
+
+.enva-architecture {
+    width: 100%;
+    padding: 35px 20px 40px 20px;
+    border-radius: 25px;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(34,197,94,0.12),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            #06141f,
+            #082b36,
+            #06131e
+        );
+
+    border: 1px solid rgba(134,239,172,0.25);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,0.35);
+
+    text-align: center;
+}
+
+
+/* =========================
+   TOP DATA SOURCE
+   ========================= */
+
+.enva-arch-source {
+    display: inline-block;
+
+    padding: 18px 30px;
+
+    border-radius: 18px;
+
+    background: rgba(14,116,144,0.20);
+
+    border: 1px solid rgba(56,189,248,0.45);
+
+    color: #bae6fd;
+
+    font-size: 20px;
+    font-weight: 800;
+
+    box-shadow:
+        0 0 25px rgba(14,165,233,0.12);
+}
+
+
+/* =========================
+   ARROW
+   ========================= */
+
+.enva-arch-arrow {
+    font-size: 32px;
+    color: #86efac;
+
+    margin: 10px 0;
+}
+
+
+/* =========================
+   AI CORE
+   ========================= */
+
+.enva-ai-core {
+
+    display: inline-block;
+
+    min-width: 280px;
+
+    padding: 25px 35px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34,197,94,0.22),
+            rgba(14,116,144,0.20)
+        );
+
+    border: 1px solid rgba(134,239,172,0.60);
+
+    box-shadow:
+        0 0 35px rgba(34,197,94,0.15);
+
+    color: white;
+}
+
+.enva-ai-core-title {
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.enva-ai-core-sub {
+    color: #bbf7d0;
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+
+/* =========================
+   AI FUNCTIONS
+   ========================= */
+
+.enva-functions {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 18px;
+
+    margin: 20px auto;
+
+    max-width: 850px;
+
+    flex-wrap: wrap;
+}
+
+.enva-function {
+
+    flex: 1;
+
+    min-width: 180px;
+
+    padding: 17px;
+
+    border-radius: 16px;
+
+    background: rgba(15,23,42,0.72);
+
+    border: 1px solid rgba(148,163,184,0.22);
+
+    color: #e2e8f0;
+
+    font-weight: 700;
+
+    font-size: 16px;
+}
+
+.enva-function span {
+
+    display: block;
+
+    font-size: 25px;
+
+    margin-bottom: 7px;
+}
+
+
+/* =========================
+   INTELLIGENCE
+   ========================= */
+
+.enva-intelligence {
+
+    display: inline-block;
+
+    padding: 20px 35px;
+
+    border-radius: 18px;
+
+    background: rgba(22,163,74,0.18);
+
+    border: 1px solid rgba(74,222,128,0.40);
+
+    color: #dcfce7;
+
+    font-size: 20px;
+
+    font-weight: 900;
+}
+
+
+/* =========================
+   OUTPUTS
+   ========================= */
+
+.enva-output-grid {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 16px;
+
+    max-width: 950px;
+
+    margin: 20px auto;
+
+    flex-wrap: wrap;
+}
+
+.enva-output {
+
+    flex: 1;
+
+    min-width: 190px;
+
+    padding: 18px;
+
+    border-radius: 16px;
+
+    background: rgba(2,6,23,0.55);
+
+    border: 1px solid rgba(148,163,184,0.20);
+
+    color: #e5e7eb;
+
+    font-weight: 700;
+}
+
+.enva-output-icon {
+
+    font-size: 28px;
+
+    margin-bottom: 8px;
+}
+
+
+/* =========================
+   DECISION CENTER
+   ========================= */
+
+.enva-decision {
+
+    display: inline-block;
+
+    padding: 23px 40px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(234,179,8,0.18),
+            rgba(34,197,94,0.15)
+        );
+
+    border: 1px solid rgba(250,204,21,0.40);
+
+    color: #fef9c3;
+
+    font-size: 21px;
+
+    font-weight: 900;
+}
+
+
+/* =========================
+   GOVERNMENT ACTION
+   ========================= */
+
+.enva-action {
+
+    display: inline-block;
+
+    padding: 22px 42px;
+
+    margin-top: 5px;
+
+    border-radius: 20px;
+
+    background: rgba(22,163,74,0.22);
+
+    border: 1px solid rgba(134,239,172,0.45);
+
+    color: #dcfce7;
+
+    font-size: 20px;
+
+    font-weight: 900;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 750px) {
+
+    .enva-functions,
+    .enva-output-grid {
+
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+    .enva-function,
+    .enva-output {
+
+        width: 90%;
+    }
+
+    .enva-ai-core {
+        min-width: auto;
+        width: 80%;
+    }
+
+}
+
+</style>
+
+
+<div class="enva-architecture">
+
+    <!-- DATA -->
+
+    <div class="enva-arch-source">
+        🛰️
+        <br>
+        Satellite & Environmental Data
+        <br>
+        <small>
+        بيانات الأقمار الصناعية والبيانات البيئية
+        </small>
+    </div>
+
+
+    <div class="enva-arch-arrow">
+        ↓
+    </div>
+
+
+    <!-- AI CORE -->
+
+    <div class="enva-ai-core">
+
+        <div class="enva-ai-core-title">
+            🤖 ENVA AI Agent
+        </div>
+
+        <div class="enva-ai-core-sub">
+            The Intelligent Core of the Future System
+            <br>
+            العقل البرمجي الذكي للمنظومة
+        </div>
+
+    </div>
+
+
+    <div class="enva-arch-arrow">
+        ↓
+    </div>
+
+
+    <!-- AI FUNCTIONS -->
+
+    <div class="enva-functions">
+
+        <div class="enva-function">
+            <span>🔍</span>
+            Detect
+            <br>
+            <small>اكتشاف</small>
+        </div>
+
+        <div class="enva-function">
+            <span>🧠</span>
+            Analyze
+            <br>
+            <small>تحليل</small>
+        </div>
+
+        <div class="enva-function">
+            <span>🔮</span>
+            Predict
+            <br>
+            <small>تنبؤ</small>
+        </div>
+
+    </div>
+
+
+    <div class="enva-arch-arrow">
+        ↓
+    </div>
+
+
+    <!-- ENVIRONMENTAL INTELLIGENCE -->
+
+    <div class="enva-intelligence">
+
+        🌍 Environmental Intelligence
+
+        <br>
+
+        <small>
+            الذكاء البيئي
+        </small>
+
+    </div>
+
+
+    <div class="enva-arch-arrow">
+        ↓
+    </div>
+
+
+    <!-- OUTPUTS -->
+
+    <div class="enva-output-grid">
+
+        <div class="enva-output">
+
+            <div class="enva-output-icon">
+                🚨
+            </div>
+
+            Early Warning
+
+            <br>
+
+            <small>
+                الإنذار المبكر
+            </small>
+
+        </div>
+
+
+        <div class="enva-output">
+
+            <div class="enva-output-icon">
+                🌳
+            </div>
+
+            Environmental Planning
+
+            <br>
+
+            <small>
+                التخطيط البيئي
+            </small>
+
+        </div>
+
+
+        <div class="enva-output">
+
+            <div class="enva-output-icon">
+                🚜
+            </div>
+
+            Land Monitoring
+
+            <br>
+
+            <small>
+                مراقبة الأراضي
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="enva-arch-arrow">
+        ↓
+    </div>
+
+
+    <!-- DECISION -->
+
+    <div class="enva-decision">
+
+        🎯 ENVA Decision Center
+
+        <br>
+
+        <small>
+            مركز دعم القرار البيئي
+        </small>
+
+    </div>
+
+
+    <div class="enva-arch-arrow">
+        ↓
+    </div>
+
+
+    <!-- ACTION -->
+
+    <div class="enva-action">
+
+        🏛️ Government Action
+
+        <br>
+
+        <small>
