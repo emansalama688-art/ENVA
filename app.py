@@ -261,15 +261,17 @@ elif page == "🌍 Interactive Map":
 
     st.subheader("الخريطة التفاعلية")
 
-    st.markdown(
-        """
-تعرض هذه الصفحة خريطة الغطاء الأرضي الناتجة من تحليل صور الأقمار الصناعية.
+    st.markdown("""
+    تعرض هذه الصفحة خريطة الغطاء الأرضي الناتجة من تحليل صور الأقمار الصناعية.
 
-This page displays the interactive land cover map generated from satellite imagery.
-"""
-    )
+    This page displays the interactive land cover map generated from satellite imagery.
+    """)
 
     st.markdown("---")
+
+    # ==================================================
+    # LOAD INTERACTIVE MAP
+    # ==================================================
 
     html_file = DATA_PATH / "landcover_map_2026.html"
 
@@ -277,14 +279,19 @@ This page displays the interactive land cover map generated from satellite image
 
         try:
 
-            from streamlit.components.v1 import html
-
             with open(
                 html_file,
                 "r",
                 encoding="utf-8"
             ) as f:
+
                 html_string = f.read()
+
+            # ==========================================
+            # DISPLAY MAP
+            # ==========================================
+
+            from streamlit.components.v1 import html
 
             html(
                 html_string,
@@ -299,20 +306,25 @@ This page displays the interactive land cover map generated from satellite image
         except Exception as e:
 
             st.error(
-                f"❌ Error loading interactive map\n\n{e}"
+                "❌ Unable to display the interactive map."
             )
+
+            st.exception(e)
 
     else:
 
         st.error(
-            "❌ Interactive map file not found."
+            f"❌ Interactive map file not found: {html_file}"
         )
 
     st.markdown("---")
 
-    st.info(
-        """
-### Available Layers
+    # ==================================================
+    # AVAILABLE MAP LAYERS
+    # ==================================================
+
+    st.info("""
+### 🗺️ Available Layers
 
 🛰️ Land Cover
 
@@ -325,8 +337,7 @@ This page displays the interactive land cover map generated from satellite image
 💧 Water Bodies
 
 يمكن استخدام الخريطة للتكبير والتصغير واستعراض المناطق المختلفة.
-"""
-    )
+""")
 
 # ======================================================
 # ANALYTICS DASHBOARD
