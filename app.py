@@ -2352,3 +2352,983 @@ and project implementation indicators.
     st.caption(
         "Generated automatically by ENVA AI Smart Afforestation Engine."
     )
+# ======================================================
+# FUTURE EXPANSION — ENVA FUTURE VISION
+# ======================================================
+
+elif page == "🔮 Future Expansion":
+
+    # ==================================================
+    # PAGE INTRODUCTION
+    # ==================================================
+
+    st.title("🔮 ENVA Future Vision")
+
+    st.subheader(
+        "من نموذج أولي تجريبي مبسط إلى منظومة وطنية للذكاء البيئي"
+    )
+
+    st.markdown("""
+    **From a Simple Prototype to a National Environmental
+    Intelligence System**
+
+    تمثل هذه الصفحة الرؤية المستقبلية لتطور ENVA.
+    النسخة الحالية من المشروع هي نموذج أولي تجريبي مبسط
+    لإثبات الفكرة الأساسية، بينما توضح هذه الصفحة كيف يمكن
+    تطوير المنظومة مستقبلًا باستخدام تقنيات وبيانات أكثر تقدمًا.
+    """)
+
+    # ==================================================
+    # PROTOTYPE NOTICE
+    # ==================================================
+
+    st.warning("""
+    ⚠️ **Current Status — نموذج أولي تجريبي**
+
+    النسخة الحالية من ENVA هي نموذج أولي مبسط جدًا
+    تم تطويره لإثبات مفهوم دمج بيانات الأقمار الصناعية
+    والتحليل البيئي والذكاء الاصطناعي ودعم اتخاذ القرار.
+
+    **Future Vision**
+
+    تمثل العناصر التالية مسار التطوير المستقبلي للمنظومة،
+    وليست جميعها وظائف مطبقة بالكامل في النموذج الحالي.
+    """)
+
+    st.markdown("---")
+
+    # ==================================================
+    # ENVA — MORE THAN A PLATFORM
+    # ==================================================
+
+    st.header("🧠 ENVA — More Than a Platform")
+
+    st.markdown("""
+    **ENVA ليست مجرد منصة لعرض البيانات.**
+
+    الرؤية المستقبلية هي تطوير ENVA إلى **منظومة ذكاء بيئي
+    متكاملة** تستطيع جمع البيانات وتحليلها واكتشاف المخاطر
+    والتنبؤ بها ثم تحويل نتائج التحليل إلى توصيات وقرارات
+    قابلة للتنفيذ.
+    """)
+
+    st.markdown("### منظومة العمل المستقبلية")
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    c1.info("""
+    ### 🛰️ Data
+
+    Satellite Data
+
+    Environmental Data
+
+    Ground Observations
+    """)
+
+    c2.info("""
+    ### 🤖 Intelligence
+
+    AI Models
+
+    Computer Vision
+
+    ENVA AI Agent
+    """)
+
+    c3.info("""
+    ### 🚨 Prediction
+
+    Risk Detection
+
+    Forecasting
+
+    Early Warning
+    """)
+
+    c4.info("""
+    ### 🎯 Decision
+
+    Recommendations
+
+    Priority
+
+    Government Action
+    """)
+
+    # ==================================================
+    # FUTURE INTELLIGENCE CYCLE
+    # ==================================================
+
+    st.markdown("---")
+
+    st.header("🔄 ENVA Future Intelligence Cycle")
+
+    cycle = [
+        ("🛰️", "Satellite Data", "بيانات الأقمار الصناعية"),
+        ("🤖", "ENVA AI Agent", "وكيل الذكاء الاصطناعي"),
+        ("🧠", "AI Analysis", "التحليل الذكي"),
+        ("🌍", "Environmental Intelligence", "الذكاء البيئي"),
+        ("🚨", "Early Warning", "الإنذار المبكر"),
+        ("🎯", "Decision Support", "دعم القرار"),
+        ("🏛️", "Government Action", "الإجراء الحكومي")
+    ]
+
+    for i, (icon, title, arabic) in enumerate(cycle):
+
+        st.markdown(
+            f"""
+            <div style="
+                background:linear-gradient(135deg,#071827,#102b3d);
+                padding:18px;
+                border-radius:16px;
+                border:1px solid rgba(56,189,248,0.25);
+                text-align:center;
+                margin:8px 0;
+            ">
+                <div style="
+                    font-size:28px;
+                    font-weight:900;
+                    color:#bae6fd;
+                ">
+                    {icon} {title}
+                </div>
+
+                <div style="
+                    color:#cbd5e1;
+                    font-size:15px;
+                    margin-top:5px;
+                ">
+                    {arabic}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        if i < len(cycle) - 1:
+            st.markdown(
+                "<div style='text-align:center;font-size:25px;color:#86efac;'>↓</div>",
+                unsafe_allow_html=True
+            )
+
+    # ==================================================
+    # 3. ADVANCED SATELLITE INTELLIGENCE
+    # ==================================================
+
+    st.markdown("---")
+
+    st.header("🛰️ Advanced Satellite Intelligence")
+
+    st.subheader(
+        "الذكاء الفضائي المتقدم"
+    )
+
+    st.write(
+        "Future ENVA can evolve from basic satellite analysis "
+        "into a continuous multi-source environmental intelligence system."
+    )
+
+    st.write(
+        "يمكن تطوير ENVA مستقبلًا من تحليل صور الأقمار الصناعية "
+        "إلى منظومة ذكاء فضائي مستمرة تعتمد على مصادر متعددة "
+        "وتحليل التغيرات البيئية عبر الزمن."
+    )
+
+    # ==================================================
+    # SATELLITE VISUAL
+    # ==================================================
+
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#061923,#0b3034,#071923);
+            padding:35px 20px;
+            border-radius:25px;
+            border:1px solid rgba(45,212,191,0.35);
+            box-shadow:0 14px 40px rgba(0,0,0,0.35);
+            text-align:center;
+            margin:20px 0;
+        ">
+
+            <div style="
+                font-size:30px;
+                font-weight:900;
+                color:#99f6e4;
+                margin-bottom:10px;
+            ">
+                🛰️ Satellite Intelligence
+            </div>
+
+            <div style="
+                color:#cbd5e1;
+                font-size:16px;
+                margin-bottom:25px;
+            ">
+                من البيانات الفضائية إلى الذكاء البيئي
+            </div>
+
+            <div style="
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                gap:12px;
+                flex-wrap:wrap;
+            ">
+
+                <div style="
+                    padding:18px 22px;
+                    border-radius:16px;
+                    background:rgba(14,116,144,0.30);
+                    color:#e0f2fe;
+                    font-weight:800;
+                ">
+                    🛰️ Satellite Data
+                    <br>
+                    <small>البيانات الفضائية</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="
+                    padding:18px 22px;
+                    border-radius:16px;
+                    background:rgba(37,99,235,0.25);
+                    color:#dbeafe;
+                    font-weight:800;
+                ">
+                    🔍 Change Detection
+                    <br>
+                    <small>اكتشاف التغيرات</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="
+                    padding:18px 22px;
+                    border-radius:16px;
+                    background:rgba(124,58,237,0.25);
+                    color:#ede9fe;
+                    font-weight:800;
+                ">
+                    🧠 Intelligence
+                    <br>
+                    <small>الذكاء البيئي</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="
+                    padding:18px 22px;
+                    border-radius:16px;
+                    background:rgba(22,163,74,0.25);
+                    color:#dcfce7;
+                    font-weight:800;
+                ">
+                    🎯 Decision
+                    <br>
+                    <small>دعم القرار</small>
+                </div>
+
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    s1, s2 = st.columns(2)
+
+    with s1:
+
+        st.markdown("### 🛰️ High-Resolution Satellite Data")
+
+        st.write(
+            "استخدام صور أقمار صناعية أعلى دقة للحصول على "
+            "تفاصيل مكانية أكثر دقة."
+        )
+
+        st.markdown("""
+        - Sentinel
+        - Landsat
+        - Commercial High-Resolution Imagery
+        """)
+
+    with s2:
+
+        st.markdown("### 🔄 Continuous Monitoring")
+
+        st.write(
+            "متابعة التغيرات البيئية بصورة دورية بدل الاعتماد "
+            "على تحليل صورة منفردة."
+        )
+
+        st.markdown("""
+        - Historical Comparison
+        - Time-Series Analysis
+        - Change Detection
+        """)
+
+    st.markdown("### 🌍 Multi-Source Satellite Intelligence")
+
+    m1, m2, m3 = st.columns(3)
+
+    with m1:
+        st.info("""
+        🛰️ **Optical Imagery**
+
+        تحليل الغطاء النباتي،
+        استخدامات الأراضي،
+        والمناطق العمرانية.
+        """)
+
+    with m2:
+        st.info("""
+        📡 **Radar Imagery**
+
+        دعم الرصد في الظروف الجوية
+        التي تحد من الاستفادة من
+        الصور البصرية.
+        """)
+
+    with m3:
+        st.info("""
+        ⏱️ **Time-Series Data**
+
+        مقارنة التغيرات البيئية
+        عبر فترات زمنية متعددة.
+        """)
+
+    st.markdown("### 🔄 Future Satellite Analysis Workflow")
+
+    flow1, flow2, flow3, flow4 = st.columns(4)
+
+    with flow1:
+        st.success("🛰️ Acquire\n\nجمع البيانات الفضائية")
+
+    with flow2:
+        st.success("🧹 Process\n\nمعالجة وتنقية البيانات")
+
+    with flow3:
+        st.success("🔍 Detect\n\nاكتشاف التغيرات")
+
+    with flow4:
+        st.success("🧠 Understand\n\nتحويلها إلى ذكاء بيئي")
+
+    # ==================================================
+    # 4. ADVANCED AI & PREDICTIVE ANALYTICS
+    # ==================================================
+
+    st.markdown("---")
+
+    st.header("🤖 Advanced AI & Predictive Analytics")
+
+    st.subheader(
+        "الذكاء الاصطناعي والتحليلات التنبؤية"
+    )
+
+    st.write(
+        "The future ENVA system is designed to move beyond "
+        "describing environmental conditions toward predicting "
+        "future risks and supporting proactive decisions."
+    )
+
+    st.write(
+        "الرؤية المستقبلية لـ ENVA هي الانتقال من مجرد وصف "
+        "الحالة البيئية إلى تحليلها والتنبؤ بالمخاطر المستقبلية "
+        "ودعم اتخاذ إجراءات استباقية."
+    )
+
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#071827,#102b3d,#071827);
+            padding:32px 22px;
+            border-radius:24px;
+            border:1px solid rgba(56,189,248,0.30);
+            box-shadow:0 12px 35px rgba(0,0,0,0.30);
+            text-align:center;
+            margin:20px 0;
+        ">
+
+            <div style="
+                font-size:30px;
+                font-weight:900;
+                color:#bae6fd;
+            ">
+                🧠 ENVA AI Intelligence Engine
+            </div>
+
+            <div style="
+                color:#cbd5e1;
+                margin:10px 0 25px;
+            ">
+                العقل الذكي للتحليل والتنبؤ واتخاذ القرار
+            </div>
+
+            <div style="
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                gap:12px;
+                flex-wrap:wrap;
+            ">
+
+                <div style="padding:18px 22px;border-radius:16px;background:rgba(14,116,144,.30);color:#e0f2fe;font-weight:800;">
+                    🛰️ Data
+                    <br><small>البيانات</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="padding:18px 22px;border-radius:16px;background:rgba(37,99,235,.25);color:#dbeafe;font-weight:800;">
+                    🤖 AI Models
+                    <br><small>نماذج الذكاء الاصطناعي</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="padding:18px 22px;border-radius:16px;background:rgba(124,58,237,.25);color:#ede9fe;font-weight:800;">
+                    🔮 Prediction
+                    <br><small>التنبؤ</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="padding:18px 22px;border-radius:16px;background:rgba(22,163,74,.25);color:#dcfce7;font-weight:800;">
+                    🎯 Decision
+                    <br><small>القرار</small>
+                </div>
+
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### 🧠 Future AI Capabilities")
+
+    ai1, ai2, ai3 = st.columns(3)
+
+    with ai1:
+        st.info("🔍 **Computer Vision**\n\nتحليل الصور واكتشاف الأنماط والتغيرات البيئية.")
+
+    with ai2:
+        st.info("📈 **Predictive Analytics**\n\nتحليل السلاسل الزمنية والتنبؤ بالاتجاهات والمخاطر.")
+
+    with ai3:
+        st.info("🧠 **Deep Learning**\n\nنماذج أكثر تقدمًا لفهم الأنماط البيئية المعقدة.")
+
+    st.markdown("### 🔄 ENVA AI Intelligence Cycle")
+
+    p1, p2, p3, p4 = st.columns(4)
+
+    with p1:
+        st.success("🔍 Detect\n\nاكتشاف التغير أو الخطر")
+
+    with p2:
+        st.success("🧠 Analyze\n\nتحليل السبب والخصائص")
+
+    with p3:
+        st.success("🔮 Predict\n\nتوقع التطورات المستقبلية")
+
+    with p4:
+        st.success("🎯 Recommend\n\nاقتراح الإجراء المناسب")
+
+    st.markdown("### 🔮 Future Prediction Areas")
+
+    r1, r2 = st.columns(2)
+
+    with r1:
+        st.markdown("""
+        **🌱 Environmental Prediction**
+
+        - Vegetation Trends
+        - Drought Risk
+        - Land Degradation
+        - Water Stress
+        - Agricultural Change
+        """)
+
+    with r2:
+        st.markdown("""
+        **🚨 Risk Prediction**
+
+        - Fire Probability
+        - Flood Risk
+        - Heatwave Risk
+        - Pollution Risk
+        - Environmental Hotspots
+        """)
+
+    st.header("🤖 ENVA AI Agent")
+
+    st.write(
+        "في الرؤية المستقبلية، يمكن تطوير ENVA AI Agent "
+        "ليعمل كروبوت برمجي ذكي قادر على تشغيل عمليات التحليل "
+        "وتجميع النتائج ومقارنتها ثم تقديم ملخص وتوصية قابلة للفهم."
+    )
+
+    agent1, agent2, agent3 = st.columns(3)
+
+    with agent1:
+        st.markdown("### 📥 Observe\n\nCollect environmental information\n\nجمع البيانات والمعلومات البيئية")
+
+    with agent2:
+        st.markdown("### 🧠 Reason\n\nAnalyze patterns and risks\n\nتحليل الأنماط والمخاطر")
+
+    with agent3:
+        st.markdown("### 🎯 Act\n\nRecommend a response\n\nاقتراح الإجراء المناسب")
+
+    st.success("""
+    🚀 **Future AI Vision**
+
+    **Detect → Analyze → Predict → Recommend**
+
+    **اكتشاف → تحليل → تنبؤ → توصية**
+
+    الانتقال من Reactive Response إلى Proactive Environmental Management.
+    """)
+
+    # ==================================================
+    # 5. NATIONAL EARLY WARNING SYSTEM
+    # ==================================================
+
+    st.markdown("---")
+
+    st.header("🚨 National Early Warning System")
+
+    st.subheader(
+        "منظومة الإنذار البيئي المبكر"
+    )
+
+    st.write(
+        "The future ENVA system can evolve from environmental "
+        "monitoring into a predictive early warning system "
+        "that detects emerging risks before they become critical."
+    )
+
+    st.write(
+        "يمكن تطوير ENVA مستقبلًا من منظومة للرصد البيئي "
+        "إلى نظام إنذار مبكر قادر على اكتشاف المخاطر المتوقعة "
+        "والتنبيه إليها قبل تفاقمها."
+    )
+
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#07151f,#132b35,#07151f);
+            padding:32px 20px;
+            border-radius:25px;
+            border:1px solid rgba(248,113,113,.30);
+            box-shadow:0 14px 40px rgba(0,0,0,.35);
+            text-align:center;
+            margin:20px 0;
+        ">
+
+            <div style="
+                font-size:30px;
+                font-weight:900;
+                color:#fecaca;
+            ">
+                🚨 ENVA Early Warning Engine
+            </div>
+
+            <div style="color:#cbd5e1;margin:10px 0 28px;">
+                محرك الإنذار المبكر للمخاطر البيئية
+            </div>
+
+            <div style="
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                gap:12px;
+                flex-wrap:wrap;
+            ">
+
+                <div style="padding:18px 20px;border-radius:16px;background:rgba(14,116,144,.28);color:#e0f2fe;font-weight:800;">
+                    🛰️ Monitor
+                    <br><small>رصد</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="padding:18px 20px;border-radius:16px;background:rgba(124,58,237,.25);color:#ede9fe;font-weight:800;">
+                    🔍 Detect
+                    <br><small>اكتشاف</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="padding:18px 20px;border-radius:16px;background:rgba(234,88,12,.25);color:#ffedd5;font-weight:800;">
+                    🔮 Forecast
+                    <br><small>توقع</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="padding:18px 20px;border-radius:16px;background:rgba(220,38,38,.25);color:#fee2e2;font-weight:800;">
+                    🚨 Alert
+                    <br><small>إنذار</small>
+                </div>
+
+                <div style="font-size:25px;color:#86efac;">→</div>
+
+                <div style="padding:18px 20px;border-radius:16px;background:rgba(22,163,74,.25);color:#dcfce7;font-weight:800;">
+                    🎯 Respond
+                    <br><small>استجابة</small>
+                </div>
+
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ⚠️ Future Environmental Risk Categories")
+
+    r1, r2, r3 = st.columns(3)
+
+    with r1:
+        st.error("🔥 **Fire Risk**\n\nالتنبؤ باحتمالات الحرائق ومناطق الخطر.")
+
+    with r2:
+        st.warning("🌵 **Drought Risk**\n\nرصد مؤشرات الجفاف والإجهاد المائي.")
+
+    with r3:
+        st.warning("🌊 **Flood Risk**\n\nالتنبؤ بالمناطق المعرضة لمخاطر السيول والفيضانات.")
+
+    r4, r5, r6 = st.columns(3)
+
+    with r4:
+        st.warning("🌡️ **Heatwave Risk**\n\nاكتشاف والتنبؤ بموجات الحرارة الشديدة.")
+
+    with r5:
+        st.error("🌫️ **Pollution Risk**\n\nرصد المناطق التي قد تواجه ارتفاعًا في مستويات التلوث.")
+
+    with r6:
+        st.info("🌪️ **Extreme Weather**\n\nمتابعة مؤشرات الظواهر الجوية المتطرفة.")
+
+    st.header("🔮 Risk Forecast")
+
+    f1, f2, f3, f4 = st.columns(4)
+
+    with f1:
+        st.metric("🔥 Fire Probability", "—", "Future Model")
+
+    with f2:
+        st.metric("🌵 Drought Probability", "—", "Future Model")
+
+    with f3:
+        st.metric("🌊 Flood Probability", "—", "Future Model")
+
+    with f4:
+        st.metric("🌡️ Heatwave Probability", "—", "Future Model")
+
+    st.caption(
+        "Forecast values are part of the future system vision "
+        "and are not operational predictions in the current prototype."
+    )
+
+    st.header("🎯 Risk Prioritization")
+
+    p1, p2, p3 = st.columns(3)
+
+    with p1:
+        st.info("🟢 **Low Risk**\n\nRoutine monitoring")
+
+    with p2:
+        st.warning("🟡 **Moderate Risk**\n\nIncrease monitoring")
+
+    with p3:
+        st.error("🔴 **Critical Risk**\n\nImmediate response")
+
+    st.header("🤖 AI Recommendation")
+
+    a1, a2, a3 = st.columns(3)
+
+    with a1:
+        st.markdown("""
+        ### 🔎 Risk Assessment
+
+        **ما الذي يحدث؟**
+
+        تحديد نوع الخطر وموقعه ومدى انتشاره.
+        """)
+
+    with a2:
+        st.markdown("""
+        ### 🎯 Priority
+
+        **ما مدى خطورته؟**
+
+        تحديد مستوى الأولوية ودرجة الاستجابة المطلوبة.
+        """)
+
+    with a3:
+        st.markdown("""
+        ### 🏛️ Recommended Action
+
+        **ماذا يجب أن نفعل؟**
+
+        اقتراح الإجراء المناسب للجهة المختصة.
+        """)
+
+    st.success("""
+    🚨 **From Reactive to Proactive**
+
+    **Detecting Problems After They Occur**
+
+    إلى:
+
+    **Predicting Risks Before They Escalate**
+    """)
+
+    # ==================================================
+    # 6. IoT ENVIRONMENTAL SENSORS
+    # ==================================================
+
+    st.markdown("---")
+
+    st.header("📡 IoT Environmental Sensors")
+
+    st.subheader(
+        "الاستشعار البيئي الميداني"
+    )
+
+    st.write(
+        "Future ENVA can integrate real-time ground sensor data "
+        "with satellite observations and AI models to create a "
+        "continuous multi-source environmental monitoring system."
+    )
+
+    st.write(
+        "يمكن ربط ENVA مستقبلًا بأجهزة استشعار ميدانية "
+        "ترسل بيانات بيئية بصورة مستمرة، ليتم دمجها مع "
+        "بيانات الأقمار الصناعية ونماذج الذكاء الاصطناعي."
+    )
+
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#061923,#0b3034,#071923);
+            padding:35px 20px;
+            border-radius:25px;
+            border:1px solid rgba(45,212,191,.35);
+            box-shadow:0 14px 40px rgba(0,0,0,.35);
+            text-align:center;
+            margin:20px 0;
+        ">
+
+            <div style="
+                font-size:30px;
+                font-weight:900;
+                color:#99f6e4;
+            ">
+                📡 ENVA Multi-Source Environmental Intelligence
+            </div>
+
+            <div style="color:#cbd5e1;margin:10px 0 28px;">
+                دمج الرصد الفضائي مع الاستشعار الميداني والذكاء الاصطناعي
+            </div>
+
+            <div style="
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                gap:12px;
+                flex-wrap:wrap;
+            ">
+
+                <div style="padding:20px 24px;border-radius:18px;background:rgba(14,116,144,.28);color:#e0f2fe;font-weight:800;">
+                    🛰️ Satellite Data
+                    <br><small>بيانات الأقمار الصناعية</small>
+                </div>
+
+                <div style="font-size:25px;color:#5eead4;">+</div>
+
+                <div style="padding:20px 24px;border-radius:18px;background:rgba(13,148,136,.25);color:#ccfbf1;font-weight:800;">
+                    📡 IoT Sensors
+                    <br><small>أجهزة الاستشعار</small>
+                </div>
+
+                <div style="font-size:25px;color:#5eead4;">+</div>
+
+                <div style="padding:20px 24px;border-radius:18px;background:rgba(22,163,74,.25);color:#dcfce7;font-weight:800;">
+                    🤖 AI
+                    <br><small>الذكاء الاصطناعي</small>
+                </div>
+
+            </div>
+
+            <div style="font-size:30px;color:#5eead4;margin:18px 0;">
+                ↓
+            </div>
+
+            <div style="
+                display:inline-block;
+                padding:18px 32px;
+                border-radius:18px;
+                background:rgba(124,58,237,.22);
+                color:#ede9fe;
+                font-size:20px;
+                font-weight:900;
+            ">
+                🌍 Integrated Environmental Intelligence
+                <br><small>ذكاء بيئي متكامل</small>
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### 📊 Future Environmental Sensor Network")
+
+    s1, s2, s3 = st.columns(3)
+
+    with s1:
+        st.info("""
+        🌫️ **Air Quality**
+
+        PM2.5  
+        PM10  
+        CO₂  
+        NO₂  
+        Other pollutants
+        """)
+
+    with s2:
+        st.info("""
+        🌡️ **Climate Sensors**
+
+        Temperature  
+        Humidity  
+        Wind Speed  
+        Solar Radiation
+        """)
+
+    with s3:
+        st.info("""
+        💧 **Water & Soil**
+
+        Water Quality  
+        Water Level  
+        Soil Moisture  
+        Soil Conditions
+        """)
+
+    st.markdown("---")
+
+    st.markdown("### 🔄 Real-Time Environmental Data Flow")
+
+    d1, d2, d3, d4 = st.columns(4)
+
+    with d1:
+        st.success("📡 Sensors\n\nCollect")
+
+    with d2:
+        st.success("☁️ Data Layer\n\nTransmit")
+
+    with d3:
+        st.success("🤖 ENVA AI\n\nAnalyze")
+
+    with d4:
+        st.success("🚨 Alert\n\nRespond")
+
+    st.markdown("---")
+
+    st.header("🎯 Future Sensor Use Cases")
+
+    u1, u2 = st.columns(2)
+
+    with u1:
+        st.markdown("""
+        ### 🌫️ Air Pollution Monitoring
+
+        يمكن للحساسات الميدانية دعم ENVA في:
+
+        - اكتشاف ارتفاع مستويات الملوثات.
+        - مقارنة القياسات الأرضية بالبيانات الفضائية.
+        - تحديد المناطق الأكثر تعرضًا للتلوث.
+        - دعم منظومة Early Warning.
+        """)
+
+    with u2:
+        st.markdown("""
+        ### 💧 Water & Soil Monitoring
+
+        يمكن استخدام البيانات الميدانية في:
+
+        - متابعة جودة المياه.
+        - قياس رطوبة التربة.
+        - دعم تحليل الجفاف.
+        - تحسين قرارات إدارة الموارد الطبيعية.
+        """)
+
+    st.markdown("---")
+
+    st.header("🛰️ + 📡 Satellite–Ground Verification")
+
+    v1, v2, v3 = st.columns(3)
+
+    with v1:
+        st.markdown("""
+        **🛰️ Satellite Observation**
+
+        What is detected from space?
+        """)
+
+    with v2:
+        st.markdown("""
+        **📡 Ground Measurement**
+
+        What is measured on site?
+        """)
+
+    with v3:
+        st.markdown("""
+        **🧠 AI Validation**
+
+        Do both sources agree?
+        """)
+
+    st.success("""
+    🌍 **Future Value**
+
+    **Satellite Data + Ground Sensors + AI**
+
+    دمج الأقمار الصناعية مع أجهزة الاستشعار الميدانية
+    سيجعل ENVA قادرة على بناء صورة بيئية أكثر شمولًا.
+    """)
+
+    # ==================================================
+    # FUTURE VISION SUMMARY
+    # ==================================================
+
+    st.markdown("---")
+
+    st.header("🌍 ENVA — National Environmental Intelligence")
+
+    st.markdown("""
+    ### **From Data → Intelligence → Prediction → Warning → Decision → Action**
+    """)
+
+    st.markdown("""
+    **ENVA aims to evolve from a simplified experimental
+    prototype into an integrated national environmental
+    intelligence and decision-support system.**
+
+    تهدف ENVA مستقبلًا إلى التطور من نموذج أولي تجريبي
+    مبسط إلى منظومة وطنية متكاملة للذكاء البيئي ودعم
+    اتخاذ القرار، تجمع بين بيانات الأقمار الصناعية،
+    والذكاء الاصطناعي، والاستشعار الميداني، والتحليلات
+    التنبؤية والإنذار المبكر.
+    """)
+
+    st.success(
+        "🌱 ENVA Future Vision — Building Environmental Intelligence for Better Decisions"
+    )
+
+    st.caption(
+        "Future Expansion — From Prototype → National Environmental Intelligence Ecosystem"
+    )
