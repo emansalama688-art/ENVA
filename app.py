@@ -85,6 +85,7 @@ page = st.sidebar.radio(
         "🚜 Agricultural Encroachments",
         "🌳 Smart Afforestation",
         "📥 Reports"
+        "🔮 Future Expansion"
     ]
 )
 
@@ -1319,4 +1320,271 @@ and project implementation indicators.
 
     st.caption(
         "Generated automatically by ENVA AI Smart Afforestation Engine."
+    )
+# ======================================================
+# FUTURE EXPANSION — ENVA FUTURE VISION
+# ======================================================
+
+elif page == "🔮 Future Expansion":
+
+    # ==================================================
+    # PAGE INTRODUCTION
+    # ==================================================
+
+    st.title("🔮 ENVA Future Vision")
+
+    st.subheader(
+        "من نموذج أولي تجريبي مبسط إلى منظومة وطنية للذكاء البيئي"
+    )
+
+    st.markdown("""
+    **From a Simple Prototype to a National Environmental
+    Intelligence System**
+
+    تمثل هذه الصفحة الرؤية المستقبلية لتطور ENVA.
+    النسخة الحالية من المشروع هي نموذج أولي تجريبي مبسط جدًا
+    لإثبات الفكرة الأساسية، بينما توضح هذه الصفحة كيف يمكن
+    تطوير المنظومة مستقبلًا باستخدام تقنيات وبيانات أكثر تقدمًا.
+    """)
+
+    # ==================================================
+    # PROTOTYPE NOTICE
+    # ==================================================
+
+    st.warning("""
+    ⚠️ **Current Status — نموذج أولي تجريبي**
+
+    النسخة الحالية من ENVA هي نموذج أولي مبسط جدًا
+    تم تطويره لإثبات مفهوم دمج بيانات الأقمار الصناعية
+    والتحليل البيئي والذكاء الاصطناعي ودعم اتخاذ القرار.
+
+    **Future Vision**
+
+    تمثل العناصر التالية مسار التطوير المستقبلي للمنظومة،
+    وليست جميعها وظائف مطبقة بالكامل في النموذج الحالي.
+    """)
+
+    st.markdown("---")
+
+    # ==================================================
+    # ENVA — MORE THAN A PLATFORM
+    # ==================================================
+
+    st.header("🧠 ENVA — More Than a Platform")
+
+    st.markdown("""
+    **ENVA ليست مجرد منصة لعرض البيانات.**
+
+    الرؤية المستقبلية هي تطوير ENVA إلى **منظومة ذكاء بيئي
+    متكاملة** تستطيع جمع البيانات وتحليلها واكتشاف المخاطر
+    والتنبؤ بها ثم تحويل نتائج التحليل إلى توصيات وقرارات
+    قابلة للتنفيذ.
+    """)
+
+    st.markdown("### منظومة العمل المستقبلية")
+
+    c1, c2, c3, c4 = st.columns(4)
+
+    c1.info("""
+    ### 🛰️ Data
+
+    Satellite Data
+
+    Environmental Data
+
+    Ground Observations
+    """)
+
+    c2.info("""
+    ### 🤖 Intelligence
+
+    AI Models
+
+    Computer Vision
+
+    ENVA AI Agent
+    """)
+
+    c3.info("""
+    ### 🚨 Prediction
+
+    Risk Detection
+
+    Forecasting
+
+    Early Warning
+    """)
+
+    c4.info("""
+    ### 🎯 Decision
+
+    Recommendations
+
+    Priority
+
+    Government Action
+    """)
+
+    st.markdown("---")
+
+    # ==================================================
+    # FUTURE SYSTEM FLOW
+    # ==================================================
+
+    st.header("🔄 ENVA Future Intelligence Cycle")
+
+    st.markdown("""
+    ### Satellite Data
+    🛰️
+    """)
+
+    st.markdown("⬇️")
+
+    st.markdown("""
+    ### 🤖 ENVA AI Agent
+
+    يجمع البيانات ويشغل عمليات التحليل والنماذج
+    الذكية بصورة آلية.
+    """)
+
+    st.markdown("⬇️")
+
+    st.markdown("""
+    ### 🧠 AI Analysis
+
+    **Detect → Analyze → Predict**
+    """)
+
+    st.markdown("⬇️")
+
+    st.markdown("""
+    ### 🌍 Environmental Intelligence
+
+    تحويل البيانات الخام إلى مؤشرات ومعلومات بيئية قابلة للفهم.
+    """)
+
+    st.markdown("⬇️")
+
+    st.markdown("""
+    ### 🚨 Early Warning
+
+    اكتشاف المخاطر البيئية والتنبؤ بها وإعطاء مستوى خطورة.
+    """)
+
+    st.markdown("⬇️")
+
+    st.markdown("""
+    ### 🎯 Decision Support
+
+    **Recommend → Prioritize → Act**
+    """)
+
+    st.markdown("⬇️")
+
+    st.success("""
+    🏛️ **Government Action**
+
+    تحويل المعلومات والتحذيرات إلى إجراءات وقرارات بيئية.
+    """)
+
+    st.markdown("---")
+
+    # ==================================================
+    # FUTURE ECOSYSTEM
+    # ==================================================
+
+    st.header("🌐 ENVA Future Technology Ecosystem")
+
+    st.markdown("""
+    في المستقبل يمكن أن تعمل ENVA كمنظومة مترابطة
+    تجمع عدة مصادر وتقنيات بدل الاعتماد على مصدر واحد للبيانات.
+    """)
+
+    f1, f2, f3 = st.columns(3)
+
+    f1.markdown("""
+    ### 🛰️ Satellite Intelligence
+
+    صور أقمار صناعية عالية الدقة  
+    Radar + Optical  
+    Time-Series Monitoring  
+    Change Detection
+    """)
+
+    f2.markdown("""
+    ### 📡 IoT Sensors
+
+    Air Quality  
+    Temperature  
+    Humidity  
+    Water Quality  
+    Soil Moisture
+    """)
+
+    f3.markdown("""
+    ### 🚁 Drone Monitoring
+
+    Field Verification  
+    Agricultural Monitoring  
+    Fire Verification  
+    Urban Monitoring
+    """)
+
+    f4, f5, f6 = st.columns(3)
+
+    f4.markdown("""
+    ### 🤖 Advanced AI
+
+    Deep Learning  
+    Computer Vision  
+    Predictive Analytics  
+    NLP
+    """)
+
+    f5.markdown("""
+    ### 🏛️ Government GIS
+
+    GIS Integration  
+    Authority Coordination  
+    Decision Support  
+    Action Tracking
+    """)
+
+    f6.markdown("""
+    ### 📱 ENVA Mobile
+
+    Alerts  
+    Field Reports  
+    Images  
+    Verification  
+    Team Communication
+    """)
+
+    st.markdown("---")
+
+    # ==================================================
+    # FINAL VISION
+    # ==================================================
+
+    st.header("🌍 ENVA — National Environmental Intelligence")
+
+    st.markdown("""
+    ### **From Data → Intelligence → Prediction → Warning → Decision → Action**
+    """)
+
+    st.markdown("""
+    **ENVA aims to evolve from a simplified experimental
+    prototype into an integrated national environmental
+    intelligence and decision-support system.**
+
+    تهدف ENVA مستقبلًا إلى التطور من نموذج أولي تجريبي
+    مبسط إلى منظومة وطنية متكاملة للذكاء البيئي ودعم
+    اتخاذ القرار، تجمع بين بيانات الأقمار الصناعية،
+    والذكاء الاصطناعي، والروبوتات البرمجية، والاستشعار
+    الميداني، والطائرات بدون طيار، ونظم المعلومات الجغرافية
+    والتحليلات التنبؤية.
+    """)
+
+    st.success(
+        "🌱 ENVA Future Vision — Building Environmental Intelligence for Better Decisions"
     )
