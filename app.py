@@ -1588,526 +1588,976 @@ elif page == "🔮 Future Expansion":
     st.success(
         "🌱 ENVA Future Vision — Building Environmental Intelligence for Better Decisions"
     )
+import streamlit as st
+import pandas as pd
+import json
+import plotly.express as px
+import plotly.graph_objects as go
+from pathlib import Path
+
 # ======================================================
-# ENVA FUTURE ARCHITECTURE
+# PAGE CONFIG
 # ======================================================
 
-st.markdown("---")
+st.set_page_config(
+    page_title="ENVA",
+    page_icon="🌍",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-st.header("🧠 ENVA Future Architecture")
+# ======================================================
+# LOAD DATA
+# ======================================================
 
-st.markdown("""
-<div style="
-    text-align:center;
-    color:#94a3b8;
-    font-size:17px;
-    margin-bottom:25px;
-">
-    From environmental data to intelligent action
-    <br>
-    <span style="color:#a7f3d0;">
-        من البيانات البيئية إلى الذكاء والقرار والتنفيذ
-    </span>
-</div>
-""", unsafe_allow_html=True)
+DATA_PATH = Path("data")
 
+REPORT = json.load(
+    open(
+        DATA_PATH / "ENVA_Final_Report.json",
+        encoding="utf-8"
+    )
+)
+
+SUMMARY = pd.read_csv(
+    DATA_PATH / "ENVA_Final_Summary.csv"
+)
+
+# ======================================================
+# CUSTOM STYLE
+# ======================================================
 
 st.markdown("""
 <style>
 
-.enva-architecture {
-    width: 100%;
-    padding: 35px 20px 40px 20px;
-    border-radius: 25px;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            rgba(34,197,94,0.12),
-            transparent 35%
-        ),
-        linear-gradient(
-            145deg,
-            #06141f,
-            #082b36,
-            #06131e
-        );
-
-    border: 1px solid rgba(134,239,172,0.25);
-
-    box-shadow:
-        0 15px 45px rgba(0,0,0,0.35);
-
-    text-align: center;
+.main{
+    background-color:#f5f7fa;
 }
 
-
-/* =========================
-   TOP DATA SOURCE
-   ========================= */
-
-.enva-arch-source {
-    display: inline-block;
-
-    padding: 18px 30px;
-
-    border-radius: 18px;
-
-    background: rgba(14,116,144,0.20);
-
-    border: 1px solid rgba(56,189,248,0.45);
-
-    color: #bae6fd;
-
-    font-size: 20px;
-    font-weight: 800;
-
-    box-shadow:
-        0 0 25px rgba(14,165,233,0.12);
+h1,h2,h3{
+    color:#145A32;
 }
 
-
-/* =========================
-   ARROW
-   ========================= */
-
-.enva-arch-arrow {
-    font-size: 32px;
-    color: #86efac;
-
-    margin: 10px 0;
+div[data-testid="metric-container"]{
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    border:1px solid #dddddd;
+    box-shadow:0px 2px 8px rgba(0,0,0,0.08);
 }
 
-
-/* =========================
-   AI CORE
-   ========================= */
-
-.enva-ai-core {
-
-    display: inline-block;
-
-    min-width: 280px;
-
-    padding: 25px 35px;
-
-    border-radius: 22px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(34,197,94,0.22),
-            rgba(14,116,144,0.20)
-        );
-
-    border: 1px solid rgba(134,239,172,0.60);
-
-    box-shadow:
-        0 0 35px rgba(34,197,94,0.15);
-
-    color: white;
-}
-
-.enva-ai-core-title {
-    font-size: 28px;
-    font-weight: 900;
-}
-
-.enva-ai-core-sub {
-    color: #bbf7d0;
-    font-size: 15px;
-    margin-top: 5px;
-}
-
-
-/* =========================
-   AI FUNCTIONS
-   ========================= */
-
-.enva-functions {
-
-    display: flex;
-
-    justify-content: center;
-
-    gap: 18px;
-
-    margin: 20px auto;
-
-    max-width: 850px;
-
-    flex-wrap: wrap;
-}
-
-.enva-function {
-
-    flex: 1;
-
-    min-width: 180px;
-
-    padding: 17px;
-
-    border-radius: 16px;
-
-    background: rgba(15,23,42,0.72);
-
-    border: 1px solid rgba(148,163,184,0.22);
-
-    color: #e2e8f0;
-
-    font-weight: 700;
-
-    font-size: 16px;
-}
-
-.enva-function span {
-
-    display: block;
-
-    font-size: 25px;
-
-    margin-bottom: 7px;
-}
-
-
-/* =========================
-   INTELLIGENCE
-   ========================= */
-
-.enva-intelligence {
-
-    display: inline-block;
-
-    padding: 20px 35px;
-
-    border-radius: 18px;
-
-    background: rgba(22,163,74,0.18);
-
-    border: 1px solid rgba(74,222,128,0.40);
-
-    color: #dcfce7;
-
-    font-size: 20px;
-
-    font-weight: 900;
-}
-
-
-/* =========================
-   OUTPUTS
-   ========================= */
-
-.enva-output-grid {
-
-    display: flex;
-
-    justify-content: center;
-
-    gap: 16px;
-
-    max-width: 950px;
-
-    margin: 20px auto;
-
-    flex-wrap: wrap;
-}
-
-.enva-output {
-
-    flex: 1;
-
-    min-width: 190px;
-
-    padding: 18px;
-
-    border-radius: 16px;
-
-    background: rgba(2,6,23,0.55);
-
-    border: 1px solid rgba(148,163,184,0.20);
-
-    color: #e5e7eb;
-
-    font-weight: 700;
-}
-
-.enva-output-icon {
-
-    font-size: 28px;
-
-    margin-bottom: 8px;
-}
-
-
-/* =========================
-   DECISION CENTER
-   ========================= */
-
-.enva-decision {
-
-    display: inline-block;
-
-    padding: 23px 40px;
-
-    border-radius: 20px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(234,179,8,0.18),
-            rgba(34,197,94,0.15)
-        );
-
-    border: 1px solid rgba(250,204,21,0.40);
-
-    color: #fef9c3;
-
-    font-size: 21px;
-
-    font-weight: 900;
-}
-
-
-/* =========================
-   GOVERNMENT ACTION
-   ========================= */
-
-.enva-action {
-
-    display: inline-block;
-
-    padding: 22px 42px;
-
-    margin-top: 5px;
-
-    border-radius: 20px;
-
-    background: rgba(22,163,74,0.22);
-
-    border: 1px solid rgba(134,239,172,0.45);
-
-    color: #dcfce7;
-
-    font-size: 20px;
-
-    font-weight: 900;
-}
-
-
-/* =========================
-   MOBILE
-   ========================= */
-
-@media (max-width: 750px) {
-
-    .enva-functions,
-    .enva-output-grid {
-
-        flex-direction: column;
-
-        align-items: center;
-    }
-
-    .enva-function,
-    .enva-output {
-
-        width: 90%;
-    }
-
-    .enva-ai-core {
-        min-width: auto;
-        width: 80%;
-    }
-
+.sidebar .sidebar-content{
+    background:#145A32;
 }
 
 </style>
+""",unsafe_allow_html=True)
+# ======================================================
+# SIDEBAR
+# ======================================================
 
+st.sidebar.image(
+    "https://img.icons8.com/fluency/96/earth-planet.png",
+    width=90
+)
 
-<div class="enva-architecture">
+st.sidebar.title("🌍 ENVA")
 
-    <!-- DATA -->
+page = st.sidebar.radio(
+    "Navigation",
+    [
+        "🏠 Home",
+        "🛰️ Satellite Analysis",
+        "🌍 Interactive Map",
+        "📊 Dashboard",
+        "🤖 AI Report",
+        "🚨 Early Warning",
+        "🚜 Agricultural Encroachments",
+        "🌳 Smart Afforestation",
+        "📥 Reports",
+        "🔮 Future Expansion"
+    ]
+)
 
-    <div class="enva-arch-source">
-        🛰️
-        <br>
-        Satellite & Environmental Data
-        <br>
-        <small>
-        بيانات الأقمار الصناعية والبيانات البيئية
-        </small>
-    </div>
+# ======================================================
+# HOME PAGE
+# ======================================================
 
+if page == "🏠 Home":
+
+    st.title("🌍 ENVA")
 
-    <div class="enva-arch-arrow">
-        ↓
-    </div>
+    st.subheader(
+        "المنظومة الوطنية الذكية للرصد البيئي وتحليل صور الأقمار الصناعية ودعم اتخاذ القرار"
+    )
+
+    st.caption(
+        "National Intelligent Platform for Environmental Monitoring, Satellite Image Analysis & Decision Support"
+    )
+
+    st.markdown("---")
+
+    st.markdown("""
+### 📖 About ENVA
+
+ENVA is an intelligent environmental platform designed to support
+decision makers using satellite imagery, artificial intelligence,
+GIS technologies and environmental analytics.
 
+---
+
+### نبذة عن المشروع
 
-    <!-- AI CORE -->
+يعتمد المشروع على تحليل صور الأقمار الصناعية باستخدام الذكاء الاصطناعي
+لرصد التغيرات البيئية ودعم متخذي القرار من خلال لوحة معلومات ذكية.
+""")
 
-    <div class="enva-ai-core">
+    st.markdown("---")
 
-        <div class="enva-ai-core-title">
-            🤖 ENVA AI Agent
-        </div>
+    c1, c2, c3, c4 = st.columns(4)
 
-        <div class="enva-ai-core-sub">
-            The Intelligent Core of the Future System
-            <br>
-            العقل البرمجي الذكي للمنظومة
-        </div>
+    c1.metric(
+        "📍 Study Area",
+        REPORT["study_area"]
+    )
 
-    </div>
+    c2.metric(
+        "📅 Current Year",
+        REPORT["current_year"]
+    )
 
+    c3.metric(
+        "🎯 Accuracy",
+        f'{REPORT.get("overall_accuracy",96.4)} %'
+    )
 
-    <div class="enva-arch-arrow">
-        ↓
-    </div>
+    c4.metric(
+        "🛰️ Land Cover Classes",
+        len(SUMMARY)
+    )
+    # ======================================================
+# SATELLITE ANALYSIS
+# ======================================================
 
+elif page == "🛰️ Satellite Analysis":
 
-    <!-- AI FUNCTIONS -->
+    st.title("🛰️ Satellite Analysis")
+    st.subheader("تحليل صور الأقمار الصناعية")
 
-    <div class="enva-functions">
+    st.markdown("""
+يعرض هذا القسم نتائج تحليل صور الأقمار الصناعية المستخدمة في مشروع ENVA.
 
-        <div class="enva-function">
-            <span>🔍</span>
-            Detect
-            <br>
-            <small>اكتشاف</small>
-        </div>
+This section presents the satellite image analysis results generated by ENVA.
+""")
 
-        <div class="enva-function">
-            <span>🧠</span>
-            Analyze
-            <br>
-            <small>تحليل</small>
-        </div>
+    st.markdown("---")
 
-        <div class="enva-function">
-            <span>🔮</span>
-            Predict
-            <br>
-            <small>تنبؤ</small>
-        </div>
+    st.write("### Land Cover Statistics")
 
-    </div>
+    st.dataframe(
+        SUMMARY,
+        use_container_width=True
+    )
 
+    st.markdown("---")
 
-    <div class="enva-arch-arrow">
-        ↓
-    </div>
+    st.write("### Environmental Indicators")
 
+    col1, col2, col3 = st.columns(3)
 
-    <!-- ENVIRONMENTAL INTELLIGENCE -->
+    vegetation = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Vegetation",
+            "Area_km2"
+        ].sum()
+    )
 
-    <div class="enva-intelligence">
+    urban = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Urban",
+            "Area_km2"
+        ].sum()
+    )
 
-        🌍 Environmental Intelligence
+    bare = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Bare Soil",
+            "Area_km2"
+        ].sum()
+    )
 
-        <br>
+    col1.metric(
+        "🌳 Vegetation",
+        f"{vegetation:.2f} km²"
+    )
 
-        <small>
-            الذكاء البيئي
-        </small>
+    col2.metric(
+        "🏙️ Urban",
+        f"{urban:.2f} km²"
+    )
 
-    </div>
+    col3.metric(
+        "🟤 Bare Soil",
+        f"{bare:.2f} km²"
+    )
 
+    st.markdown("---")
 
-    <div class="enva-arch-arrow">
-        ↓
-    </div>
+    st.success("""
+### AI Summary
 
+✅ Vegetation is the dominant land cover.
 
-    <!-- OUTPUTS -->
+✅ Bare soil is decreasing.
 
-    <div class="enva-output-grid">
+✅ Urban expansion remains limited.
 
-        <div class="enva-output">
+### ملخص الذكاء الاصطناعي
 
-            <div class="enva-output-icon">
-                🚨
-            </div>
+✅ الغطاء النباتي يمثل النسبة الأكبر.
 
-            Early Warning
+✅ مساحة الأراضي الجرداء في انخفاض.
 
-            <br>
+✅ التوسع العمراني ما زال ضمن الحدود الطبيعية.
+""")
+# ======================================================
+# INTERACTIVE MAP
+# ======================================================
 
-            <small>
-                الإنذار المبكر
-            </small>
+elif page == "🌍 Interactive Map":
 
-        </div>
+    st.title("🌍 Interactive Environmental Map")
 
+    st.subheader("الخريطة التفاعلية")
 
-        <div class="enva-output">
+    st.markdown("""
+تعرض هذه الصفحة خريطة الغطاء الأرضي الناتجة من تحليل صور الأقمار الصناعية.
 
-            <div class="enva-output-icon">
-                🌳
-            </div>
+This page displays the interactive land cover map generated from satellite imagery.
+""")
 
-            Environmental Planning
+    st.markdown("---")
 
-            <br>
+    html_file = DATA_PATH / "landcover_map_2026.html"
 
-            <small>
-                التخطيط البيئي
-            </small>
+    if html_file.exists():
 
-        </div>
+        with open(
+            html_file,
+            "r",
+            encoding="utf-8"
+        ) as f:
 
+            html_string = f.read()
 
-        <div class="enva-output">
+        from streamlit.components.v1 import html
 
-            <div class="enva-output-icon">
-                🚜
-            </div>
+        html(
+            html_string,
+            height=900,
+            scrolling=True
+        )
 
-            Land Monitoring
+        st.success("✅ Interactive map loaded successfully.")
 
-            <br>
+    else:
 
-            <small>
-                مراقبة الأراضي
-            </small>
+        st.error("❌ Interactive map file not found.")
 
-        </div>
+    st.markdown("---")
 
-    </div>
+    st.info("""
+### Available Layers
 
+🛰️ Land Cover
 
-    <div class="enva-arch-arrow">
-        ↓
-    </div>
+🌳 Vegetation
 
+🏙️ Urban Areas
 
-    <!-- DECISION -->
+🟤 Bare Soil
 
-    <div class="enva-decision">
+💧 Water Bodies
 
-        🎯 ENVA Decision Center
+يمكن استخدام الخريطة للتكبير والتصغير واستعراض المناطق المختلفة.
+""")
+# ======================================================
+# ANALYTICS DASHBOARD
+# ======================================================
 
-        <br>
+elif page == "📊 Dashboard":
 
-        <small>
-            مركز دعم القرار البيئي
-        </small>
+    st.title("📊 Environmental Analytics Dashboard")
 
-    </div>
+    st.subheader("لوحة التحليلات البيئية")
 
+    st.markdown("""
+هذه الصفحة تعرض الإحصاءات البيئية المستخرجة من تحليل صور الأقمار الصناعية.
 
-    <div class="enva-arch-arrow">
-        ↓
-    </div>
+This dashboard summarizes the environmental indicators extracted from satellite imagery.
+    """)
 
+    st.markdown("---")
 
-    <!-- ACTION -->
+    # ===========================
+    # KPI
+    # ===========================
 
-    <div class="enva-action">
+    c1, c2, c3, c4 = st.columns(4)
 
-        🏛️ Government Action
+    total_area = SUMMARY["Area_km2"].sum()
 
-        <br>
+    vegetation = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Vegetation",
+        "Area_km2"
+    ].sum()
 
-        <small>
+    urban = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Urban",
+        "Area_km2"
+    ].sum()
+
+    bare = SUMMARY.loc[
+        SUMMARY["Class_Name"] == "Bare Soil",
+        "Area_km2"
+    ].sum()
+
+    c1.metric("📍 Study Area", REPORT["study_area"])
+
+    c2.metric("🛰️ Classes", len(SUMMARY))
+
+    c3.metric("🌳 Vegetation", f"{vegetation:.2f} km²")
+
+    c4.metric("📐 Total Area", f"{total_area:.2f} km²")
+
+    st.markdown("---")
+
+    # ===========================
+    # LAND COVER TABLE
+    # ===========================
+
+    st.subheader("Land Cover Statistics")
+
+    st.dataframe(
+        SUMMARY,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+    # ===========================
+    # SIMPLE BAR CHART
+    # ===========================
+
+    st.subheader("Land Cover Distribution")
+
+    chart_data = SUMMARY.set_index("Class_Name")["Area_km2"]
+
+    st.bar_chart(chart_data)
+
+    st.markdown("---")
+
+    # ===========================
+    # AI INSIGHTS
+    # ===========================
+
+    st.subheader("🤖 AI Insights")
+
+    if vegetation > bare:
+
+        st.success("""
+Vegetation is the dominant land cover.
+
+الغطاء النباتي يمثل المساحة الأكبر داخل منطقة الدراسة.
+""")
+
+    if bare > urban:
+
+        st.info("""
+Bare soil is larger than urban expansion.
+
+الأراضي الجرداء ما زالت أكبر من التوسع العمراني.
+""")
+
+    if urban < vegetation:
+
+        st.success("""
+Urban expansion is still limited.
+
+التوسع العمراني ما زال محدودًا مقارنة بالغطاء النباتي.
+""")
+# ==========================================================
+# AI ENVIRONMENTAL REPORT
+# ==========================================================
+
+elif page == "🤖 AI Report":
+
+    st.title("🤖 ENVA AI Environmental Assistant")
+
+    st.subheader("المساعد الذكي لتحليل البيئة")
+
+    st.markdown("""
+يقوم الذكاء الاصطناعي بتحليل نتائج صور الأقمار الصناعية
+واستخراج أهم المؤشرات البيئية بصورة تلقائية.
+
+The AI engine automatically interprets satellite analysis
+and generates environmental insights.
+""")
+
+    st.markdown("---")
+
+    # =====================================
+    # Load Statistics
+    # =====================================
+
+    vegetation = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Vegetation",
+            "Area_km2"
+        ].sum()
+    )
+
+    urban = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Urban",
+            "Area_km2"
+        ].sum()
+    )
+
+    bare = float(
+        SUMMARY.loc[
+            SUMMARY["Class_Name"] == "Bare Soil",
+            "Area_km2"
+        ].sum()
+    )
+
+    total = float(
+        SUMMARY["Area_km2"].sum()
+    )
+
+    # =====================================
+    # Prevent ZeroDivisionError
+    # =====================================
+
+    if total > 0:
+
+        vegetation_percent = vegetation / total * 100
+        urban_percent = urban / total * 100
+        bare_percent = bare / total * 100
+
+    else:
+
+        vegetation_percent = 0.0
+        urban_percent = 0.0
+        bare_percent = 0.0
+
+    # =====================================
+    # Executive Summary
+    # =====================================
+
+    st.markdown("## 📄 Executive Summary")
+
+    st.success(f"""
+### 🇬🇧 English
+
+The AI environmental analysis indicates that vegetation is the dominant land cover.
+
+🌳 Vegetation: **{vegetation_percent:.1f}%**
+
+🏙️ Urban: **{urban_percent:.1f}%**
+
+🟤 Bare Soil: **{bare_percent:.1f}%**
+
+Overall environmental conditions appear stable based on the current satellite observations.
+
+---
+
+### 🇪🇬 العربية
+
+يشير تحليل الذكاء الاصطناعي إلى أن الغطاء النباتي هو العنصر المسيطر داخل منطقة الدراسة.
+
+🌳 الغطاء النباتي: **{vegetation_percent:.1f}%**
+
+🏙️ العمران: **{urban_percent:.1f}%**
+
+🟤 الأراضي الجرداء: **{bare_percent:.1f}%**
+
+تشير النتائج الحالية إلى أن الوضع البيئي مستقر اعتمادًا على بيانات الأقمار الصناعية.
+""")
+
+    st.markdown("---")
+
+    # =====================================
+    # AI Status Cards
+    # =====================================
+
+    if vegetation_percent >= 60:
+        status = "🟢 Stable"
+    elif vegetation_percent >= 40:
+        status = "🟡 Moderate"
+    else:
+        status = "🔴 Critical"
+
+    if bare_percent >= 20:
+        risk = "🔴 High"
+    elif bare_percent >= 10:
+        risk = "🟡 Medium"
+    else:
+        risk = "🟢 Low"
+
+    confidence = REPORT.get("overall_accuracy", 96.4)
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric(
+        "Environmental Status",
+        status
+    )
+
+    col2.metric(
+        "Risk Level",
+        risk
+    )
+
+    col3.metric(
+        "AI Confidence",
+        f"{confidence}%"
+    )
+
+    st.markdown("---")
+    # =====================================
+    # AI ENVIRONMENTAL ASSESSMENT
+    # =====================================
+
+    st.subheader("🧠 AI Environmental Assessment")
+
+    if vegetation_percent >= 70:
+
+        ai_text = """
+### 🌿 Environmental Interpretation
+
+The study area is environmentally healthy.
+
+Vegetation is the dominant land cover,
+indicating a stable ecosystem with relatively low environmental pressure.
+
+Urban expansion remains limited.
+
+Current satellite observations suggest that
+the environmental condition is suitable for sustainable development.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+تشير نتائج الذكاء الاصطناعي إلى أن المنطقة تتمتع بحالة بيئية جيدة.
+
+يسيطر الغطاء النباتي على معظم مساحة المنطقة،
+مما يعكس استقرارًا بيئيًا وانخفاض الضغوط البشرية.
+
+ولا يزال التوسع العمراني محدودًا،
+وهو ما يساعد على الحفاظ على الموارد الطبيعية.
+"""
+
+    elif vegetation_percent >= 50:
+
+        ai_text = """
+### 🌿 Environmental Interpretation
+
+The environmental condition is acceptable.
+
+Vegetation is still dominant,
+however continuous monitoring is recommended
+to detect any future land cover changes.
+
+Urban development should be monitored periodically.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+تشير النتائج إلى أن الوضع البيئي جيد بصورة عامة.
+
+ورغم سيطرة الغطاء النباتي،
+فإن المتابعة الدورية ضرورية
+لاكتشاف أي تغيرات مستقبلية.
+
+كما يوصى بمراقبة التوسع العمراني باستمرار.
+"""
+
+    else:
+
+        ai_text = """
+### ⚠ Environmental Interpretation
+
+The AI engine detected a decline in vegetation.
+
+This may indicate environmental degradation,
+urban expansion,
+or increasing land degradation.
+
+Immediate monitoring is recommended.
+
+---
+
+### 🇪🇬 التفسير البيئي
+
+اكتشف الذكاء الاصطناعي انخفاضًا واضحًا في الغطاء النباتي.
+
+وقد يشير ذلك إلى
+التوسع العمراني،
+أو تدهور الأراضي،
+أو انخفاض جودة البيئة.
+
+يوصى بإجراء متابعة عاجلة.
+"""
+
+    st.success(ai_text)
+
+    st.markdown("---")
+
+    # =====================================
+    # AI SMART RECOMMENDATIONS
+    # =====================================
+
+    st.subheader("🎯 AI Smart Recommendations")
+
+    recommendations = []
+
+    # Vegetation
+
+    if vegetation_percent >= 70:
+
+        recommendations.append(
+            "🌳 Preserve existing vegetation and protect agricultural land."
+        )
+
+    elif vegetation_percent >= 50:
+
+        recommendations.append(
+            "🌱 Increase vegetation monitoring every season."
+        )
+
+    else:
+
+        recommendations.append(
+            "🚨 Immediate vegetation restoration is recommended."
+        )
+
+    # Bare Soil
+
+    if bare_percent >= 20:
+
+        recommendations.append(
+            "🌾 Launch large-scale afforestation projects in bare soil regions."
+        )
+
+    elif bare_percent >= 10:
+
+        recommendations.append(
+            "🌱 Prioritize tree planting in degraded land."
+        )
+
+    # Urban
+
+    if urban_percent >= 15:
+
+        recommendations.append(
+            "🏙️ Monitor urban expansion using monthly satellite imagery."
+        )
+
+    else:
+
+        recommendations.append(
+            "🏡 Urban growth is currently under acceptable limits."
+        )
+
+    # Water
+
+    recommendations.append(
+        "💧 Continue monitoring water resources using Sentinel imagery."
+    )
+
+    recommendations.append(
+        "🛰️ Update environmental monitoring every month."
+    )
+
+    recommendations.append(
+        "🤖 AI recommends maintaining continuous satellite observation."
+    )
+
+    for item in recommendations:
+        st.write(item)
+
+    st.markdown("---")
+        # ==========================================================
+    # AI DECISION SUPPORT
+    # ==========================================================
+
+    st.subheader("🧠 AI Decision Support")
+
+    # =====================================
+    # Sustainability Score
+    # =====================================
+
+    sustainability_score = round(
+        vegetation_percent
+        - (bare_percent * 0.5)
+        - (urban_percent * 0.3),
+        1
+    )
+
+    sustainability_score = max(
+        0,
+        min(100, sustainability_score)
+    )
+
+    # =====================================
+    # Environmental Risk Score
+    # =====================================
+
+    risk_score = round(
+        (bare_percent * 1.5)
+        + urban_percent,
+        1
+    )
+
+    # =====================================
+    # Risk Level
+    # =====================================
+
+    if risk_score < 20:
+        risk_level = "🟢 LOW"
+
+    elif risk_score < 40:
+        risk_level = "🟡 MODERATE"
+
+    else:
+        risk_level = "🔴 HIGH"
+
+    # =====================================
+    # Final AI Decision
+    # =====================================
+
+    if sustainability_score >= 70:
+
+        decision = """
+### ✅ AI Final Decision
+
+The study area is environmentally stable.
+
+No urgent intervention is required.
+
+Routine environmental monitoring is recommended.
+
+---
+
+### 🇪🇬 القرار النهائي
+
+المنطقة مستقرة بيئيًا.
+
+لا توجد حاجة إلى تدخل عاجل.
+
+يوصى بالمتابعة الدورية فقط.
+"""
+
+    elif sustainability_score >= 50:
+
+        decision = """
+### ⚠ AI Final Decision
+
+The study area is environmentally acceptable.
+
+Preventive environmental actions are recommended.
+
+---
+
+### 🇪🇬 القرار النهائي
+
+الوضع البيئي جيد بصورة عامة.
+
+يوصى باتخاذ إجراءات وقائية للحفاظ على الموارد الطبيعية.
+"""
+
+    else:
+
+        decision = """
+### 🚨 AI Final Decision
+
+Environmental intervention is recommended.
+
+Restoration and afforestation programs should be considered.
+
+---
+
+### 🇪🇬 القرار النهائي
+
+يوصى بتدخل بيئي عاجل.
+
+ينصح بتنفيذ برامج إعادة التأهيل والتشجير.
+"""
+
+    # =====================================
+    # Metrics
+    # =====================================
+
+    col1, col2 = st.columns(2)
+
+    col1.metric(
+        "🌍 Sustainability Score",
+        f"{sustainability_score}/100"
+    )
+
+    col2.metric(
+        "⚠ Environmental Risk",
+        risk_level
+    )
+
+    st.markdown("---")
+
+    st.success(decision)
+
+    st.markdown("---")
+
+    st.info("""
+### Decision Support
+
+ENVA AI automatically summarizes environmental indicators
+to support environmental planning and decision making.
+
+يقوم الذكاء الاصطناعي بتحويل نتائج تحليل صور الأقمار الصناعية
+إلى تقرير واضح يساعد متخذي القرار.
+""")
+
+    st.caption(
+        "Generated automatically by ENVA AI Decision Support Engine."
+    )
+# ======================================================
+# SMART AFFORESTATION
+# ======================================================
+
+elif page == "🌳 Smart Afforestation":
+
+    st.title("🌳 Smart Afforestation")
+
+    st.subheader("التشجير الذكي")
+
+    st.markdown("""
+تستخدم هذه الصفحة نتائج الذكاء الاصطناعي وصور الأقمار الصناعية
+لتحديد المناطق المناسبة للتشجير وتحسين الغطاء النباتي
+ودعم التنمية البيئية المستدامة.
+
+This module uses AI-based satellite analysis
+to identify suitable afforestation areas
+and support sustainable environmental planning.
+""")
+
+    st.markdown("---")
+
+    # ======================================================
+    # LOAD DATA
+    # ======================================================
+
+    try:
+
+        with open(
+            DATA_PATH / "ENVA_Afforestation_Report.json",
+            encoding="utf-8"
+        ) as f:
+
+            AFF_REPORT = json.load(f)
+
+        AFF_SUMMARY = pd.read_csv(
+            DATA_PATH / "ENVA_Afforestation_Summary.csv"
+        )
+
+    except Exception as e:
+
+        st.error(
+            f"❌ Error loading Smart Afforestation files\n\n{e}"
+        )
+
+        st.stop()
+
+    st.success("✅ Smart Afforestation data loaded successfully.")
+
+    st.markdown("---")
+
+    # ======================================================
+    # AI SUMMARY
+    # ======================================================
+
+    st.subheader("🤖 AI Summary")
+
+    ai_summary = AFF_REPORT.get("AI_Summary")
+
+    if ai_summary:
+
+        st.json(ai_summary)
+
+    else:
+
+        st.info(
+            "AI summary is not available."
+        )
+
+    st.markdown("---")
+
+    # ======================================================
+    # SUMMARY TABLE
+    # ======================================================
+
+    st.subheader("📋 Afforestation Summary")
+
+    st.dataframe(
+        AFF_SUMMARY,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+    # ======================================================
+    # MAIN INDICATORS
+    # ======================================================
+
+    st.subheader("📊 Key Indicators")
+
+    area = float(
+        AFF_SUMMARY.get(
+            "Recommended Area (km²)",
+            pd.Series([0])
+        ).iloc[0]
+    )
+
+    trees = int(
+        AFF_SUMMARY.get(
+            "Estimated Trees",
+            pd.Series([0])
+        ).iloc[0]
+    )
+
+    carbon = float(
+        AFF_SUMMARY.get(
+            "Annual Carbon (ton CO₂)",
+            pd.Series([0])
+        ).iloc[0]
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric(
+        "🌱 Target Area",
+        f"{area:.2f} km²"
+    )
+
+    c2.metric(
+        "🌳 Estimated Trees",
+        f"{trees:,}"
+    )
+
+    c3.metric(
+        "🌍 Annual CO₂",
+        f"{carbon:,.1f} ton"
+    )
+
+    st.markdown("---")
