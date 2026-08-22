@@ -3729,3 +3729,532 @@ elif page == "🌾 Agricultural Encroachments":
     st.success("✅ الصفحة تعمل بنجاح")
 
     st.write("وصل Streamlit إلى صفحة Agricultural Encroachments.")
+    # ======================================================
+# AGRICULTURAL ENCROACHMENTS — PART 1
+# ======================================================
+
+elif page == "🚜 Agricultural Encroachments":
+
+    st.title("🌾 Agricultural Encroachment Monitoring")
+
+    st.subheader(
+        "رصد التعديات والتغيرات على الأراضي الزراعية"
+    )
+
+    st.markdown("""
+    يهدف هذا الجزء من ENVA إلى رصد التغيرات التي تحدث
+    على الأراضي الزراعية من خلال مقارنة صور الأقمار
+    الصناعية في فترتين زمنيتين مختلفتين.
+
+    **Before Image → After Image → Change Detection**
+    """)
+
+    st.warning("""
+    ⚠️ **نموذج أولي تجريبي**
+
+    النتائج الحالية تمثل كشفًا أوليًا للتغيرات بين الصور،
+    ولا تعتبر إثباتًا نهائيًا لوجود تعديات.
+    """)
+
+    st.markdown("---")
+
+
+    # ==================================================
+    # PATHS
+    # ==================================================
+
+    from pathlib import Path
+    import numpy as np
+    from PIL import Image
+
+    ENCROACHMENT_DIR = Path(
+        "data/agricultural_encroachment"
+    )
+
+    ENCROACHMENT_DIR.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    BEFORE_IMAGE = (
+        ENCROACHMENT_DIR / "before.png"
+    )
+
+    AFTER_IMAGE = (
+        ENCROACHMENT_DIR / "after.png"
+    )
+
+
+    # ==================================================
+    # 1. BEFORE / AFTER SATELLITE IMAGES
+    # ==================================================
+
+    st.header(
+        "🛰️ Satellite Image Comparison"
+    )
+
+    st.write(
+        "تبدأ عملية اكتشاف التغير من مقارنة صور الأقمار "
+        "الصناعية للمنطقة نفسها في فترتين زمنيتين مختلفتين."
+    )
+
+    before_col, after_col = st.columns(2)
+
+
+    # --------------------------------------------------
+    # BEFORE
+    # --------------------------------------------------
+
+    with before_col:
+
+        st.markdown(
+            "### 🛰️ Before — الصورة السابقة"
+        )
+
+        if BEFORE_IMAGE.exists():
+
+            before_preview = Image.open(
+                BEFORE_IMAGE
+            ).convert("RGB")
+
+            st.image(
+                before_preview,
+                use_container_width=True,
+                caption="Previous Satellite Image"
+            )
+
+        else:
+
+            st.info("""
+            🛰️ **Before Image**
+
+            لم يتم إضافة الصورة السابقة بعد.
+
+            المسار المطلوب:
+
+            `data/agricultural_encroachment/before.png`
+            """)
+
+
+    # --------------------------------------------------
+    # AFTER
+    # --------------------------------------------------
+
+    with after_col:
+
+        st.markdown(
+            "### 🛰️ After — الصورة الحديثة"
+        )
+
+        if AFTER_IMAGE.exists():
+
+            after_preview = Image.open(
+                AFTER_IMAGE
+            ).convert("RGB")
+
+            st.image(
+                after_preview,
+                use_container_width=True,
+                caption="Recent Satellite Image"
+            )
+
+        else:
+
+            st.info("""
+            🛰️ **After Image**
+
+            لم يتم إضافة الصورة الحديثة بعد.
+
+            المسار المطلوب:
+
+            `data/agricultural_encroachment/after.png`
+            """)
+
+
+    st.markdown("---")
+
+
+    # ==================================================
+    # 2. CHANGE DETECTION
+    # ==================================================
+
+    st.header(
+        "🔄 Change Detection"
+    )
+
+    st.write(
+        "يتم هنا إجراء مقارنة أولية بين صورتي Before وAfter "
+        "لاكتشاف المناطق التي يظهر بها اختلاف مكاني."
+    )
+
+
+    # --------------------------------------------------
+    # Check images
+    # --------------------------------------------------
+
+    if BEFORE_IMAGE.exists() and AFTER_IMAGE.exists():
+
+        try:
+
+            # ==========================================
+            # Load Images
+            # ==========================================
+
+            before = Image.open(
+                BEFORE_IMAGE
+            ).convert("RGB")
+
+            after = Image.open(
+                AFTER_IMAGE
+            ).convert("RGB")
+
+
+            # ==========================================
+            # Match Dimensions
+            # ==========================================
+
+            if before.size != after.size:
+
+                st.info(
+                    "ℹ️ أبعاد الصورتين مختلفة، "
+                    "سيتم توحيد أبعاد الصورة الحديثة."
+                )
+
+                after = after.resize(
+                    before.size
+                )
+
+
+            # ==========================================
+            # Convert to NumPy
+            # ==========================================
+
+            before_array = np.asarray(
+                before,
+                dtype=np.float32
+            )
+
+            after_array = np.asarray(
+                after,
+                dtype=np.float32
+            )
+
+
+            # ==========================================
+            # Pixel Difference
+            # ==========================================
+
+            difference = np.mean(
+                np.abs(
+                    before_array - after_array
+                ),
+                axis=2
+            )
+
+
+            # ==========================================
+            # Threshold
+            # ==========================================
+
+            threshold = st.slider(
+                "🔧 Change Detection Threshold",
+                min_value=5,
+                max_value=100,
+                value=35,
+                step=5,
+                help=(
+                    "القيم الأقل تكشف تغيرات أكثر، "
+                    "والقيم الأعلى تجعل الكشف أكثر تحفظًا."
+                )
+            )
+
+
+            # ==========================================
+            # Changed Pixels
+            # ==========================================
+
+            changed_pixels = (
+                difference >= threshold
+            )
+
+
+            # ==========================================
+            # Percentage
+            # ==========================================
+
+            changed_percentage = (
+                changed_pixels.mean() * 100
+            )
+
+
+            # ==========================================
+            # Normalize Difference Map
+            # ==========================================
+
+            max_difference = (
+                difference.max()
+            )
+
+            if max_difference > 0:
+
+                change_map = (
+                    difference
+                    / max_difference
+                    * 255
+                ).astype(np.uint8)
+
+            else:
+
+                change_map = np.zeros_like(
+                    difference,
+                    dtype=np.uint8
+                )
+
+
+            # ==========================================
+            # Change Mask
+            # ==========================================
+
+            change_mask = (
+                changed_pixels.astype(
+                    np.uint8
+                ) * 255
+            )
+
+
+            # ==================================================
+            # DISPLAY BEFORE / AFTER
+            # ==================================================
+
+            st.markdown(
+                "### 🛰️ Before / After"
+            )
+
+            result_col1, result_col2 = st.columns(2)
+
+            with result_col1:
+
+                st.image(
+                    before,
+                    caption="Before",
+                    use_container_width=True
+                )
+
+            with result_col2:
+
+                st.image(
+                    after,
+                    caption="After",
+                    use_container_width=True
+                )
+
+
+            # ==================================================
+            # CHANGE MAP
+            # ==================================================
+
+            st.markdown(
+                "### 🗺️ Detected Change Map"
+            )
+
+            st.image(
+                change_map,
+                caption=(
+                    "Pixel Difference — "
+                    "Higher intensity indicates greater change"
+                ),
+                use_container_width=True
+            )
+
+
+            # ==================================================
+            # SIGNIFICANT CHANGE MASK
+            # ==================================================
+
+            st.markdown(
+                "### 🔍 Significant Change Areas"
+            )
+
+            st.image(
+                change_mask,
+                caption=(
+                    "Thresholded Change Mask"
+                ),
+                use_container_width=True
+            )
+
+
+            # ==================================================
+            # STATISTICS
+            # ==================================================
+
+            st.markdown("---")
+
+            m1, m2, m3 = st.columns(3)
+
+            with m1:
+
+                st.metric(
+                    "Detected Change",
+                    f"{changed_percentage:.2f}%"
+                )
+
+            with m2:
+
+                st.metric(
+                    "Changed Pixels",
+                    f"{int(changed_pixels.sum()):,}"
+                )
+
+            with m3:
+
+                st.metric(
+                    "Threshold",
+                    threshold
+                )
+
+
+            # ==================================================
+            # INTERPRETATION
+            # ==================================================
+
+            if changed_percentage < 1:
+
+                st.success(
+                    f"""
+                    🟢 **Low Detected Change**
+
+                    نسبة البكسلات التي أظهرت تغيرًا:
+
+                    **{changed_percentage:.2f}%**
+                    """
+                )
+
+            elif changed_percentage < 10:
+
+                st.info(
+                    f"""
+                    🔵 **Moderate Detected Change**
+
+                    نسبة البكسلات التي أظهرت تغيرًا:
+
+                    **{changed_percentage:.2f}%**
+                    """
+                )
+
+            else:
+
+                st.warning(
+                    f"""
+                    🟡 **High Detected Change**
+
+                    نسبة البكسلات التي أظهرت تغيرًا:
+
+                    **{changed_percentage:.2f}%**
+
+                    هذه النسبة لا تعني تلقائيًا وجود تعديات.
+                    """
+                )
+
+
+            # ==================================================
+            # SCIENTIFIC WARNING
+            # ==================================================
+
+            st.markdown("---")
+
+            st.warning("""
+            ⚠️ **Important Scientific Interpretation**
+
+            اختلاف البكسلات بين الصورتين لا يعني تلقائيًا
+            وجود تعدٍ على الأراضي الزراعية.
+
+            يمكن أن ينتج التغير عن:
+
+            - اختلاف الإضاءة.
+            - اختلاف الموسم الزراعي.
+            - تغير الغطاء النباتي.
+            - الحصاد أو الزراعة الجديدة.
+            - اختلاف الرطوبة.
+            - السحب أو الظلال.
+            - اختلاف جودة أو ظروف التصوير.
+
+            لذلك تعتبر هذه النتيجة:
+
+            **Preliminary Change Detection**
+
+            وليست:
+
+            **Confirmed Agricultural Encroachment**
+            """)
+
+
+            # ==================================================
+            # SAVE RESULTS FOR PART 2
+            # ==================================================
+
+            st.session_state[
+                "encroachment_before"
+            ] = before
+
+            st.session_state[
+                "encroachment_after"
+            ] = after
+
+            st.session_state[
+                "changed_pixels"
+            ] = changed_pixels
+
+            st.session_state[
+                "change_map"
+            ] = change_map
+
+            st.session_state[
+                "change_mask"
+            ] = change_mask
+
+            st.session_state[
+                "change_percentage"
+            ] = changed_percentage
+
+            st.session_state[
+                "change_threshold"
+            ] = threshold
+
+
+            st.success(
+                "✅ Change Detection completed successfully."
+            )
+
+
+        except Exception as e:
+
+            st.error(
+                f"❌ Unable to perform Change Detection: {e}"
+            )
+
+            st.exception(e)
+
+
+    else:
+
+        st.info("""
+        🛰️ **Change Detection is waiting for imagery**
+
+        أضيفي صورتَي Before وAfter أولًا:
+
+        `data/agricultural_encroachment/before.png`
+
+        `data/agricultural_encroachment/after.png`
+        """)
+
+
+    # ==================================================
+    # PART 1 END
+    # ==================================================
+
+    st.markdown("---")
+
+    st.caption(
+        "ENVA — Agricultural Encroachment Monitoring | Part 1"
+    )
