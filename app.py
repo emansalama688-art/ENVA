@@ -3723,10 +3723,19 @@ elif page == "🔮 Future Expansion":
         "Generated automatically by ENVA Future Vision."
     )
 # ======================================================
-# 🌾 AGRICULTURAL ENCROACHMENTS
+# 🌾 AGRICULTURAL ENCROACHMENT — PART 1
 # ======================================================
 
 elif page == "🌾 Agricultural Encroachments":
+
+    from pathlib import Path
+    import numpy as np
+    from PIL import Image
+    import streamlit as st
+
+    # ==================================================
+    # PAGE TITLE
+    # ==================================================
 
     st.title("🌾 Agricultural Encroachment Monitoring")
 
@@ -3735,199 +3744,95 @@ elif page == "🌾 Agricultural Encroachments":
     )
 
     st.markdown("""
-    ### 🛰️ ENVA Agricultural Encroachment
+    يهدف هذا الجزء من ENVA إلى رصد التغيرات التي تحدث
+    على الأراضي الزراعية من خلال مقارنة صور الأقمار
+    الصناعية في فترات زمنية مختلفة.
 
-    يهدف هذا الجزء من ENVA إلى تطوير منظومة مستقبلية
-    لرصد التغيرات التي تحدث على الأراضي الزراعية
-    من خلال مقارنة صور الأقمار الصناعية وتحليل
-    التغيرات المكانية.
-
-    **Before Image → After Image → Change Detection
-    → Location → Assessment**
+    **Before → After → Change Detection**
     """)
 
     st.warning("""
     ⚠️ **نموذج أولي تجريبي**
 
-    هذا القسم يمثل نقطة البداية لتطوير نظام رصد
-    التعديات الزراعية، ولا يعرض حاليًا نتائج تشغيلية
-    فعلية.
+    النتائج الحالية تمثل كشفًا أوليًا للتغيرات،
+    وليست إثباتًا نهائيًا لوجود تعديات.
     """)
 
     st.markdown("---")
 
     # ==================================================
-    # 1. FUTURE DETECTION WORKFLOW
+    # DATA PATHS
     # ==================================================
-
-    st.header("🔄 Agricultural Change Detection")
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        st.info("""
-        🛰️ **Before**
-
-        الصورة الفضائية السابقة
-        """)
-
-    with c2:
-        st.info("""
-        🛰️ **After**
-
-        الصورة الفضائية الحديثة
-        """)
-
-    st.markdown("---")
-
-    st.header("📍 Future Detection Workflow")
-
-    st.markdown("""
-    **1️⃣ Satellite Images**
-
-    تحميل صور المنطقة في فترتين زمنيتين.
-
-    ↓
-
-    **2️⃣ Image Preprocessing**
-
-    تجهيز الصور وتوحيدها للتحليل.
-
-    ↓
-
-    **3️⃣ Change Detection**
-
-    اكتشاف المناطق التي حدث بها تغير.
-
-    ↓
-
-    **4️⃣ Agricultural Area Identification**
-
-    تحديد ما إذا كان التغير داخل أرض زراعية.
-
-    ↓
-
-    **5️⃣ Encroachment Assessment**
-
-    تقييم التغير وتحديد المناطق التي تحتاج إلى مراجعة.
-    """)
-
-    st.success(
-        "🌱 Agricultural Encroachment Module — Initial Prototype"
-    )
-
-    # ==================================================
-    # 2. BEFORE / AFTER SATELLITE IMAGES
-    # ==================================================
-
-    from pathlib import Path
-    import numpy as np
-    import pandas as pd
-    from PIL import Image
 
     ENCROACHMENT_DIR = Path(
         "data/agricultural_encroachment"
     )
 
-    BEFORE_IMAGE = (
-        ENCROACHMENT_DIR / "before.png"
-    )
+    BEFORE_IMAGE = ENCROACHMENT_DIR / "before.png"
+    AFTER_IMAGE = ENCROACHMENT_DIR / "after.png"
 
-    AFTER_IMAGE = (
-        ENCROACHMENT_DIR / "after.png"
-    )
-
-    st.markdown("---")
+    # ==================================================
+    # BEFORE / AFTER
+    # ==================================================
 
     st.header("🛰️ Satellite Image Comparison")
 
-    st.write(
-        "تبدأ عملية اكتشاف التغير من مقارنة صور الأقمار "
-        "الصناعية للمنطقة نفسها في فترتين زمنيتين مختلفتين."
-    )
-
     before_col, after_col = st.columns(2)
-
-    # --------------------------------------------------
-    # BEFORE IMAGE
-    # --------------------------------------------------
 
     with before_col:
 
-        st.markdown(
-            "### 🛰️ Before — الصورة السابقة"
-        )
+        st.markdown("### 🛰️ Before — الصورة السابقة")
 
         if BEFORE_IMAGE.exists():
 
+            before_preview = Image.open(
+                BEFORE_IMAGE
+            ).convert("RGB")
+
             st.image(
-                str(BEFORE_IMAGE),
+                before_preview,
                 use_container_width=True,
                 caption="Previous Satellite Image"
             )
 
         else:
 
-            st.info(
-                """
-                🛰️ **Before Image**
+            st.info("""
+            🛰️ لم يتم إضافة الصورة السابقة.
 
-                لم يتم إضافة الصورة السابقة بعد.
+            المسار:
 
-                المسار المتوقع:
-
-                `data/agricultural_encroachment/before.png`
-                """
-            )
-
-    # --------------------------------------------------
-    # AFTER IMAGE
-    # --------------------------------------------------
+            `data/agricultural_encroachment/before.png`
+            """)
 
     with after_col:
 
-        st.markdown(
-            "### 🛰️ After — الصورة الحديثة"
-        )
+        st.markdown("### 🛰️ After — الصورة الحديثة")
 
         if AFTER_IMAGE.exists():
 
+            after_preview = Image.open(
+                AFTER_IMAGE
+            ).convert("RGB")
+
             st.image(
-                str(AFTER_IMAGE),
+                after_preview,
                 use_container_width=True,
                 caption="Recent Satellite Image"
             )
 
         else:
 
-            st.info(
-                """
-                🛰️ **After Image**
+            st.info("""
+            🛰️ لم يتم إضافة الصورة الحديثة.
 
-                لم يتم إضافة الصورة الحديثة بعد.
+            المسار:
 
-                المسار المتوقع:
-
-                `data/agricultural_encroachment/after.png`
-                """
-            )
-
-    st.markdown("---")
-
-    st.info(
-        """
-        🔍 **Next Step**
-
-        بعد توفير صور Before وAfter للمنطقة نفسها،
-        سيتم استخدامهما في مرحلة **Change Detection**
-        لاكتشاف المناطق التي تغيرت مكانيًا.
-
-        **Before → After → Change Detection**
-        """
-    )
+            `data/agricultural_encroachment/after.png`
+            """)
 
     # ==================================================
-    # 3. CHANGE DETECTION
+    # CHANGE DETECTION
     # ==================================================
 
     st.markdown("---")
@@ -3935,17 +3840,25 @@ elif page == "🌾 Agricultural Encroachments":
     st.header("🔄 Change Detection")
 
     st.write(
-        "يتم هنا إجراء مقارنة أولية بين صورتي Before وAfter "
+        "مقارنة أولية بين صورتي Before وAfter "
         "لاكتشاف المناطق التي يظهر بها اختلاف مكاني."
     )
+
+    # --------------------------------------------------
+    # Default values
+    # --------------------------------------------------
+
+    changed_pixels = None
+    difference = None
+    change_map = None
 
     if BEFORE_IMAGE.exists() and AFTER_IMAGE.exists():
 
         try:
 
-            # --------------------------------------------------
-            # Load Images
-            # --------------------------------------------------
+            # ------------------------------------------
+            # Load images
+            # ------------------------------------------
 
             before = Image.open(
                 BEFORE_IMAGE
@@ -3955,9 +3868,9 @@ elif page == "🌾 Agricultural Encroachments":
                 AFTER_IMAGE
             ).convert("RGB")
 
-            # --------------------------------------------------
-            # Resize After Image
-            # --------------------------------------------------
+            # ------------------------------------------
+            # Match dimensions
+            # ------------------------------------------
 
             if before.size != after.size:
 
@@ -3965,9 +3878,9 @@ elif page == "🌾 Agricultural Encroachments":
                     before.size
                 )
 
-            # --------------------------------------------------
-            # Convert to NumPy
-            # --------------------------------------------------
+            # ------------------------------------------
+            # NumPy conversion
+            # ------------------------------------------
 
             before_array = np.asarray(
                 before,
@@ -3979,9 +3892,9 @@ elif page == "🌾 Agricultural Encroachments":
                 dtype=np.float32
             )
 
-            # --------------------------------------------------
-            # Calculate Pixel Difference
-            # --------------------------------------------------
+            # ------------------------------------------
+            # Pixel difference
+            # ------------------------------------------
 
             difference = np.mean(
                 np.abs(
@@ -3990,13 +3903,31 @@ elif page == "🌾 Agricultural Encroachments":
                 axis=2
             )
 
-            # --------------------------------------------------
-            # Normalize Difference
-            # --------------------------------------------------
+            # ------------------------------------------
+            # Threshold
+            # ------------------------------------------
 
-            max_difference = (
-                difference.max()
+            threshold = st.slider(
+                "Change Detection Threshold",
+                min_value=10,
+                max_value=100,
+                value=35,
+                step=5
             )
+
+            changed_pixels = (
+                difference >= threshold
+            )
+
+            changed_percentage = (
+                changed_pixels.mean() * 100
+            )
+
+            # ------------------------------------------
+            # Normalize change map
+            # ------------------------------------------
+
+            max_difference = difference.max()
 
             if max_difference > 0:
 
@@ -4013,34 +3944,13 @@ elif page == "🌾 Agricultural Encroachments":
                     dtype=np.uint8
                 )
 
-            # --------------------------------------------------
-            # Change Threshold
-            # --------------------------------------------------
+            # ------------------------------------------
+            # Display images
+            # ------------------------------------------
 
-            threshold = st.slider(
-                "Change Detection Threshold",
-                min_value=10,
-                max_value=100,
-                value=35,
-                step=5
-            )
+            st.markdown("### 🛰️ Image Comparison")
 
-            changed_pixels = (
-                difference >= threshold
-            )
-
-            changed_percentage = (
-                changed_pixels.mean()
-                * 100
-            )
-
-            # --------------------------------------------------
-            # Display Results
-            # --------------------------------------------------
-
-            result_col1, result_col2 = (
-                st.columns(2)
-            )
+            result_col1, result_col2 = st.columns(2)
 
             with result_col1:
 
@@ -4058,9 +3968,9 @@ elif page == "🌾 Agricultural Encroachments":
                     use_container_width=True
                 )
 
-            # --------------------------------------------------
+            # ------------------------------------------
             # Change Map
-            # --------------------------------------------------
+            # ------------------------------------------
 
             st.markdown(
                 "### 🗺️ Detected Change Map"
@@ -4070,21 +3980,19 @@ elif page == "🌾 Agricultural Encroachments":
                 change_map,
                 caption=(
                     "Pixel Difference — "
-                    "Higher intensity indicates "
-                    "greater change"
+                    "Higher intensity indicates greater change"
                 ),
                 use_container_width=True
             )
 
-            # --------------------------------------------------
+            # ------------------------------------------
             # Change Mask
-            # --------------------------------------------------
+            # ------------------------------------------
 
             change_mask = (
                 changed_pixels.astype(
                     np.uint8
-                )
-                * 255
+                ) * 255
             )
 
             st.markdown(
@@ -4093,15 +4001,13 @@ elif page == "🌾 Agricultural Encroachments":
 
             st.image(
                 change_mask,
-                caption=(
-                    "Thresholded Change Mask"
-                ),
+                caption="Thresholded Change Mask",
                 use_container_width=True
             )
 
-            # --------------------------------------------------
+            # ------------------------------------------
             # Statistics
-            # --------------------------------------------------
+            # ------------------------------------------
 
             st.markdown("---")
 
@@ -4121,1568 +4027,50 @@ elif page == "🌾 Agricultural Encroachments":
                     threshold
                 )
 
-            # --------------------------------------------------
-            # Important Interpretation
-            # --------------------------------------------------
+            # ------------------------------------------
+            # Interpretation
+            # ------------------------------------------
 
-            st.warning(
-                """
-                ⚠️ **Important**
+            st.warning("""
+            ⚠️ **Important Interpretation**
 
-                هذه النتيجة تمثل **كشفًا أوليًا للاختلافات
-                بين الصورتين**.
+            النتيجة الحالية تمثل كشفًا أوليًا للاختلافات
+            بين الصورتين.
 
-                اختلاف البكسلات لا يعني تلقائيًا وجود تعدٍ
-                على الأراضي الزراعية؛ فقد ينتج عن اختلاف
-                الإضاءة أو الموسم أو الغطاء النباتي أو جودة
-                الصور أو السحب أو اختلاف ظروف التصوير.
+            اختلاف البكسلات لا يعني تلقائيًا وجود تعدٍ،
+            فقد ينتج عن:
 
-                لذلك سيتم في المراحل التالية دمج هذه النتيجة
-                مع بيانات استخدامات الأراضي والتحليل المكاني
-                ونماذج أكثر تقدمًا لتحديد التعديات المحتملة.
-                """
-            )
+            - اختلاف الموسم.
+            - تغير الغطاء النباتي.
+            - اختلاف الإضاءة.
+            - اختلاف جودة الصور.
+            - السحب.
+            - اختلاف ظروف التصوير.
+
+            سيتم في الأجزاء التالية ربط التغيرات
+            بالمناطق الزراعية لتحديد التغيرات المحتملة.
+            """)
 
         except Exception as e:
 
             st.error(
-                f"❌ Unable to perform change detection: {e}"
+                f"❌ Change Detection Error: {e}"
             )
 
     else:
 
-        st.info(
-            """
-            🛰️ **Change Detection is waiting for imagery**
+        st.info("""
+        🛰️ **Change Detection is waiting for imagery**
 
-            أضيفي صورتَي Before وAfter أولًا:
+        أضيفي صورتي Before وAfter أولًا.
 
-            `data/agricultural_encroachment/before.png`
+        `data/agricultural_encroachment/before.png`
 
-            `data/agricultural_encroachment/after.png`
-            """
-        )
-
-    # ==================================================
-    # 4. SPATIAL CHANGE MAP
-    # ==================================================
+        `data/agricultural_encroachment/after.png`
+        """)
 
     st.markdown("---")
 
-    st.header("📍 Spatial Change Mapping")
-
-    st.write(
-        "يتم تحويل مناطق التغير المكتشفة إلى مواقع مكانية "
-        "قابلة للعرض على الخريطة."
+    st.success(
+        "✅ Agricultural Encroachment Part 1 loaded."
     )
-
-    if (
-        BEFORE_IMAGE.exists()
-        and AFTER_IMAGE.exists()
-    ):
-
-        try:
-
-            import folium
-            from folium.plugins import HeatMap
-
-            if "changed_pixels" not in locals():
-
-                st.warning(
-                    "⚠️ لم يتم إنشاء Change Mask بعد. "
-                    "تأكدي من تشغيل مرحلة Change Detection أولًا."
-                )
-
-            else:
-
-                rows, cols = np.where(
-                    changed_pixels
-                )
-
-                if len(rows) == 0:
-
-                    st.info(
-                        "لم يتم اكتشاف مناطق تغير عند مستوى Threshold الحالي."
-                    )
-
-                else:
-
-                    height, width = (
-                        changed_pixels.shape
-                    )
-
-                    # --------------------------------------------------
-                    # Temporary image-relative coordinates
-                    # --------------------------------------------------
-
-                    normalized_lat = (
-                        1
-                        - (
-                            rows
-                            / max(
-                                height - 1,
-                                1
-                            )
-                        )
-                    )
-
-                    normalized_lon = (
-                        cols
-                        / max(
-                            width - 1,
-                            1
-                        )
-                    )
-
-                    # --------------------------------------------------
-                    # Temporary visualization center
-                    # --------------------------------------------------
-
-                    MAP_CENTER = [
-                        30.0444,
-                        31.2357
-                    ]
-
-                    lat_span = 0.08
-                    lon_span = 0.08
-
-                    latitudes = (
-                        MAP_CENTER[0]
-                        + (
-                            normalized_lat
-                            - 0.5
-                        )
-                        * lat_span
-                    )
-
-                    longitudes = (
-                        MAP_CENTER[1]
-                        + (
-                            normalized_lon
-                            - 0.5
-                        )
-                        * lon_span
-                    )
-
-                    # --------------------------------------------------
-                    # Create Folium Map
-                    # --------------------------------------------------
-
-                    change_map = folium.Map(
-                        location=MAP_CENTER,
-                        zoom_start=12,
-                        tiles="OpenStreetMap",
-                        control_scale=True
-                    )
-
-                    folium.TileLayer(
-                        tiles="CartoDB positron",
-                        name="Light Map"
-                    ).add_to(
-                        change_map
-                    )
-
-                    # --------------------------------------------------
-                    # Build heatmap points
-                    # --------------------------------------------------
-
-                    heat_points = [
-                        [
-                            float(lat),
-                            float(lon)
-                        ]
-                        for lat, lon in zip(
-                            latitudes,
-                            longitudes
-                        )
-                    ]
-
-                    # --------------------------------------------------
-                    # Add change heatmap
-                    # --------------------------------------------------
-
-                    HeatMap(
-                        heat_points,
-                        name="Detected Change Areas",
-                        radius=10,
-                        blur=12,
-                        min_opacity=0.35
-                    ).add_to(
-                        change_map
-                    )
-
-                    # --------------------------------------------------
-                    # Add sample markers
-                    # --------------------------------------------------
-
-                    max_markers = 100
-
-                    marker_step = max(
-                        1,
-                        len(heat_points)
-                        // max_markers
-                    )
-
-                    for lat, lon in heat_points[
-                        ::marker_step
-                    ]:
-
-                        folium.CircleMarker(
-                            location=[
-                                lat,
-                                lon
-                            ],
-                            radius=3,
-                            weight=1,
-                            fill=True,
-                            popup=(
-                                "Detected change area<br>"
-                                "Requires further assessment"
-                            )
-                        ).add_to(
-                            change_map
-                        )
-
-                    # --------------------------------------------------
-                    # Layer control
-                    # --------------------------------------------------
-
-                    folium.LayerControl().add_to(
-                        change_map
-                    )
-
-                    # --------------------------------------------------
-                    # Save map
-                    # --------------------------------------------------
-
-                    MAP_DIR = Path(
-                        "data/agricultural_encroachment"
-                    )
-
-                    MAP_DIR.mkdir(
-                        parents=True,
-                        exist_ok=True
-                    )
-
-                    MAP_PATH = (
-                        MAP_DIR
-                        / "ENVA_Agricultural_Change_Map.html"
-                    )
-
-                    change_map.save(
-                        str(MAP_PATH)
-                    )
-
-                    # --------------------------------------------------
-                    # Display
-                    # --------------------------------------------------
-
-                    st.markdown(
-                        "### 🗺️ Detected Change Areas"
-                    )
-
-                    try:
-
-                        from streamlit_folium import (
-                            st_folium
-                        )
-
-                        st_folium(
-                            change_map,
-                            width=None,
-                            height=650
-                        )
-
-                    except ImportError:
-
-                        st.warning(
-                            """
-                            ⚠️ مكتبة streamlit-folium غير مثبتة.
-
-                            ثبتيها في بيئة المشروع:
-
-                            `pip install streamlit-folium`
-                            """
-                        )
-
-                    st.caption(
-                        f"Detected change pixels: {len(rows):,}"
-                    )
-
-                    st.caption(
-                        f"Standalone map saved to: {MAP_PATH}"
-                    )
-
-                    st.info(
-                        """
-                        📌 **Spatial Accuracy Notice**
-
-                        الإحداثيات المعروضة حاليًا هي إحداثيات
-                        **تمثيلية مبنية على موضع البكسل داخل الصورة**.
-
-                        لكي تصبح الخريطة جغرافية حقيقية وتحدد
-                        أماكن التعديات بدقة على سطح الأرض، يجب
-                        ربط الصورة بمرجعها الجغرافي الحقيقي
-                        GeoTIFF / GeoJSON / Earth Engine geometry.
-
-                        لذلك لا نعتبر هذه الإحداثيات الحالية
-                        مواقع تعديات فعلية.
-                        """
-                    )
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Spatial mapping error: {e}"
-            )
-
-    else:
-
-        st.info(
-            """
-            🛰️ أضيفي صور Before وAfter أولًا حتى يمكن
-            إنشاء خريطة التغيرات.
-            """
-        )
-
-    # ==================================================
-    # 5. AGRICULTURAL ENCROACHMENT ASSESSMENT
-    # ==================================================
-
-    st.markdown("---")
-
-    st.header(
-        "🌾 Agricultural Encroachment Assessment"
-    )
-
-    st.subheader(
-        "تقييم التغيرات داخل الأراضي الزراعية"
-    )
-
-    st.write(
-        "في هذه المرحلة يتم ربط مناطق التغير المكتشفة "
-        "بمناطق الأراضي الزراعية لتحديد التغيرات التي "
-        "قد تمثل تعديًا محتملًا."
-    )
-
-    AGRICULTURAL_MASK_PATH = (
-        Path(
-            "data/agricultural_encroachment"
-        )
-        / "agricultural_mask.png"
-    )
-
-    if (
-        BEFORE_IMAGE.exists()
-        and AFTER_IMAGE.exists()
-        and "changed_pixels" in locals()
-    ):
-
-        if AGRICULTURAL_MASK_PATH.exists():
-
-            try:
-
-                agricultural_mask = Image.open(
-                    AGRICULTURAL_MASK_PATH
-                ).convert("L")
-
-                before_reference = Image.open(
-                    BEFORE_IMAGE
-                ).convert("RGB")
-
-                if (
-                    agricultural_mask.size
-                    != before_reference.size
-                ):
-
-                    agricultural_mask = (
-                        agricultural_mask.resize(
-                            before_reference.size
-                        )
-                    )
-
-                agricultural_array = np.asarray(
-                    agricultural_mask
-                )
-
-                agricultural_pixels = (
-                    agricultural_array >= 128
-                )
-
-                potential_encroachment = (
-                    changed_pixels
-                    & agricultural_pixels
-                )
-
-                total_pixels = (
-                    agricultural_pixels.size
-                )
-
-                agricultural_count = int(
-                    agricultural_pixels.sum()
-                )
-
-                changed_agricultural_count = int(
-                    potential_encroachment.sum()
-                )
-
-                if agricultural_count > 0:
-
-                    affected_agricultural_percentage = (
-                        changed_agricultural_count
-                        / agricultural_count
-                        * 100
-                    )
-
-                else:
-
-                    affected_agricultural_percentage = 0
-
-                # --------------------------------------------------
-                # Display masks
-                # --------------------------------------------------
-
-                st.markdown(
-                    "### 🗺️ Agricultural Area Mask"
-                )
-
-                mask_col1, mask_col2 = (
-                    st.columns(2)
-                )
-
-                with mask_col1:
-
-                    st.image(
-                        agricultural_mask,
-                        caption=(
-                            "Agricultural Area Mask"
-                        ),
-                        use_container_width=True
-                    )
-
-                with mask_col2:
-
-                    encroachment_mask = (
-                        potential_encroachment
-                        .astype(np.uint8)
-                        * 255
-                    )
-
-                    st.image(
-                        encroachment_mask,
-                        caption=(
-                            "Potential Agricultural "
-                            "Encroachment Areas"
-                        ),
-                        use_container_width=True
-                    )
-
-                # --------------------------------------------------
-                # Metrics
-                # --------------------------------------------------
-
-                st.markdown("---")
-
-                m1, m2, m3 = st.columns(3)
-
-                with m1:
-
-                    st.metric(
-                        "Agricultural Pixels",
-                        f"{agricultural_count:,}"
-                    )
-
-                with m2:
-
-                    st.metric(
-                        "Changed Agricultural Pixels",
-                        f"{changed_agricultural_count:,}"
-                    )
-
-                with m3:
-
-                    st.metric(
-                        "Potential Change",
-                        f"{affected_agricultural_percentage:.2f}%"
-                    )
-
-                # --------------------------------------------------
-                # Assessment
-                # --------------------------------------------------
-
-                st.markdown("---")
-
-                st.header(
-                    "🚨 Potential Encroachment Assessment"
-                )
-
-                if changed_agricultural_count == 0:
-
-                    st.success(
-                        """
-                        🟢 لم يتم اكتشاف تغير داخل المناطق
-                        المصنفة كأراضٍ زراعية عند مستوى
-                        Threshold الحالي.
-                        """
-                    )
-
-                elif (
-                    affected_agricultural_percentage
-                    < 1
-                ):
-
-                    st.info(
-                        f"""
-                        🔵 **Low Potential Change**
-
-                        تم اكتشاف تغير محدود داخل الأراضي
-                        الزراعية بنسبة تقريبية:
-
-                        **{affected_agricultural_percentage:.2f}%**
-
-                        ويحتاج إلى مراجعة إضافية قبل اعتباره
-                        تعديًا فعليًا.
-                        """
-                    )
-
-                elif (
-                    affected_agricultural_percentage
-                    < 5
-                ):
-
-                    st.warning(
-                        f"""
-                        🟡 **Moderate Potential Change**
-
-                        تم اكتشاف تغير ملحوظ داخل الأراضي
-                        الزراعية بنسبة:
-
-                        **{affected_agricultural_percentage:.2f}%**
-
-                        يوصى بإجراء تحقق مكاني وميداني إضافي.
-                        """
-                    )
-
-                else:
-
-                    st.error(
-                        f"""
-                        🔴 **High Potential Change**
-
-                        تم اكتشاف نسبة مرتفعة نسبيًا من التغير
-                        داخل المناطق الزراعية:
-
-                        **{affected_agricultural_percentage:.2f}%**
-
-                        تحتاج هذه المناطق إلى أولوية أعلى
-                        في المراجعة والتحقق.
-                        """
-                    )
-
-                st.markdown("---")
-
-                st.info(
-                    """
-                    📌 **Important Interpretation**
-
-                    وجود تغير داخل منطقة زراعية لا يعني
-                    تلقائيًا وجود تعدٍ.
-
-                    قد يكون التغير ناتجًا عن:
-
-                    - تغير موسمي في الغطاء النباتي.
-                    - حصاد أو زراعة جديدة.
-                    - اختلاف ظروف التصوير.
-                    - اختلاف الإضاءة.
-                    - تغيرات مؤقتة في التربة أو الرطوبة.
-
-                    لذلك تُصنف النتيجة هنا باعتبارها:
-
-                    **Potential Agricultural Encroachment**
-
-                    وليس تعديًا مؤكدًا.
-                    """
-                )
-
-            except Exception as e:
-
-                st.error(
-                    f"❌ Agricultural assessment error: {e}"
-                )
-
-        else:
-
-            st.warning(
-                """
-                ⚠️ **Agricultural Mask Not Available**
-
-                لم يتم العثور على طبقة تحديد الأراضي الزراعية.
-
-                المسار المتوقع:
-
-                `data/agricultural_encroachment/agricultural_mask.png`
-
-                عند توفير طبقة الأراضي الزراعية يمكن
-                للمنظومة ربطها مع Change Detection.
-                """
-            )
-
-    else:
-
-        st.info(
-            """
-            ⏳ **Waiting for previous analysis stages**
-
-            يجب أولًا توفير:
-
-            1. Before Image
-            2. After Image
-            3. Change Detection
-
-            قبل تنفيذ تقييم التعديات الزراعية.
-            """
-        )
-
-    # ==================================================
-    # 6. POTENTIAL ENCROACHMENT LOCATIONS
-    # ==================================================
-
-    st.markdown("---")
-
-    st.header(
-        "📍 Potential Encroachment Locations"
-    )
-
-    st.subheader(
-        "تحديد مناطق التعديات الزراعية المحتملة"
-    )
-
-    st.write(
-        "يتم في هذه المرحلة استخراج المناطق المتغيرة داخل "
-        "الأراضي الزراعية وتحديد مواقعها ومساحاتها التقريبية."
-    )
-
-    if (
-        "potential_encroachment" in locals()
-        and potential_encroachment.any()
-    ):
-
-        try:
-
-            rows, cols = np.where(
-                potential_encroachment
-            )
-
-            height, width = (
-                potential_encroachment.shape
-            )
-
-            normalized_y = (
-                rows
-                / max(
-                    height - 1,
-                    1
-                )
-            )
-
-            normalized_x = (
-                cols
-                / max(
-                    width - 1,
-                    1
-                )
-            )
-
-            MAP_CENTER = [
-                30.0444,
-                31.2357
-            ]
-
-            lat_span = 0.08
-            lon_span = 0.08
-
-            latitudes = (
-                MAP_CENTER[0]
-                + (
-                    0.5
-                    - normalized_y
-                )
-                * lat_span
-            )
-
-            longitudes = (
-                MAP_CENTER[1]
-                + (
-                    normalized_x
-                    - 0.5
-                )
-                * lon_span
-            )
-
-            locations_df = pd.DataFrame(
-                {
-                    "Latitude": latitudes,
-                    "Longitude": longitudes
-                }
-            )
-
-            max_points = 500
-
-            if (
-                len(locations_df)
-                > max_points
-            ):
-
-                sample_indices = np.linspace(
-                    0,
-                    len(locations_df) - 1,
-                    max_points,
-                    dtype=int
-                )
-
-                display_locations = (
-                    locations_df.iloc[
-                        sample_indices
-                    ].copy()
-                )
-
-            else:
-
-                display_locations = (
-                    locations_df.copy()
-                )
-
-            c1, c2, c3 = st.columns(3)
-
-            with c1:
-
-                st.metric(
-                    "Potential Locations",
-                    f"{len(locations_df):,}"
-                )
-
-            with c2:
-
-                st.metric(
-                    "Displayed Points",
-                    f"{len(display_locations):,}"
-                )
-
-            with c3:
-
-                st.metric(
-                    "Status",
-                    "Needs Verification"
-                )
-
-            st.markdown(
-                "### 📊 Detected Location Points"
-            )
-
-            st.dataframe(
-                display_locations,
-                use_container_width=True,
-                hide_index=True
-            )
-
-            LOCATION_DIR = Path(
-                "data/agricultural_encroachment"
-            )
-
-            LOCATION_DIR.mkdir(
-                parents=True,
-                exist_ok=True
-            )
-
-            LOCATION_CSV = (
-                LOCATION_DIR
-                / "ENVA_Potential_Encroachment_Locations.csv"
-            )
-
-            locations_df.to_csv(
-                LOCATION_CSV,
-                index=False,
-                encoding="utf-8-sig"
-            )
-
-            with open(
-                LOCATION_CSV,
-                "rb"
-            ) as location_file:
-
-                st.download_button(
-                    label=(
-                        "📥 Download Potential Locations"
-                    ),
-                    data=location_file,
-                    file_name=(
-                        "ENVA_Potential_Encroachment_Locations.csv"
-                    ),
-                    mime="text/csv"
-                )
-
-            st.warning(
-                """
-                ⚠️ **Geographic Accuracy Notice**
-
-                الإحداثيات الحالية تمثل مواقع البكسلات داخل
-                الصورة بصورة تقريبية فقط.
-
-                للحصول على إحداثيات حقيقية ودقيقة للتعديات،
-                يجب استخدام صورة جغرافية المرجع مثل:
-
-                **GeoTIFF / Earth Engine Geometry / GeoJSON**
-
-                وبعد ربط المرجع الجغرافي يمكن حساب:
-
-                **Latitude + Longitude + Area + Exact Location**
-                """
-            )
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Location extraction error: {e}"
-            )
-
-    else:
-
-        st.info(
-            """
-            ⏳ لا توجد مناطق تعدٍ محتملة لاستخراج مواقعها بعد.
-
-            يجب أولًا إنشاء:
-
-            **Change Detection**
-            +
-            **Agricultural Mask**
-            =
-            **Potential Encroachment**
-            """
-        )
-
-    # ==================================================
-    # 7. AFFECTED AREA ESTIMATION
-    # ==================================================
-
-    st.markdown("---")
-
-    st.header(
-        "📐 Affected Agricultural Area"
-    )
-
-    st.subheader(
-        "تقدير مساحة المناطق الزراعية المتغيرة"
-    )
-
-    st.write(
-        "يتم في هذه المرحلة تقدير المساحة المتأثرة "
-        "بناءً على المناطق التي تم تصنيفها كتغير محتمل "
-        "داخل الأراضي الزراعية."
-    )
-
-    if (
-        "potential_encroachment" in locals()
-        and potential_encroachment.any()
-    ):
-
-        try:
-
-            affected_pixels = int(
-                potential_encroachment.sum()
-            )
-
-            pixel_size_m = st.number_input(
-                "Pixel Resolution (meters)",
-                min_value=1.0,
-                max_value=100.0,
-                value=10.0,
-                step=1.0
-            )
-
-            pixel_area_m2 = (
-                pixel_size_m ** 2
-            )
-
-            estimated_area_m2 = (
-                affected_pixels
-                * pixel_area_m2
-            )
-
-            estimated_area_km2 = (
-                estimated_area_m2
-                / 1_000_000
-            )
-
-            c1, c2, c3 = st.columns(3)
-
-            with c1:
-
-                st.metric(
-                    "Changed Pixels",
-                    f"{affected_pixels:,}"
-                )
-
-            with c2:
-
-                st.metric(
-                    "Estimated Area",
-                    f"{estimated_area_m2:,.0f} m²"
-                )
-
-            with c3:
-
-                st.metric(
-                    "Estimated Area",
-                    f"{estimated_area_km2:.4f} km²"
-                )
-
-            st.markdown("---")
-
-            st.markdown(
-                "### 📊 Area Assessment"
-            )
-
-            if estimated_area_m2 < 1_000:
-
-                st.info(
-                    f"""
-                    🔵 **Small Area**
-
-                    المساحة المقدرة للتغير:
-
-                    **{estimated_area_m2:,.0f} m²**
-                    """
-                )
-
-            elif estimated_area_m2 < 10_000:
-
-                st.warning(
-                    f"""
-                    🟡 **Moderate Area**
-
-                    المساحة المقدرة للتغير:
-
-                    **{estimated_area_m2:,.0f} m²**
-                    """
-                )
-
-            else:
-
-                st.error(
-                    f"""
-                    🔴 **Large Area**
-
-                    المساحة المقدرة للتغير:
-
-                    **{estimated_area_m2:,.0f} m²**
-                    """
-                )
-
-            st.info(
-                """
-                📌 **Accuracy Notice**
-
-                المساحة الحالية هي **تقدير أولي** يعتمد على
-                دقة البكسل التي يتم إدخالها يدويًا.
-
-                في النسخة المتقدمة من ENVA سيتم الحصول على
-                دقة البكسل تلقائيًا من البيانات الجغرافية
-                للصورة، مما يسمح بحساب المساحة الحقيقية
-                للمناطق المتغيرة.
-
-                لذلك يجب عدم اعتبار هذه القيمة الحالية
-                مساحة رسمية أو نهائية للتعديات.
-                """
-            )
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Area estimation error: {e}"
-            )
-
-    else:
-
-        st.info(
-            """
-            ⏳ لا توجد مناطق تغير زراعي محتملة
-            لحساب المساحة حاليًا.
-
-            سيتم حساب المساحة بعد اكتمال مراحل:
-
-            **Change Detection → Agricultural Mask
-            → Potential Encroachment**
-            """
-        )
-
-    # ==================================================
-    # 8. ENCROACHMENT PRIORITY ASSESSMENT
-    # ==================================================
-
-    st.markdown("---")
-
-    st.header(
-        "🚨 Encroachment Priority Assessment"
-    )
-
-    st.subheader(
-        "تحديد أولويات المناطق التي تحتاج إلى المراجعة"
-    )
-
-    st.write(
-        "تستخدم ENVA مجموعة من المؤشرات الأولية لترتيب "
-        "مناطق التغير المحتملة حسب درجة الأولوية."
-    )
-
-    if (
-        "potential_encroachment" in locals()
-        and potential_encroachment.any()
-    ):
-
-        try:
-
-            affected_pixels = int(
-                potential_encroachment.sum()
-            )
-
-            total_agricultural_pixels = (
-                int(
-                    agricultural_pixels.sum()
-                )
-                if "agricultural_pixels"
-                in locals()
-                else 0
-            )
-
-            if total_agricultural_pixels > 0:
-
-                affected_ratio = (
-                    affected_pixels
-                    / total_agricultural_pixels
-                    * 100
-                )
-
-            else:
-
-                affected_ratio = 0
-
-            # --------------------------------------------------
-            # Prototype Priority Score
-            # --------------------------------------------------
-
-            if affected_ratio < 1:
-
-                priority_score = 25
-
-            elif affected_ratio < 5:
-
-                priority_score = 55
-
-            else:
-
-                priority_score = 85
-
-            # --------------------------------------------------
-            # Classification
-            # --------------------------------------------------
-
-            if priority_score < 40:
-
-                priority_level = "LOW"
-
-                priority_message = (
-                    "تغير محدود — يحتاج إلى متابعة دورية."
-                )
-
-            elif priority_score < 70:
-
-                priority_level = "MEDIUM"
-
-                priority_message = (
-                    "تغير ملحوظ — يوصى بالمراجعة والتحقق."
-                )
-
-            else:
-
-                priority_level = "HIGH"
-
-                priority_message = (
-                    "تغير مرتفع — يوصى بإعطاء المنطقة "
-                    "أولوية أعلى في التحقق."
-                )
-
-            c1, c2, c3 = st.columns(3)
-
-            with c1:
-
-                st.metric(
-                    "Potential Change",
-                    f"{affected_ratio:.2f}%"
-                )
-
-            with c2:
-
-                st.metric(
-                    "Priority Score",
-                    f"{priority_score}/100"
-                )
-
-            with c3:
-
-                st.metric(
-                    "Priority Level",
-                    priority_level
-                )
-
-            st.markdown("---")
-
-            if priority_level == "LOW":
-
-                st.success(
-                    f"🟢 **LOW PRIORITY** — "
-                    f"{priority_message}"
-                )
-
-            elif priority_level == "MEDIUM":
-
-                st.warning(
-                    f"🟡 **MEDIUM PRIORITY** — "
-                    f"{priority_message}"
-                )
-
-            else:
-
-                st.error(
-                    f"🔴 **HIGH PRIORITY** — "
-                    f"{priority_message}"
-                )
-
-            st.markdown("---")
-
-            st.header(
-                "🎯 Recommended Action"
-            )
-
-            if priority_level == "LOW":
-
-                action = """
-                **Routine Monitoring**
-
-                متابعة المنطقة في صور الأقمار الصناعية
-                القادمة ومقارنة التغيرات الزمنية.
-                """
-
-            elif priority_level == "MEDIUM":
-
-                action = """
-                **Remote Verification**
-
-                إجراء تحليل إضافي للصور ومراجعة الموقع
-                باستخدام مصادر بيانات أخرى.
-                """
-
-            else:
-
-                action = """
-                **Priority Verification**
-
-                إعطاء المنطقة أولوية للتحقق المكاني أو
-                الميداني قبل اتخاذ أي إجراء رسمي.
-                """
-
-            st.info(action)
-
-            st.caption(
-                """
-                ⚠️ Prototype Notice:
-                درجة الأولوية الحالية نموذج تجريبي مبسط
-                لإثبات فكرة ترتيب المناطق، وليست نموذج
-                تقييم رسمي أو قرارًا حكوميًا.
-                """
-            )
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Priority assessment error: {e}"
-            )
-
-    else:
-
-        st.info(
-            """
-            ⏳ لا توجد مناطق تغير محتملة متاحة
-            لتحديد الأولويات حاليًا.
-            """
-        )
-
-    # ==================================================
-    # 9. AGRICULTURAL ENCROACHMENT DECISION SUPPORT
-    # ==================================================
-
-    st.markdown("---")
-
-    st.header(
-        "📋 Agricultural Encroachment Decision Support"
-    )
-
-    st.subheader(
-        "ملخص التحليل والتوصية المقترحة"
-    )
-
-    st.write(
-        "تجمع هذه المرحلة نتائج التحليل السابقة في ملخص "
-        "مبسط يساعد على تحديد الإجراء المقترح لكل منطقة."
-    )
-
-    if (
-        "potential_encroachment" in locals()
-        and potential_encroachment.any()
-    ):
-
-        try:
-
-            # --------------------------------------------------
-            # Collect final indicators
-            # --------------------------------------------------
-
-            affected_pixels = int(
-                potential_encroachment.sum()
-            )
-
-            if (
-                "affected_agricultural_percentage"
-                in locals()
-            ):
-
-                change_percentage = (
-                    affected_agricultural_percentage
-                )
-
-            else:
-
-                change_percentage = 0
-
-            if (
-                "estimated_area_m2"
-                in locals()
-            ):
-
-                area_m2 = estimated_area_m2
-
-            else:
-
-                area_m2 = 0
-
-            if (
-                "estimated_area_km2"
-                in locals()
-            ):
-
-                area_km2 = estimated_area_km2
-
-            else:
-
-                area_km2 = 0
-
-            if (
-                "priority_score"
-                in locals()
-            ):
-
-                final_priority_score = (
-                    priority_score
-                )
-
-            else:
-
-                final_priority_score = 0
-
-            if (
-                "priority_level"
-                in locals()
-            ):
-
-                final_priority_level = (
-                    priority_level
-                )
-
-            else:
-
-                final_priority_level = (
-                    "UNASSESSED"
-                )
-
-            # --------------------------------------------------
-            # Decision Classification
-            # --------------------------------------------------
-
-            if final_priority_level == "HIGH":
-
-                decision = (
-                    "Priority Verification"
-                )
-
-                recommendation = """
-                يوصى بإعطاء المنطقة أولوية للتحقق
-                المكاني أو الميداني، مع مراجعة صور
-                الأقمار الصناعية ومصادر البيانات الأخرى
-                قبل اتخاذ أي إجراء رسمي.
-                """
-
-            elif final_priority_level == "MEDIUM":
-
-                decision = (
-                    "Further Investigation"
-                )
-
-                recommendation = """
-                يوصى بإجراء تحليل إضافي ومراجعة زمنية
-                للصور للتأكد من طبيعة التغير قبل
-                تصنيفه كتعدٍ محتمل.
-                """
-
-            elif final_priority_level == "LOW":
-
-                decision = (
-                    "Routine Monitoring"
-                )
-
-                recommendation = """
-                يوصى بالمتابعة الدورية للمنطقة ومقارنة
-                الصور المستقبلية للتأكد من استمرار التغير
-                أو اختفائه.
-                """
-
-            else:
-
-                decision = (
-                    "Needs Assessment"
-                )
-
-                recommendation = """
-                تحتاج المنطقة إلى استكمال البيانات
-                والتحليل قبل تحديد مستوى الأولوية.
-                """
-
-            # --------------------------------------------------
-            # Summary Metrics
-            # --------------------------------------------------
-
-            c1, c2, c3, c4 = st.columns(4)
-
-            with c1:
-
-                st.metric(
-                    "Changed Pixels",
-                    f"{affected_pixels:,}"
-                )
-
-            with c2:
-
-                st.metric(
-                    "Affected Area",
-                    f"{area_m2:,.0f} m²"
-                )
-
-            with c3:
-
-                st.metric(
-                    "Change Ratio",
-                    f"{change_percentage:.2f}%"
-                )
-
-            with c4:
-
-                st.metric(
-                    "Priority",
-                    final_priority_level
-                )
-
-            # --------------------------------------------------
-            # Decision Card
-            # --------------------------------------------------
-
-            st.markdown("---")
-
-            st.markdown(
-                f"""
-                <div style="
-                    padding:25px;
-                    border-radius:15px;
-                    background-color:rgba(30,40,50,0.45);
-                    border:1px solid rgba(255,255,255,0.15);
-                    margin-bottom:20px;
-                ">
-
-                <h2>🎯 ENVA Assessment</h2>
-
-                <h3>
-                Priority Score:
-                {final_priority_score}/100
-                </h3>
-
-                <h3>
-                Recommended Decision:
-                {decision}
-                </h3>
-
-                <p>
-                Potentially affected agricultural area:
-                <b>{area_km2:.4f} km²</b>
-                </p>
-
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            # --------------------------------------------------
-            # Recommendation
-            # --------------------------------------------------
-
-            st.markdown(
-                "### 🧭 Recommended Action"
-            )
-
-            st.info(
-                recommendation
-            )
-
-            # --------------------------------------------------
-            # Decision Workflow
-            # --------------------------------------------------
-
-            st.markdown("---")
-
-            st.markdown(
-                """
-                ### 🔄 Decision Support Workflow
-
-                **Satellite Observation**
-
-                ↓
-
-                **Change Detection**
-
-                ↓
-
-                **Agricultural Area Assessment**
-
-                ↓
-
-                **Potential Encroachment**
-
-                ↓
-
-                **Priority Assessment**
-
-                ↓
-
-                **Verification**
-
-                ↓
-
-                **Human Decision**
-                """
-            )
-
-            # --------------------------------------------------
-            # Important Disclaimer
-            # --------------------------------------------------
-
-            st.markdown("---")
-
-            st.warning(
-                """
-                ⚠️ **ENVA Prototype Disclaimer**
-
-                النتائج الحالية تمثل مخرجات نموذج أولي
-                تجريبي مبسط لإثبات مفهوم المنظومة.
-
-                لا تمثل هذه النتائج قرارًا رسميًا أو إثباتًا
-                قانونيًا لوجود تعديات.
-
-                في النسخة المستقبلية يمكن رفع دقة النتائج
-                من خلال استخدام:
-
-                • صور أقمار صناعية عالية الدقة
-                • بيانات جغرافية مرجعة مكانيًا
-                • بيانات زمنية متعددة
-                • نماذج Change Detection متقدمة
-                • نماذج Computer Vision
-                • بيانات استخدامات الأراضي
-                • تحقق ميداني
-                • فريق متخصص في الاستشعار عن بعد
-                  وGIS والبيئة والذكاء الاصطناعي
-                """
-            )
-
-            # --------------------------------------------------
-            # Export Summary
-            # --------------------------------------------------
-
-            summary_text = f"""
-ENVA — Agricultural Encroachment Assessment
-==================================================
-
-Changed Pixels:
-{affected_pixels}
-
-Affected Agricultural Area:
-{area_m2:,.0f} m²
-
-Affected Agricultural Area:
-{area_km2:.4f} km²
-
-Change Ratio:
-{change_percentage:.2f}%
-
-Priority Score:
-{final_priority_score}/100
-
-Priority Level:
-{final_priority_level}
-
-Recommended Decision:
-{decision}
-
-Recommendation:
-{recommendation}
-
-STATUS:
-Prototype — Requires Verification
-"""
-
-            st.download_button(
-                label=(
-                    "📥 Download Assessment Summary"
-                ),
-                data=summary_text,
-                file_name=(
-                    "ENVA_Agricultural_Encroachment_Assessment.txt"
-                ),
-                mime="text/plain"
-            )
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Decision support error: {e}"
-            )
-
-    else:
-
-        st.info(
-            """
-            ⏳ لا توجد نتائج تحليل متاحة لإنشاء
-            تقرير Decision Support.
-
-            يجب استكمال مراحل:
-
-            Change Detection
-            → Agricultural Assessment
-            → Priority Assessment
-            """
-        )
