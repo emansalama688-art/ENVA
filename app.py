@@ -270,52 +270,262 @@ elif page == "🌍 Interactive Map":
     st.markdown("---")
 
     # ==================================================
-    # LOAD INTERACTIVE MAP
+    # INTERACTIVE EARTH ENGINE MAP
     # ==================================================
 
-    html_file = DATA_PATH / "landcover_map_2026.html"
+    st.markdown("### 🛰️ Satellite Environmental Map")
 
-    if html_file.exists():
+    st.write(
+        "الخريطة التفاعلية تعرض طبقات الأقمار الصناعية "
+        "والغطاء الأرضي ومنطقة الدراسة."
+    )
 
-        try:
+    # --------------------------------------------------
+    # MAP CONTAINER
+    # --------------------------------------------------
 
-            with open(
-                html_file,
-                "r",
-                encoding="utf-8"
-            ) as f:
+    map_html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
 
-                html_string = f.read()
+        <meta charset="utf-8">
 
-            # ==========================================
-            # DISPLAY MAP
-            # ==========================================
+        <meta name="viewport"
+              content="width=device-width,
+                       initial-scale=1.0">
 
-            from streamlit.components.v1 import html
+        <title>ENVA Interactive Map</title>
 
-            html(
-                html_string,
-                height=900,
-                scrolling=True
-            )
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        />
 
-            st.success(
-                "✅ Interactive map loaded successfully."
-            )
+        <script
+            src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+        </script>
 
-        except Exception as e:
+        <style>
 
-            st.error(
-                "❌ Unable to display the interactive map."
-            )
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background: #071827;
+            }
 
-            st.exception(e)
+            #map {
+                width: 100%;
+                height: 880px;
+                min-height: 700px;
+            }
 
-    else:
+            .leaflet-control-layers {
+                background: rgba(255,255,255,0.96);
+                border-radius: 10px;
+            }
 
-        st.error(
-            f"❌ Interactive map file not found: {html_file}"
-        )
+            .map-title {
+                background: rgba(7,24,39,0.90);
+                color: white;
+                padding: 10px 16px;
+                border-radius: 10px;
+                font-family: Arial, sans-serif;
+                font-weight: 700;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="map"></div>
+
+        <script>
+
+            // ==================================================
+            // CREATE MAP
+            // ==================================================
+
+            var map = L.map("map", {
+                center: [31.130909905415095, 30.101980232169154],
+                zoom: 11,
+                zoomControl: true
+            });
+
+
+            // ==================================================
+            // OPEN STREET MAP
+            // ==================================================
+
+            var osm = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    maxZoom: 19,
+                    attribution:
+                        '&copy; OpenStreetMap contributors'
+                }
+            );
+
+
+            // ==================================================
+            // TRUE COLOR — GOOGLE EARTH ENGINE
+            // ==================================================
+
+            var trueColor = L.tileLayer(
+                "https://earthengine.googleapis.com/v1/projects/carbide-theme-502500-b6/maps/edecd4b45ebac6aaa2d624c678e5cb28-87bdd295220d48a0f5d379d488a14dd3/tiles/{z}/{x}/{y}",
+                {
+                    maxZoom: 24,
+                    attribution: "Google Earth Engine",
+                    opacity: 1.0
+                }
+            );
+
+
+            // ==================================================
+            // LAND COVER — GOOGLE EARTH ENGINE
+            // ==================================================
+
+            var landCover = L.tileLayer(
+                "https://earthengine.googleapis.com/v1/projects/carbide-theme-502500-b6/maps/6741bcd95f559abf8b80536e7655fa82-d1860385ad48f2d189c580e675049896/tiles/{z}/{x}/{y}",
+                {
+                    maxZoom: 24,
+                    attribution: "Google Earth Engine",
+                    opacity: 0.75
+                }
+            );
+
+
+            // ==================================================
+            // STUDY AREA — GOOGLE EARTH ENGINE
+            // ==================================================
+
+            var studyArea = L.tileLayer(
+                "https://earthengine.googleapis.com/v1/projects/carbide-theme-502500-b6/maps/f5589abb5aad4d0ec79af757f6b7475f-c3398c3892b456e3473322ae971c6a7d/tiles/{z}/{x}/{y}",
+                {
+                    maxZoom: 24,
+                    attribution: "Google Earth Engine",
+                    opacity: 1.0
+                }
+            );
+
+
+            // ==================================================
+            // DEFAULT LAYERS
+            // ==================================================
+
+            osm.addTo(map);
+
+            trueColor.addTo(map);
+
+
+            // ==================================================
+            // LAYER CONTROL
+            // ==================================================
+
+            var baseMaps = {
+
+                "🗺️ OpenStreetMap":
+                    osm,
+
+                "🛰️ True Color":
+                    trueColor
+
+            };
+
+
+            var overlayMaps = {
+
+                "🌱 Land Cover":
+                    landCover,
+
+                "📍 Study Area":
+                    studyArea
+
+            };
+
+
+            L.control.layers(
+                baseMaps,
+                overlayMaps,
+                {
+                    collapsed: false,
+                    position: "topright"
+                }
+            ).addTo(map);
+
+
+            // ==================================================
+            // TITLE
+            // ==================================================
+
+            var titleControl =
+                L.control({
+                    position: "topleft"
+                });
+
+            titleControl.onAdd = function() {
+
+                var div =
+                    L.DomUtil.create(
+                        "div",
+                        "map-title"
+                    );
+
+                div.innerHTML =
+                    "🛰️ ENVA Environmental Map";
+
+                return div;
+            };
+
+            titleControl.addTo(map);
+
+
+            // ==================================================
+            // SCALE
+            // ==================================================
+
+            L.control.scale({
+                imperial: false
+            }).addTo(map);
+
+
+            // ==================================================
+            // FIX MAP SIZE
+            // ==================================================
+
+            setTimeout(function() {
+
+                map.invalidateSize();
+
+            }, 500);
+
+        </script>
+
+    </body>
+    </html>
+    """
+
+    # ==================================================
+    # DISPLAY MAP
+    # ==================================================
+
+    from streamlit.components.v1 import html
+
+    html(
+        map_html,
+        height=900,
+        scrolling=False
+    )
+
+    st.success(
+        "✅ Interactive environmental map loaded successfully."
+    )
 
     st.markdown("---")
 
