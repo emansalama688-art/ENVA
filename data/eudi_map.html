@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>
+ENVA - Cell 16 EUDI - Kafr El Dawwar
+</title>
+
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<style>
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.legend {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+.gradient {
+    width: 190px;
+    height: 14px;
+    margin-top: 5px;
+    margin-bottom: 4px;
+    background: linear-gradient(
+        to right,
+        #1a9850,
+        #91cf60,
+        #d9ef8b,
+        #fee08b,
+        #fc8d59,
+        #d73027
+    );
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script>
+
+var map = L.map("map").setView(
+    [31.13374268692284, 30.12322254207539],
+    13
+);
+
+
+// ------------------------------------------------------------------
+// Basemaps
+// ------------------------------------------------------------------
+
+var osm = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+        attribution:
+            "&copy; OpenStreetMap contributors"
+    }
+);
+
+
+var esri = L.tileLayer(
+    "https://server.arcgisonline.com/"
+    + "ArcGIS/rest/services/"
+    + "World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+        attribution:
+            "Tiles &copy; Esri"
+    }
+);
+
+
+osm.addTo(map);
+
+
+// ------------------------------------------------------------------
+// EUDI local pressure
+// ------------------------------------------------------------------
+
+var eudi = L.tileLayer(
+    "https://earthengine.googleapis.com/v1/projects/806538578935/maps/ae97e94c8bf464b93db6f4a8f8b59749-73d67d7b7554ae9279cd9ec996aa120d/tiles/{z}/{x}/{y}",
+    {
+        opacity: 0.82,
+        attribution: "Google Earth Engine"
+    }
+);
+
+
+eudi.addTo(map);
+
+
+// ------------------------------------------------------------------
+// Built-up
+// ------------------------------------------------------------------
+
+var builtup = L.tileLayer(
+    "https://earthengine.googleapis.com/v1/projects/806538578935/maps/86853b9c0a4297a81a518273f24e1f0c-d2c9cbeafb9735f4b19b7d4803d29c8a/tiles/{z}/{x}/{y}",
+    {
+        opacity: 0.0,
+        attribution: "Google Earth Engine"
+    }
+);
+
+
+// ------------------------------------------------------------------
+// New built-up
+// ------------------------------------------------------------------
+
+var newBuiltup = null;
+
+
+
+newBuiltup = L.tileLayer(
+    "https://earthengine.googleapis.com/v1/projects/806538578935/maps/df4f1f27026e06c5e6686c61ae7e945c-7315dbc8858ef759eee11ccc0a297591/tiles/{z}/{x}/{y}",
+    {
+        opacity: 0.0,
+        attribution: "Google Earth Engine"
+    }
+);
+
+
+
+// ------------------------------------------------------------------
+// AOI
+// ------------------------------------------------------------------
+
+var aoi = L.tileLayer(
+    "https://earthengine.googleapis.com/v1/projects/806538578935/maps/4bd8ed44e4b7bd204fb75095ee4e5ec7-fdcd42d790474355b969e728096f43ea/tiles/{z}/{x}/{y}",
+    {
+        opacity: 1.0,
+        attribution: "Google Earth Engine"
+    }
+);
+
+
+aoi.addTo(map);
+
+
+// ------------------------------------------------------------------
+// Layer control
+// ------------------------------------------------------------------
+
+var baseMaps = {
+
+    "OpenStreetMap":
+        osm,
+
+    "Esri World Imagery":
+        esri
+
+};
+
+
+var overlays = {
+
+    "EUDI Local Urban Pressure":
+        eudi,
+
+    "Satellite-derived Built-up Areas":
+        builtup,
+
+    "Approved AOI Boundary":
+        aoi
+
+};
+
+
+
+
+overlays["New Built-up Areas vs Baseline"] =
+    newBuiltup;
+
+
+
+L.control.layers(
+    baseMaps,
+    overlays
+).addTo(map);
+
+
+// ------------------------------------------------------------------
+// Legend
+// ------------------------------------------------------------------
+
+var legend = L.control({
+    position: "bottomright"
+});
+
+
+legend.onAdd = function(map) {
+
+    var div = L.DomUtil.create(
+        "div",
+        "legend"
+    );
+
+    div.innerHTML =
+        "<b>EUDI Local Urban Pressure</b>"
+        + "<br>"
+        + "<div class='gradient'></div>"
+        + "0"
+        + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        + "50"
+        + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        + "100"
+        + "<br><br>"
+        + "<b>Interpretation</b>"
+        + "<br>"
+        + "0–25 : Low"
+        + "<br>"
+        + "25–50 : Moderate"
+        + "<br>"
+        + "50–75 : High"
+        + "<br>"
+        + "75–100 : Very High";
+
+    return div;
+};
+
+
+legend.addTo(map);
+
+</script>
+
+</body>
+
+</html>

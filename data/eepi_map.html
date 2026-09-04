@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_950d38c00878bf9f61f5c1d3c4e11ede {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    
+            
+                <style>
+                    .leaflet-image-layer {
+                        /* old android/safari*/
+                        image-rendering: -webkit-optimize-contrast;
+                        image-rendering: crisp-edges; /* safari */
+                        image-rendering: pixelated; /* chrome */
+                        image-rendering: -moz-crisp-edges; /* firefox */
+                        image-rendering: -o-crisp-edges; /* opera */
+                        -ms-interpolation-mode: nearest-neighbor; /* ie */
+                    }
+                </style>
+            
+        
+</head>
+<body>
+    
+    
+
+        <div style="
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.25);
+            font-family: Arial, sans-serif;
+            min-width: 250px;
+        ">
+
+            <div style="
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 8px;
+            ">
+                ENVA — EEPI
+            </div>
+
+            <div>
+                <b>Environmental & Ecological Priority</b>
+            </div>
+
+            <div style="margin-top:8px;">
+                Score:
+                <b>
+                    50.15 / 100
+                </b>
+            </div>
+
+            <div style="margin-top:5px;">
+                Priority:
+                <span style="
+                    background:#f46d43;
+                    color:white;
+                    padding:3px 7px;
+                    border-radius:4px;
+                    font-weight:bold;
+                ">
+                    HIGH
+                </span>
+            </div>
+
+            <div style="
+                margin-top:8px;
+                font-size:11px;
+            ">
+                Six-indicator composite.
+                Relative prioritization only.
+            </div>
+
+        </div>
+
+        
+    
+            <div class="folium-map" id="map_950d38c00878bf9f61f5c1d3c4e11ede" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_950d38c00878bf9f61f5c1d3c4e11ede = L.map(
+                "map_950d38c00878bf9f61f5c1d3c4e11ede",
+                {
+                    center: [31.133742686925586, 30.123222542072433],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_65eb80adada0e04d55ecfd0d49f497e0 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "\u00a9 OpenStreetMap contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_65eb80adada0e04d55ecfd0d49f497e0.addTo(map_950d38c00878bf9f61f5c1d3c4e11ede);
+        
+    
+            var tile_layer_cf757856ad2ddd54c65c4098b59f1736 = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                {
+  "minZoom": 0,
+  "maxZoom": 18,
+  "maxNativeZoom": 18,
+  "noWrap": false,
+  "attribution": "Tiles \u00a9 Esri",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_cf757856ad2ddd54c65c4098b59f1736.addTo(map_950d38c00878bf9f61f5c1d3c4e11ede);
+        
+    
+            var image_overlay_84826554e459f98a43204a34c897e92a = L.imageOverlay(
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG8AAACMCAYAAAByFfdMAAAA4ElEQVR42u3RQQ0AAAyEMPyb3nRc0gcGaFenzTIBnuAJHjzBEzzBgyd4ggdP8ARP8OAJnuAJHjzBEzx4gid4ggdP8ARP8OAJnuDBEzzBEzx4gid48EyAJ3iCB0/wBE/w4Ame4METPMETPHiCJ3iCB0/wBA+e4Ame4METPMETPHiCJ3jwBE/wBA+e4AkePMETPMGDJ3iCJ3jwBE/w4Ame4AkePMETPMGDJ3iCB0/wBE/w4Ame4AkePMETPHiCJ3iCB0/wBA+e4Ame4METPMETPHiCJ3jwBE/wBA+e4Ame4K33XcX1oTedIaUAAAAASUVORK5CYII=",
+                [[31.11503632757628, 30.10901304089083], [31.1527655695093, 30.13892693985201]],
+                {
+  "opacity": 0.78,
+}
+            );
+        
+    
+            image_overlay_84826554e459f98a43204a34c897e92a.addTo(map_950d38c00878bf9f61f5c1d3c4e11ede);
+        
+    
+        function geo_json_6b3d1d3a92e7de47c989a069ec0767c3_styler(feature) {
+            switch(feature.properties.study_area) {
+                default:
+                    return {"color": "#000000", "fill": false, "weight": 2};
+            }
+        }
+
+        function geo_json_6b3d1d3a92e7de47c989a069ec0767c3_onEachFeature(feature, layer) {
+
+            layer.on({
+            });
+        };
+        var geo_json_6b3d1d3a92e7de47c989a069ec0767c3 = L.geoJson(null, {
+                onEachFeature: geo_json_6b3d1d3a92e7de47c989a069ec0767c3_onEachFeature,
+            
+                style: geo_json_6b3d1d3a92e7de47c989a069ec0767c3_styler,
+            ...{
+}
+        });
+
+        function geo_json_6b3d1d3a92e7de47c989a069ec0767c3_add (data) {
+            geo_json_6b3d1d3a92e7de47c989a069ec0767c3
+                .addData(data);
+        }
+            geo_json_6b3d1d3a92e7de47c989a069ec0767c3_add({"crs": {"properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}, "type": "name"}, "features": [{"geometry": {"coordinates": [[[30.1141235, 31.1513104], [30.1140469, 31.1512994], [30.1140051, 31.1512699], [30.1139876, 31.1512397], [30.1139746, 31.1512078], [30.1139645, 31.1511132], [30.1139691, 31.1497651], [30.1140189, 31.147114], [30.114112, 31.1463737], [30.1141386, 31.1452469], [30.1141686, 31.1438969], [30.1142723, 31.1439072], [30.1143205, 31.1405856], [30.1125155, 31.1408325], [30.1114204, 31.1374457], [30.1158825, 31.1362002], [30.1175979, 31.1357214], [30.1204201, 31.1349595], [30.1199346, 31.1339249], [30.1200882, 31.1338891], [30.119856, 31.133249], [30.1201695, 31.1331401], [30.1203479, 31.133045], [30.1200119, 31.1319825], [30.1198384, 31.1319844], [30.1198876, 31.1317672], [30.1199117, 31.1315055], [30.1197453, 31.1310571], [30.1201562, 31.1309278], [30.1199958, 31.1306302], [30.1198442, 31.1303291], [30.1196168, 31.1298928], [30.1182519, 31.1268395], [30.1186678, 31.1250858], [30.1182467, 31.125055], [30.1177504, 31.1250272], [30.1164813, 31.1249944], [30.1151669, 31.125017], [30.1139384, 31.1251106], [30.1137169, 31.12489], [30.11259, 31.1240855], [30.1117784, 31.1234383], [30.113394, 31.1218782], [30.1124954, 31.1213501], [30.1113528, 31.1206991], [30.1103765, 31.1201331], [30.1103081, 31.1198897], [30.1097153, 31.1186268], [30.1090702, 31.1171549], [30.1105797, 31.1151594], [30.1116532, 31.1158804], [30.1121977, 31.1162524], [30.1126698, 31.1165487], [30.1137212, 31.1172307], [30.1143649, 31.1176394], [30.1153386, 31.1182571], [30.1156765, 31.1184821], [30.1158589, 31.1185831], [30.1160869, 31.1186773], [30.1173288, 31.1192054], [30.1179591, 31.1194902], [30.1182139, 31.1196119], [30.1183319, 31.1196807], [30.1184204, 31.1197519], [30.1184767, 31.1198093], [30.118753, 31.1196647], [30.118973, 31.1196119], [30.1192278, 31.1195636], [30.1193592, 31.1195636], [30.119496, 31.1195453], [30.1196274, 31.1194902], [30.1201773, 31.1192513], [30.1207888, 31.118985], [30.1213789, 31.1187071], [30.1218268, 31.118493], [30.122999, 31.1179632], [30.1238304, 31.1175889], [30.1240504, 31.1175062], [30.1243293, 31.1174189], [30.1246834, 31.117334], [30.1256463, 31.1171021], [30.1252145, 31.1165234], [30.1250938, 31.1163489], [30.1253298, 31.1161606], [30.1255484, 31.1164143], [30.1256986, 31.1165555], [30.1258747, 31.116702], [30.1260811, 31.1168157], [30.1262382, 31.1168702], [30.126429, 31.1169249], [30.1267234, 31.1169889], [30.1274391, 31.1171536], [30.1310712, 31.1181212], [30.1310206, 31.1184385], [30.1310204, 31.1184759], [30.1310377, 31.1185319], [30.1310643, 31.1185828], [30.1310944, 31.1186296], [30.131132, 31.1186719], [30.1317736, 31.1197341], [30.132528, 31.1210185], [30.1318973, 31.1211003], [30.1304905, 31.121728], [30.1298655, 31.122015], [30.1309427, 31.1232809], [30.131379, 31.1238444], [30.1315097, 31.1241088], [30.131638, 31.1244213], [30.1322138, 31.125722], [30.1325288, 31.1264309], [30.1327662, 31.1269555], [30.1332182, 31.1280478], [30.1332504, 31.1281281], [30.1332986, 31.1282246], [30.1333684, 31.1283187], [30.1334408, 31.1283991], [30.1340416, 31.1289708], [30.1358628, 31.1304793], [30.1359315, 31.1305514], [30.1360016, 31.1306373], [30.1360579, 31.1307183], [30.136088, 31.1307835], [30.1362343, 31.1310968], [30.1362571, 31.1311313], [30.1362826, 31.131164], [30.1363188, 31.1311961], [30.136351, 31.1312214], [30.1363912, 31.1312472], [30.1365664, 31.131332], [30.1377781, 31.1319184], [30.1385853, 31.1323091], [30.1386255, 31.1323412], [30.1386563, 31.1323952], [30.1386738, 31.1324594], [30.1386738, 31.1325203], [30.1381646, 31.1348975], [30.1351359, 31.1347435], [30.1349954, 31.1347271], [30.1346156, 31.1347576], [30.1344771, 31.134758], [30.1342817, 31.1347496], [30.1341263, 31.1347428], [30.1336379, 31.1347027], [30.1328957, 31.1346769], [30.1318015, 31.1366403], [30.1317738, 31.1366976], [30.1317658, 31.1367481], [30.1317926, 31.1368101], [30.1317646, 31.1368751], [30.1309981, 31.1381436], [30.128174, 31.1429398], [30.1278062, 31.1436624], [30.1276551, 31.1439586], [30.1270748, 31.1452056], [30.1285278, 31.1460332], [30.1292534, 31.1464222], [30.1295046, 31.1465569], [30.1298087, 31.1467221], [30.1307001, 31.1472063], [30.1307728, 31.1472459], [30.1303566, 31.1475711], [30.1302467, 31.1476527], [30.130177, 31.1477171], [30.1300464, 31.147824], [30.1299695, 31.1479013], [30.129736, 31.1482073], [30.1292526, 31.1487846], [30.1291238, 31.1489449], [30.1265153, 31.1518705], [30.1258614, 31.1526795], [30.1238906, 31.1515564], [30.1238126, 31.151523], [30.1236818, 31.1514964], [30.121432, 31.1514296], [30.1151454, 31.1513269], [30.1141235, 31.1513104]]], "type": "Polygon"}, "properties": {"study_area": "Kafr El Dawwar City"}, "type": "Feature"}], "name": "kafr_el_dawwar_city_aoi", "type": "FeatureCollection"});
+
+        
+    
+            geo_json_6b3d1d3a92e7de47c989a069ec0767c3.addTo(map_950d38c00878bf9f61f5c1d3c4e11ede);
+        
+    
+            var layer_control_62fc8e4fb22dc47f6a2dc69ce9ea938d_layers = {
+                base_layers : {
+                    "OpenStreetMap" : tile_layer_65eb80adada0e04d55ecfd0d49f497e0,
+                    "Esri World Imagery" : tile_layer_cf757856ad2ddd54c65c4098b59f1736,
+                },
+                overlays :  {
+                    "EEPI Priority Score (0-100)" : image_overlay_84826554e459f98a43204a34c897e92a,
+                    "Approved AOI Boundary" : geo_json_6b3d1d3a92e7de47c989a069ec0767c3,
+                },
+            };
+            let layer_control_62fc8e4fb22dc47f6a2dc69ce9ea938d = L.control.layers(
+                layer_control_62fc8e4fb22dc47f6a2dc69ce9ea938d_layers.base_layers,
+                layer_control_62fc8e4fb22dc47f6a2dc69ce9ea938d_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": false,
+  "autoZIndex": true,
+}
+            ).addTo(map_950d38c00878bf9f61f5c1d3c4e11ede);
+
+        
+</script>
+</html>

@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>
+ENVA - Cell 15 ECSI - Kafr El Dawwar
+</title>
+
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
+.legend {
+    background: white;
+    padding: 10px 12px;
+    border-radius: 6px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.25);
+    line-height: 1.4;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+}
+
+.gradient {
+    width: 180px;
+    height: 14px;
+    margin: 5px 0;
+    background: linear-gradient(
+        to right,
+        #fff7bc,
+        #fee391,
+        #fec44f,
+        #fe9929,
+        #ec6633,
+        #c62828
+    );
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="map"></div>
+
+<script>
+
+var map = L.map("map").setView(
+    [31.13374268692284, 30.12322254207539],
+    13
+);
+
+
+// ------------------------------------------------------------------
+// Basemaps
+// ------------------------------------------------------------------
+
+var osm = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+        attribution:
+        '&copy; OpenStreetMap contributors'
+    }
+);
+
+var esri = L.tileLayer(
+    "https://server.arcgisonline.com/ArcGIS/rest/services/"
+    + "World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+        attribution:
+        "Tiles &copy; Esri"
+    }
+);
+
+osm.addTo(map);
+
+
+// ------------------------------------------------------------------
+// ECSI layer
+// ------------------------------------------------------------------
+
+var ecsiLayer = L.tileLayer(
+    "https://earthengine.googleapis.com/v1/projects/806538578935/maps/f2e83ae486c4b36f24d83fd1b2ea6382-3674fe08c1db5ef1b7ad29f2158a8e59/tiles/{z}/{x}/{y}",
+    {
+        opacity: 0.85,
+        attribution: "Google Earth Engine"
+    }
+);
+
+ecsiLayer.addTo(map);
+
+
+// ------------------------------------------------------------------
+// ECSI classes
+// ------------------------------------------------------------------
+
+var classLayer = L.tileLayer(
+    "https://earthengine.googleapis.com/v1/projects/806538578935/maps/25eb4be6a57d0e0c149ba95ef6b06e8a-8713d36bc7a1b402d887a12c4861c993/tiles/{z}/{x}/{y}",
+    {
+        opacity: 0.0,
+        attribution: "Google Earth Engine"
+    }
+);
+
+
+// ------------------------------------------------------------------
+// AOI boundary
+// ------------------------------------------------------------------
+
+var aoiLayer = L.tileLayer(
+    "https://earthengine.googleapis.com/v1/projects/806538578935/maps/4bd8ed44e4b7bd204fb75095ee4e5ec7-f5f8a86bd052f8a03dc75d8b0403dec6/tiles/{z}/{x}/{y}",
+    {
+        opacity: 1.0,
+        attribution: "Google Earth Engine"
+    }
+);
+
+aoiLayer.addTo(map);
+
+
+// ------------------------------------------------------------------
+// Layer control
+// ------------------------------------------------------------------
+
+var baseMaps = {
+    "OpenStreetMap": osm,
+    "Esri World Imagery": esri
+};
+
+var overlays = {
+    "ECSI Carbon Sequestration Potential (0-100)": ecsiLayer,
+    "ECSI Potential Classes": classLayer,
+    "Approved AOI Boundary": aoiLayer
+};
+
+L.control.layers(
+    baseMaps,
+    overlays
+).addTo(map);
+
+
+// ------------------------------------------------------------------
+// Legend
+// ------------------------------------------------------------------
+
+var legend = L.control({
+    position: "bottomright"
+});
+
+legend.onAdd = function(map) {
+
+    var div = L.DomUtil.create(
+        "div",
+        "legend"
+    );
+
+    div.innerHTML =
+        "<b>ECSI Carbon Sequestration Potential</b>"
+        + "<br>"
+        + "<div class='gradient'></div>"
+        + "0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        + "50 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        + "100"
+        + "<br><br>"
+        + "<b>Classes</b>"
+        + "<br>"
+        + "1 - Low"
+        + "<br>"
+        + "2 - Moderate"
+        + "<br>"
+        + "3 - High"
+        + "<br>"
+        + "4 - Very High";
+
+    return div;
+};
+
+legend.addTo(map);
+
+</script>
+
+</body>
+</html>
