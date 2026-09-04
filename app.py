@@ -1,4 +1,4 @@
-
+import json
 from datetime import datetime
 from pathlib import Path
 
@@ -29,9 +29,6 @@ st.set_page_config(
 # ======================================================
 
 DATA_PATH = Path("data")
-ASSETS_PATH = DATA_PATH / "assets"
-ENVA_LOGO_PATH = ASSETS_PATH / "enva_logo.png"
-ENVA_HOME_BANNER_PATH = ASSETS_PATH / "enva_home_banner.png"
 
 try:
     with open(
@@ -162,9 +159,9 @@ INDICATOR_INFO = {
 
 
 MAP_ROOT_CANDIDATES = [
-    # GitHub package layout: official HTML maps directly inside data/
+    # GitHub layout: official HTML indicator maps directly inside data/
     DATA_PATH,
-    # Cell 21 app-ready official HTML maps — fallback
+    # Cell 21 app-ready official HTML maps — highest priority
     DATA_PATH / "app_data" / "indicator_maps",
     Path("app_data") / "indicator_maps",
     # Standard packaged report maps
@@ -764,13 +761,18 @@ def build_indicators_pdf(indicators, info, latest_run):
 # ======================================================
 
 with st.sidebar:
-    if ENVA_LOGO_PATH.exists():
-        st.image(str(ENVA_LOGO_PATH), width=100)
-    else:
-        st.markdown(enva_logo_svg(100), unsafe_allow_html=True)
     st.markdown(
-        "<div style=\"text-align:center; font-size:22px; font-weight:800; letter-spacing:1px;\">ENVA</div>"
-        "<div style=\"text-align:center; font-size:12px; opacity:0.85; padding-bottom:10px;\">Environmental Intelligence Platform</div>",
+        f"""
+        <div style="text-align:center; padding-bottom:6px;">
+            {enva_logo_svg(100)}
+        </div>
+        <div style="text-align:center; font-size:22px; font-weight:800; letter-spacing:1px;">
+            ENVA
+        </div>
+        <div style="text-align:center; font-size:12px; opacity:0.85; padding-bottom:10px;">
+            Environmental Intelligence Platform
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
@@ -814,23 +816,23 @@ with st.sidebar:
 
 if page == "🏠 Home":
 
-    if ENVA_HOME_BANNER_PATH.exists():
-        st.image(str(ENVA_HOME_BANNER_PATH), use_container_width=True)
-    else:
-        st.markdown(enva_cover_banner_svg(), unsafe_allow_html=True)
+    st.markdown(enva_cover_banner_svg(), unsafe_allow_html=True)
 
-    logo_col, title_col = st.columns([0.8, 5])
-    with logo_col:
-        if ENVA_LOGO_PATH.exists():
-            st.image(str(ENVA_LOGO_PATH), width=72)
-        else:
-            st.markdown(enva_logo_svg(64), unsafe_allow_html=True)
-    with title_col:
-        st.markdown(
-            '<div style="font-size:30px; font-weight:800; color:#145A32;">ENVA</div>'
-            '<div style="font-size:14px; color:#555;">National Intelligent Platform for Environmental Monitoring, Satellite Image Analysis &amp; Decision Support</div>',
-            unsafe_allow_html=True
-        )
+    st.markdown(
+        f"""
+        <div class="platform-header">
+            {enva_logo_svg(64)}
+            <div>
+                <div style="font-size:30px; font-weight:800; color:#145A32;">ENVA</div>
+                <div style="font-size:14px; color:#555;">
+                    National Intelligent Platform for Environmental Monitoring,
+                    Satellite Image Analysis &amp; Decision Support
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.subheader(
         "المنظومة الوطنية الذكية للرصد البيئي وتحليل صور الأقمار الصناعية ودعم اتخاذ القرار"
