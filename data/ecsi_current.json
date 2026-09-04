@@ -1,0 +1,50 @@
+{
+  "indicator": "ECSI",
+  "name": "Environmental Carbon Sequestration Index",
+  "study_area": "Kafr El Dawwar City",
+  "study_area_ar": "مدينة كفر الدوار",
+  "period_start": "2026-05-28",
+  "period_end": "2026-08-26",
+  "score_mean": 44.972785360724636,
+  "score_median": 45.76298537618962,
+  "min": 0,
+  "max": 100,
+  "vegetated_area_ha": 156.80456047851263,
+  "vegetation_percent_of_aoi": 26.50779082694028,
+  "mean_ndvi_vegetation": 0.5089644989003956,
+  "potential_classes": {
+    "low": {
+      "area_m2": 398512.05662761,
+      "area_km2": 0.39851205662761,
+      "percent_of_vegetation": 25.41457055914004
+    },
+    "moderate": {
+      "area_m2": 466180.0753393436,
+      "area_km2": 0.4661800753393436,
+      "percent_of_vegetation": 29.730007463859803
+    },
+    "high": {
+      "area_m2": 480951.69082877954,
+      "area_km2": 0.48095169082877953,
+      "percent_of_vegetation": 30.672047379303468
+    },
+    "very_high": {
+      "area_m2": 222401.78198939306,
+      "area_km2": 0.22240178198939306,
+      "percent_of_vegetation": 14.183374597696693
+    }
+  },
+  "estimated_tons_co2_LOW_CONFIDENCE": 399.0397727462148,
+  "quality": {
+    "accepted_scenes": 50,
+    "rejected_scenes": 3,
+    "composite_coverage_percent": 99.53082746256743,
+    "composite_status": "QUALITY_VALIDATED"
+  },
+  "raster_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/ECSI.tif",
+  "metadata_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/metadata/cell_15_ecsi_metadata.json",
+  "evidence_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/evidence/cell_15_ecsi_evidence.json",
+  "run_id": "ENVA_CELL_15_ECSI_20260904_083815",
+  "confidence": "PROTOTYPE — relative carbon sequestration potential only. Carbon-ton estimate is LOW_CONFIDENCE.",
+  "validation_status": "REVIEW_REQUIRED"
+}

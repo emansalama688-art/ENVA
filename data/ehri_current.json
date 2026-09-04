@@ -1,0 +1,35 @@
+{
+  "indicator": "EHRI",
+  "score_mean": 57.50684238062824,
+  "score_median": 60.75449302881882,
+  "min": 0.49932528723613534,
+  "max": 93.01117666008558,
+  "risk_classes": {
+    "low": {
+      "area_m2": 683143.8185791016,
+      "area_km2": 0.6831438185791016,
+      "percent_of_aoi": 11.548537486633588
+    },
+    "moderate": {
+      "area_m2": 739993.7901376763,
+      "area_km2": 0.7399937901376763,
+      "percent_of_aoi": 12.509585526303777
+    },
+    "high": {
+      "area_m2": 3343507.683418544,
+      "area_km2": 3.343507683418544,
+      "percent_of_aoi": 56.521954482613104
+    },
+    "critical": {
+      "area_m2": 1143022.380874455,
+      "area_km2": 1.143022380874455,
+      "percent_of_aoi": 19.322778680842816
+    }
+  },
+  "raster_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/EHRI.tif",
+  "metadata_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/metadata/cell_11_ehri_metadata.json",
+  "evidence_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/evidence/cell_11_ehri_evidence.json",
+  "run_id": "ENVA_CELL_11_EHRI_20260904_081941",
+  "confidence": "PROTOTYPE — satellite-derived relative heat-risk indicator.",
+  "validation_status": "VALIDATED"
+}

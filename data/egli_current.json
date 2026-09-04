@@ -1,0 +1,31 @@
+{
+  "indicator": "EGLI",
+  "mean_ndvi_change": 0.036887959307126225,
+  "median_ndvi_change": 0.019575607295807665,
+  "change_classes": {
+    "improvement": {
+      "area_m2": 232841.0788894354,
+      "area_km2": 0.2328410788894354,
+      "percent_of_vegetation": 14.827868435818964,
+      "percent_of_aoi": 3.936175450691548
+    },
+    "stable": {
+      "area_m2": 904525.4614780203,
+      "area_km2": 0.9045254614780203,
+      "percent_of_vegetation": 57.6023122879159,
+      "percent_of_aoi": 15.29099131895824
+    },
+    "loss": {
+      "area_m2": 432927.1258952721,
+      "area_km2": 0.4329271258952721,
+      "percent_of_vegetation": 27.569819276265147,
+      "percent_of_aoi": 7.318627507719978
+    }
+  },
+  "raster_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/EGLI.tif",
+  "metadata_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/metadata/cell_12_egli_metadata.json",
+  "evidence_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/evidence/cell_12_egli_evidence.json",
+  "run_id": "ENVA_CELL_12_EGLI_20260904_082748",
+  "confidence": "PROTOTYPE",
+  "validation_status": "VALIDATED"
+}

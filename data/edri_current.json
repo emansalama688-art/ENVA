@@ -1,0 +1,25 @@
+{
+  "indicator": "EDRI",
+  "score_mean": 57.304659488487744,
+  "score_median": 58.86480649933562,
+  "min": 29.837991941512666,
+  "max": 73.25233369007348,
+  "risk_classes": {
+    "moderate": {
+      "area_m2": 1081009.7344307695,
+      "area_km2": 1.0810097344307694,
+      "percent_of_aoi": 18.274455688489113
+    },
+    "high": {
+      "area_m2": 4828657.938579005,
+      "area_km2": 4.828657938579005,
+      "percent_of_aoi": 81.62840048789994
+    }
+  },
+  "raster_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/EDRI.tif",
+  "metadata_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/metadata/cell_13_edri_metadata.json",
+  "evidence_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/evidence/cell_13_edri_evidence.json",
+  "run_id": "ENVA_CELL_13_EDRI_20260904_083049",
+  "confidence": "PROTOTYPE — satellite-derived relative drought/stress proxy.",
+  "validation_status": "VALIDATED"
+}

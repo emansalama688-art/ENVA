@@ -1,0 +1,55 @@
+{
+  "indicator": "ETHI",
+  "name": "Environmental Tree / Vegetation Health Index",
+  "location": "Kafr El Dawwar City",
+  "location_ar": "مدينة كفر الدوار",
+  "scope": "CITY_ONLY",
+  "score_mean": 63.776453554876234,
+  "score_median": 64.76869009228975,
+  "min": 18.690540821521587,
+  "max": 98.23814865055832,
+  "stddev": 17.443516043984612,
+  "health_classes": {
+    "stressed": {
+      "area_m2": 173975.62593715894,
+      "area_km2": 0.17397562593715893,
+      "percent_of_vegetation": 11.095061610851511,
+      "percent_of_aoi": 2.9410557239246695
+    },
+    "moderate": {
+      "area_m2": 620788.6136759445,
+      "area_km2": 0.6207886136759445,
+      "percent_of_vegetation": 39.58995910460225,
+      "percent_of_aoi": 10.494423547919164
+    },
+    "healthy": {
+      "area_m2": 570383.1650644639,
+      "area_km2": 0.5703831650644638,
+      "percent_of_vegetation": 36.37541939621234,
+      "percent_of_aoi": 9.64232008597023
+    },
+    "very_healthy": {
+      "area_m2": 202898.20010755953,
+      "area_km2": 0.20289820010755955,
+      "percent_of_vegetation": 12.93955988833394,
+      "percent_of_aoi": 3.4299914691262283
+    }
+  },
+  "monitoring_priority_percent": 50.68502071545377,
+  "current_period": {
+    "start": "2026-05-28",
+    "end": "2026-08-26"
+  },
+  "baseline_period": {
+    "start": "2025-05-28",
+    "end": "2025-08-26"
+  },
+  "accepted_current_scenes": 50,
+  "vegetation_threshold": 0.2,
+  "raster_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/ETHI.tif",
+  "metadata_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/metadata/cell_14_ethi_metadata.json",
+  "evidence_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/evidence/cell_14_ethi_evidence.json",
+  "run_id": "ENVA_CELL_14_ETHI_20260904_083316",
+  "confidence": "PROTOTYPE",
+  "validation_status": "REVIEW_REQUIRED"
+}

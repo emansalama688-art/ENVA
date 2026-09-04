@@ -1,0 +1,60 @@
+{
+  "indicator": "EUDI",
+  "name": "Environmental Urban Development Index",
+  "name_ar": "مؤشر التطور العمراني البيئي",
+  "study_area": "Kafr El Dawwar City",
+  "study_area_ar": "مدينة كفر الدوار",
+  "period_start": "2026-05-28",
+  "period_end": "2026-08-26",
+  "baseline_start": "2025-05-28",
+  "baseline_end": "2025-08-26",
+  "eudi_summary_score": 39.41776309194701,
+  "components": {
+    "builtup_coverage": 36.96986593434552,
+    "urban_expansion": 45.12952312635048,
+    "global_density": 36.96986593434552
+  },
+  "builtup_percent": 36.96986593434552,
+  "urban_density": 0.3696986593434552,
+  "urban_expansion_percent": 17.69428468952571,
+  "new_builtup_area_km2": 0.5194695385388542,
+  "spatial_pressure_classes": {
+    "low_pressure": {
+      "area_m2": 1922691.3004025633,
+      "area_km2": 1.9226913004025632,
+      "percent_of_aoi": 32.50307176035921
+    },
+    "moderate_pressure": {
+      "area_m2": 1894743.1228766053,
+      "area_km2": 1.8947431228766052,
+      "percent_of_aoi": 32.03060817792802
+    },
+    "high_pressure": {
+      "area_m2": 1819018.9412360399,
+      "area_km2": 1.8190189412360398,
+      "percent_of_aoi": 30.75049185902522
+    },
+    "very_high_pressure": {
+      "area_m2": 273496.72278633865,
+      "area_km2": 0.27349672278633863,
+      "percent_of_aoi": 4.623458589054936
+    }
+  },
+  "high_pressure_percent": 35.37106569363529,
+  "very_high_pressure_percent": 4.620573834610067,
+  "quality": {
+    "screened_scenes": 53,
+    "accepted_scenes": 50,
+    "rejected_scenes": 3,
+    "baseline_accepted_scenes": 49,
+    "composite_status": "QUALITY_VALIDATED",
+    "composite_coverage_percent": 99.53082746256327
+  },
+  "raster_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/EUDI.tif",
+  "builtup_mask_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/builtup_mask.tif",
+  "metadata_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/metadata/cell_16_eudi_metadata.json",
+  "evidence_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/evidence/cell_16_eudi_evidence.json",
+  "run_id": "ENVA_CELL_16_EUDI_20260904_084127",
+  "confidence": "PROTOTYPE — satellite-derived relative urban development pressure. Not an official cadastral land-use statistic.",
+  "validation_status": "REVIEW_REQUIRED"
+}
