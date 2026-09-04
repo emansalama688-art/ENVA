@@ -161,10 +161,10 @@ INDICATOR_INFO = {
 MAP_ROOT_CANDIDATES = [
     # GitHub layout: official HTML indicator maps directly inside data/
     DATA_PATH,
-    # Cell 21 app-ready official HTML maps — highest priority
+
+    # Existing/local project structures — preserved for compatibility
     DATA_PATH / "app_data" / "indicator_maps",
     Path("app_data") / "indicator_maps",
-    # Standard packaged report maps
     DATA_PATH / "maps" / "report_maps",
     DATA_PATH / "report_maps",
     DATA_PATH / "maps",
@@ -220,14 +220,28 @@ def load_indicator_app_data(name):
 def find_map_file(name):
     candidates = []
 
-    # Prefer the Cell 21 original HTML map so the platform displays the
-    # authoritative interactive map rather than a re-rendered PNG fallback.
+    # Preserve the original official HTML maps exactly as packaged.
+    # Support both existing filename conventions:
+    #   EHRI_map.html / ehri_map.html
+    # The GitHub data/ layout uses lowercase filenames.
+    filename_variants = [
+        f"{name.lower()}_map.html",
+        f"{name}_map.html",
+    ]
+
+    # Prefer the original official HTML map.
     for root in MAP_ROOT_CANDIDATES:
-        candidates.append(root / f"{name}_map.html")
+        for filename in filename_variants:
+            candidates.append(root / filename)
 
     # PNG remains a fallback only when the official HTML asset is unavailable.
+    png_variants = [
+        f"{name.lower()}_map.png",
+        f"{name}_map.png",
+    ]
     for root in MAP_ROOT_CANDIDATES:
-        candidates.append(root / f"{name}_map.png")
+        for filename in png_variants:
+            candidates.append(root / filename)
 
     return first_existing(candidates)
 
