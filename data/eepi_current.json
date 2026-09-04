@@ -1,0 +1,60 @@
+{
+  "indicator": "EEPI",
+  "name": "Environmental & Ecological Priority Index",
+  "name_ar": "مؤشر الأولوية البيئية والإيكولوجية",
+  "study_area": "Kafr El Dawwar City",
+  "study_area_ar": "مدينة كفر الدوار",
+  "scope": "CITY_ONLY",
+  "eepi_summary_score": 50.14647209205519,
+  "eepi_priority_class": "high",
+  "input_indicators": {
+    "EHRI": {
+      "normalized_score": 57.50684238062824,
+      "weight": 0.2,
+      "weighted_contribution": 11.501368476125648,
+      "confidence": "PROTOTYPE — satellite-derived relative heat-risk indicator."
+    },
+    "EGLI": {
+      "normalized_score": 56.14799321785438,
+      "weight": 0.2,
+      "weighted_contribution": 11.229598643570876,
+      "confidence": "PROTOTYPE"
+    },
+    "EDRI": {
+      "normalized_score": 57.304659488487744,
+      "weight": 0.15,
+      "weighted_contribution": 8.595698923273162,
+      "confidence": "PROTOTYPE — satellite-derived relative drought/stress proxy."
+    },
+    "ETHI": {
+      "normalized_score": 36.223546445123766,
+      "weight": 0.15,
+      "weighted_contribution": 5.433531966768565,
+      "confidence": "PROTOTYPE"
+    },
+    "ECSI": {
+      "normalized_score": 55.027214639275364,
+      "weight": 0.1,
+      "weighted_contribution": 5.502721463927537,
+      "confidence": "PROTOTYPE — relative carbon sequestration potential only. Carbon-ton estimate is LOW_CONFIDENCE."
+    },
+    "EUDI": {
+      "normalized_score": 39.41776309194701,
+      "weight": 0.2,
+      "weighted_contribution": 7.883552618389402,
+      "confidence": "PROTOTYPE — satellite-derived relative urban development pressure. Not an official cadastral land-use statistic."
+    }
+  },
+  "aoi": {
+    "status": "APPROVED_FOR_ANALYSIS",
+    "area_km2": 5.91541413248024,
+    "sha256": "f3dea103309d0616971cd2c3028ac44030951477d44ebbe4070048c8f54ed49b"
+  },
+  "spatial_raster_available": true,
+  "raster_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/indicators/EEPI.tif",
+  "metadata_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/metadata/cell_17_eepi_metadata.json",
+  "evidence_file": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/evidence/cell_17_eepi_evidence.json",
+  "run_id": "ENVA_CELL_17_EEPI_20260904_084421",
+  "confidence": "PROTOTYPE — aggregate index pending formal weight validation and stakeholder approval.",
+  "validation_status": "REVIEW_REQUIRED"
+}
