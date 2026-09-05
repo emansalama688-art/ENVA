@@ -1,3 +1,4 @@
+import base64
 import json
 from datetime import datetime
 from pathlib import Path
@@ -220,23 +221,22 @@ def load_indicator_app_data(name):
 def find_map_file(name):
     candidates = []
 
-    # Preserve the original official HTML maps exactly as packaged.
-    # Support both existing filename conventions:
-    #   EHRI_map.html / ehri_map.html
-    # The GitHub data/ layout uses lowercase filenames.
-    filename_variants = [
+    # Official HTML maps are the authoritative display assets.
+    # Support both lowercase and uppercase filename conventions.
+    html_variants = [
         f"{name.lower()}_map.html",
+        f"{name.upper()}_map.html",
         f"{name}_map.html",
     ]
 
-    # Prefer the original official HTML map.
     for root in MAP_ROOT_CANDIDATES:
-        for filename in filename_variants:
+        for filename in html_variants:
             candidates.append(root / filename)
 
-    # PNG remains a fallback only when the official HTML asset is unavailable.
+    # PNG is only a fallback when the official HTML asset is unavailable.
     png_variants = [
         f"{name.lower()}_map.png",
+        f"{name.upper()}_map.png",
         f"{name}_map.png",
     ]
     for root in MAP_ROOT_CANDIDATES:
@@ -245,6 +245,27 @@ def find_map_file(name):
 
     return first_existing(candidates)
 
+
+def render_official_map_html(original_map_html, height=760, scrolling=False):
+    """
+    Display-only renderer for the ORIGINAL official ENVA HTML map.
+
+    Cell-21 display fix:
+    isolate each complete HTML document inside its own iframe.
+    The source HTML content is never modified.
+    """
+    encoded = base64.b64encode(
+        original_map_html.encode("utf-8")
+    ).decode("ascii")
+
+    scroll_value = "yes" if scrolling else "no"
+
+    return (
+        f'<iframe src="data:text/html;base64,{encoded}" '
+        f'style="width:100%; height:{int(height)}px; border:0;" '
+        f'frameborder="0" scrolling="{scroll_value}" '
+        f'allowfullscreen></iframe>'
+    )
 
 def load_indicator_metadata(name):
     cell_number = 11 + INDICATOR_ORDER.index(name)
@@ -1086,23 +1107,35 @@ elif page == "📡 Environmental Indicators":
 
     if selected["map_path"] is not None:
         map_path = selected["map_path"]
-        if map_path.suffix == ".html":
+        if map_path.suffix.lower() == ".html":
             from streamlit.components.v1 import html as st_html
             with open(map_path, encoding="utf-8") as f:
-                st_html(f.read(), height=560, scrolling=True)
+                original_map_html = f.read()
+
+            st_html(
+                render_official_map_html(
+                    original_map_html,
+                    height=760,
+                    scrolling=False
+                ),
+                height=780,
+                scrolling=False
+            )
         else:
-            st.image(str(map_path), use_container_width=True,
-                      caption=f"{selected_indicator} — {info['title']}")
-        st.caption(info["map_meaning"])
+            st.image(
+                str(map_path),
+                use_container_width=True,
+                caption=f"{selected_indicator} — {info['title']}"
+            )
+
+        st.markdown("##### 🎨 مفتاح ألوان المؤشر")
+        st.caption(
+            f"{info['map_meaning']} "
+            "يُعتمد تدرج الألوان الظاهر داخل الخريطة الأصلية لهذا المؤشر، "
+            "ولا يُفترض توحيد دلالة الألوان بين المؤشرات."
+        )
     else:
         st.warning("الخريطة الرسمية لهذا المؤشر غير موجودة في حزمة بيانات المنصة الحالية.")
-
-    st.markdown("##### 🎨 مفتاح الألوان")
-    st.caption(
-        "القيم المنخفضة (اللون الأخضر/الفاتح) تعني أولوية أقل، بينما القيم "
-        "المرتفعة (اللون الأحمر/الداكن) تعني أولوية أعلى للفحص أو التدخل — "
-        "وفق تدرج الخريطة الموضّح داخل ملف الخريطة نفسه."
-    )
 
     # -------------------------------------------------
     # 7. TOP PRIORITY AREAS (ranked class breakdown)
@@ -1576,14 +1609,19 @@ elif page == "🌍 Interactive Map":
                         original_map_html = map_file.read()
 
                     st_html(
-                        original_map_html,
-                        height=650,
+                        render_official_map_html(
+                            original_map_html,
+                            height=650,
+                            scrolling=False
+                        ),
+                        height=670,
                         scrolling=False
                     )
 
                     official_map_available = True
                     st.caption(
-                        "Official original interactive HTML map — Cell 11-17 source preserved."
+                        f"🎨 {meta['map_meaning']} "
+                        "— تدرج الألوان يُقرأ وفق الخريطة الأصلية لهذا المؤشر."
                     )
 
                 except Exception as map_error:
