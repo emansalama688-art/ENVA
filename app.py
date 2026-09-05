@@ -845,6 +845,186 @@ with st.sidebar:
         st.caption("📡 Indicators data not loaded yet")
 
 
+
+# ======================================================
+# INDICATOR-SPECIFIC CHARTS & INTERPRETATION
+# Each indicator has its own chart form and explanatory text.
+# Maps are intentionally NOT modified here.
+# ======================================================
+
+INDICATOR_CHART_TEXT = {
+    "EHRI": {
+        "title": "📊 توزيع فئات مخاطر الحرارة البيئية",
+        "note": (
+            "يوضح هذا الرسم كيف تتوزع مساحة منطقة الدراسة بين فئات مخاطر الحرارة النسبية. "
+            "هذه الفئات تعبر عن نمط مكاني نسبي داخل نموذج EHRI وليست درجات حرارة مئوية."
+        ),
+    },
+    "EGLI": {
+        "title": "📊 تركيب فئات تغير الغطاء الأخضر",
+        "note": (
+            "يوضح الرسم حصة المساحة في كل فئة من فئات تغير الغطاء النباتي بين الفترتين المستخدمتين "
+            "في التحليل. الدلالة هنا هي اتجاه التغير النباتي، وليس عدد الأشجار المفقودة مباشرة."
+        ),
+    },
+    "EDRI": {
+        "title": "📊 التوزيع المكاني لفئات ضغط الجفاف",
+        "note": (
+            "يبين الرسم مقدار المساحة الواقعة ضمن كل فئة من فئات الضغط المرتبط بالجفاف. "
+            "اتساع الفئات الأعلى أولوية يحدد نطاقًا مكانيًا أكبر للمتابعة المائية والزراعية."
+        ),
+    },
+    "ETHI": {
+        "title": "📊 ملف صحة الغطاء النباتي",
+        "note": (
+            "يقارن الرسم الحصص المكانية لفئات حالة الغطاء النباتي. في ETHI، انخفاض الفئة يعني "
+            "حالة نسبية أقل جودة وفق اتجاه المؤشر، ويستحق الفحص والمتابعة."
+        ),
+    },
+    "ECSI": {
+        "title": "📊 توزيع إمكانات احتجاز الكربون",
+        "note": (
+            "يعرض الرسم تركيب المساحة حسب فئات الإمكانات النسبية لاحتجاز الكربون. "
+            "النتيجة ليست مخزونًا كربونيًا مقاسًا ولا كمية CO₂ مطلقة."
+        ),
+    },
+    "EUDI": {
+        "title": "📊 فئات ضغط التنمية الحضرية",
+        "note": (
+            "يوضح الرسم كيف تتوزع المنطقة على فئات الضغط العمراني المكاني. "
+            "الفئات الأعلى ضغطًا تمثل مناطق متابعة تخطيطية، وليست تصنيفًا قانونيًا لاستخدامات الأراضي."
+        ),
+    },
+    "EEPI": {
+        "title": "📊 مساهمة المؤشرات الستة في الأولوية البيئية",
+        "note": (
+            "هذا الرسم مخصص لطبيعة EEPI المركبة: يعرض مساهمة كل مؤشر من المؤشرات الستة بعد "
+            "التطبيع والوزن في النتيجة المركبة، وليس توزيع مساحة فئات مكانية."
+        ),
+    },
+}
+
+
+def render_indicator_specific_chart(indicator_name, selected_data, class_df=None, sort_col=None):
+    """Render an indicator-specific analytical chart without touching maps."""
+    cfg = INDICATOR_CHART_TEXT[indicator_name]
+    st.markdown(f"### {cfg['title']}")
+
+    if indicator_name == "EEPI":
+        input_indicators = selected_data.get("input_indicators", {})
+        rows = []
+        if isinstance(input_indicators, dict):
+            for name, value in input_indicators.items():
+                if isinstance(value, dict):
+                    try:
+                        contribution = float(value.get("weighted_contribution", 0) or 0)
+                    except (TypeError, ValueError):
+                        contribution = 0.0
+                    rows.append({"Indicator": name, "Contribution": contribution})
+
+        if rows:
+            chart_df = pd.DataFrame(rows).sort_values("Contribution", ascending=False)
+            fig = px.bar(
+                chart_df,
+                x="Indicator",
+                y="Contribution",
+                title="EEPI — Weighted contribution of the six indicators",
+                labels={
+                    "Indicator": "Indicator",
+                    "Contribution": "Weighted contribution",
+                },
+            )
+            fig.update_layout(showlegend=False)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("لا تتوفر بيانات كافية لرسم مساهمات EEPI.")
+        st.caption(cfg["note"])
+        return
+
+    if class_df is None or sort_col is None or class_df.empty:
+        st.info("لا تتوفر فئات مكانية كافية لإنشاء الرسم الخاص بهذا المؤشر.")
+        st.caption(cfg["note"])
+        return
+
+    plot_df = class_df.copy()
+
+    if indicator_name == "EHRI":
+        plot_df = plot_df.sort_values(sort_col, ascending=True)
+        fig = px.bar(
+            plot_df,
+            y="Class",
+            x=sort_col,
+            orientation="h",
+            title="EHRI — Area share by heat-risk class",
+            labels={sort_col: "Area share (%)", "Class": "Heat-risk class"},
+        )
+
+    elif indicator_name == "EGLI":
+        fig = px.pie(
+            plot_df,
+            names="Class",
+            values=sort_col,
+            hole=0.42,
+            title="EGLI — Composition of vegetation-change classes",
+        )
+        fig.update_traces(textposition="inside", textinfo="percent+label")
+
+    elif indicator_name == "EDRI":
+        fig = px.bar(
+            plot_df,
+            x="Class",
+            y=sort_col,
+            title="EDRI — Area share by drought-pressure class",
+            labels={sort_col: "Area share (%)", "Class": "Drought-pressure class"},
+        )
+        fig.update_layout(showlegend=False)
+
+    elif indicator_name == "ETHI":
+        plot_df = plot_df.sort_values(sort_col, ascending=False)
+        fig = px.bar(
+            plot_df,
+            x=sort_col,
+            y="Class",
+            orientation="h",
+            title="ETHI — Vegetation-health class profile",
+            labels={sort_col: "Area share (%)", "Class": "Health class"},
+        )
+        fig.update_layout(showlegend=False)
+
+    elif indicator_name == "ECSI":
+        fig = px.pie(
+            plot_df,
+            names="Class",
+            values=sort_col,
+            hole=0.35,
+            title="ECSI — Area share by sequestration-potential class",
+        )
+        fig.update_traces(textposition="inside", textinfo="percent+label")
+
+    elif indicator_name == "EUDI":
+        fig = px.bar(
+            plot_df,
+            x="Class",
+            y=sort_col,
+            title="EUDI — Area share by urban-pressure class",
+            labels={sort_col: "Area share (%)", "Class": "Urban-pressure class"},
+        )
+        fig.update_layout(showlegend=False)
+
+    else:
+        fig = px.bar(
+            plot_df,
+            x="Class",
+            y=sort_col,
+            title=f"{indicator_name} — Area share by spatial class",
+            labels={sort_col: "Area share (%)", "Class": "Spatial class"},
+        )
+        fig.update_layout(showlegend=False)
+
+    st.plotly_chart(fig, use_container_width=True)
+    st.caption(cfg["note"])
+
+
 # ======================================================
 # HOME
 # ======================================================
@@ -1167,22 +1347,33 @@ elif page == "📡 Environmental Indicators":
 
             st.dataframe(class_df, use_container_width=True, hide_index=True)
 
-            if sort_col:
-                fig = px.bar(class_df, x="Class", y=sort_col, color="Class",
-                              title=f"{selected_indicator} — توزيع الفئات المكانية")
-                st.plotly_chart(fig, use_container_width=True)
+            render_indicator_specific_chart(
+                selected_indicator,
+                selected_data,
+                class_df=class_df,
+                sort_col=sort_col,
+            )
 
     if selected_indicator == "EEPI" and "input_indicators" in selected_data:
-        st.markdown("### 🧩 مساهمة المؤشرات الستة في EEPI")
+        st.markdown("### 🧩 مكونات EEPI")
         contrib_rows = [
-            {"Indicator": name, "Normalized Score": round(v.get("normalized_score", 0), 2),
-             "Weight": v.get("weight"), "Contribution": round(v.get("weighted_contribution", 0), 2)}
+            {
+                "Indicator": name,
+                "Normalized Score": round(v.get("normalized_score", 0), 2),
+                "Weight": v.get("weight"),
+                "Contribution": round(v.get("weighted_contribution", 0), 2),
+            }
             for name, v in selected_data["input_indicators"].items()
+            if isinstance(v, dict)
         ]
-        st.dataframe(pd.DataFrame(contrib_rows), use_container_width=True, hide_index=True)
+        if contrib_rows:
+            st.dataframe(
+                pd.DataFrame(contrib_rows),
+                use_container_width=True,
+                hide_index=True
+            )
         st.caption(
-            "EEPI مؤشر ترتيب/أولوية مركب، وليس قياسًا بيئيًا خامًا — "
-            "راجعي المكونات الستة أعلاه قبل تحديد نوع التدخل."
+            "هذه المكونات تشرح تركيب EEPI المركب. لا تُقرأ كفئات مكانية أو كمؤشرات منفصلة للحكم التنفيذي."
         )
 
     # -------------------------------------------------
