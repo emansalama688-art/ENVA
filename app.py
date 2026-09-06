@@ -349,11 +349,7 @@ def find_map_file(name):
 
 
 def render_official_map_html(original_map_html, height=760, scrolling=False):
-    """
-    The indicator map file is already a complete Leaflet HTML document.
-    Return it unchanged so Streamlit components.html can initialize its
-    original colored overlays, city boundary, legend and JavaScript.
-    """
+    """Return the complete official HTML map unchanged for components.html()."""
     return original_map_html
 
 def load_indicator_metadata(name):
@@ -487,121 +483,6 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# ======================================================
-# REAL HOME ASSETS — GITHUB IMAGE FILES
-# ======================================================
-
-REAL_ASSET_ROOTS = [
-    Path("assets"),
-    Path("static"),
-    DATA_PATH,
-    Path("."),
-]
-
-REAL_LOGO_NAMES = ["enva_logo.png", "enva_logo.jpg", "enva_logo.jpeg", "enva_logo.webp"]
-REAL_COVER_NAMES = [
-    "enva_home_banner.png", "enva_home_banner.jpg",
-    "enva_home_banner.jpeg", "enva_home_banner.webp"
-]
-
-def find_real_asset(names):
-    for root in REAL_ASSET_ROOTS:
-        for name in names:
-            candidate = root / name
-            if candidate.exists() and candidate.is_file():
-                return candidate
-    return None
-
-REAL_LOGO_PATH = find_real_asset(REAL_LOGO_NAMES)
-REAL_COVER_PATH = find_real_asset(REAL_COVER_NAMES)
-
-def real_logo_html(size=100):
-    if REAL_LOGO_PATH is None:
-        return enva_logo_svg(size)
-    mime = {
-        ".png": "image/png",
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".webp": "image/webp",
-    }.get(REAL_LOGO_PATH.suffix.lower(), "image/png")
-    encoded = base64.b64encode(REAL_LOGO_PATH.read_bytes()).decode("ascii")
-    return (
-        f'<img src="data:{mime};base64,{encoded}" width="{int(size)}" height="{int(size)}" '
-        f'style="display:block;margin:0 auto;object-fit:contain;" alt="ENVA logo">'
-    )
-
-def real_cover_html():
-    if REAL_COVER_PATH is None:
-        return enva_cover_banner_svg()
-    mime = {
-        ".png": "image/png",
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".webp": "image/webp",
-    }.get(REAL_COVER_PATH.suffix.lower(), "image/png")
-    encoded = base64.b64encode(REAL_COVER_PATH.read_bytes()).decode("ascii")
-    return (
-        f'<img src="data:{mime};base64,{encoded}" width="100%" '
-        f'style="display:block;width:100%;height:230px;object-fit:cover;" alt="ENVA Home Banner">'
-    )
-
-# Current planning context from the verified 100 Million Trees bundle.
-def current_100mt_value(obj, keys, default=None):
-    if not isinstance(obj, dict):
-        return default
-    for key in keys:
-        value = obj.get(key)
-        if value not in (None, ""):
-            return value
-    return default
-
-CURRENT_100MT = load_100mt_bundle()
-CURRENT_100MT_DASH = CURRENT_100MT.get("dashboard", {})
-CURRENT_100MT_BOUNDARY = CURRENT_100MT.get("boundary", {})
-CURRENT_100MT_WATER = CURRENT_100MT.get("water", {})
-CURRENT_100MT_PRIORITY = CURRENT_100MT.get("priority", {})
-
-CURRENT_AREA_KM2 = float(current_100mt_value(CURRENT_100MT_BOUNDARY, ["area_km2"], 5.9154))
-CURRENT_VEG_AREA_KM2 = 1.5718
-CURRENT_VEG_PCT = 26.57
-CURRENT_NDVI_MEAN = 0.1906
-CURRENT_NDVI_MIN = -0.2860
-CURRENT_NDVI_MAX = 0.8904
-CURRENT_TREES = int(float(current_100mt_value(
-    CURRENT_100MT_DASH,
-    ["proposed_trees_total", "proposed_tree_count", "tree_count", "total_trees"],
-    23000
-)))
-CURRENT_DAILY_WATER = float(current_100mt_value(
-    CURRENT_100MT_WATER,
-    ["city_daily_water_liters", "daily_water_liters", "city_daily_liters"],
-    345000
-))
-CURRENT_MONTHLY_WATER = float(current_100mt_value(
-    CURRENT_100MT_WATER,
-    ["city_monthly_water_liters", "monthly_water_liters", "city_monthly_liters"],
-    10350000
-))
-CURRENT_HIGH_PRIORITY_STREETS = int(float(current_100mt_value(
-    CURRENT_100MT_PRIORITY,
-    ["high_priority_streets", "high_priority_count"],
-    current_100mt_value(CURRENT_100MT_DASH, ["high_priority_streets", "high_priority_count"], 1710)
-)))
-CURRENT_ELIGIBLE_KM = 179.963
-CURRENT_EXCLUDED_KM = 82.654
-CURRENT_OSM_SEGMENTS = 6454
-CURRENT_OSM_LENGTH_KM = 262.61
-CURRENT_COST_EGP = 11500000
-
-def build_current_afforestation_compatibility():
-    return pd.DataFrame([{
-        "Recommended Area (km²)": CURRENT_VEG_AREA_KM2,
-        "Estimated Trees": CURRENT_TREES,
-        "Annual Carbon (ton CO₂)": "N/A — requires validated biomass model",
-        "Recommended Tree": "Pending local horticultural validation",
-        "Estimated Cost (EGP)": CURRENT_COST_EGP,
-    }])
 
 # ======================================================
 # PLATFORM LOGO — MERGED BRAIN + TREE + SATELLITE MARK
@@ -793,6 +674,106 @@ def enva_cover_banner_svg():
       </text>
     </svg>
     """
+
+
+# ======================================================
+# REAL ENVA IMAGE ASSETS — HOME / SIDEBAR
+# ======================================================
+ENVA_ASSET_DIRS = [
+    Path("enva_assets"),
+    DATA_PATH / "enva_assets",
+    Path("assets"),
+    DATA_PATH / "assets",
+    DATA_PATH,
+]
+
+
+def find_enva_asset(filename):
+    for root in ENVA_ASSET_DIRS:
+        candidate = root / filename
+        if candidate.exists() and candidate.is_file():
+            return candidate
+    return None
+
+
+def image_data_uri(path):
+    if path is None or not Path(path).exists():
+        return None
+    suffix = Path(path).suffix.lower()
+    mime = {
+        ".png": "image/png",
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".webp": "image/webp",
+        ".gif": "image/gif",
+        ".svg": "image/svg+xml",
+    }.get(suffix)
+    if not mime:
+        return None
+    return f"data:{mime};base64,{base64.b64encode(Path(path).read_bytes()).decode('ascii')}"
+
+
+ENVA_LOGO_PATH = find_enva_asset("enva_logo.png")
+ENVA_HOME_BANNER_PATH = find_enva_asset("enva_home_banner.png")
+
+
+def render_real_logo(size=110):
+    uri = image_data_uri(ENVA_LOGO_PATH)
+    if uri:
+        return (
+            f'<img src="{uri}" width="{int(size)}" height="{int(size)}" '
+            f'style="display:block;margin:0 auto;object-fit:contain;" alt="ENVA logo">'
+        )
+    return enva_logo_svg(size)
+
+
+def render_real_home_banner(height=230):
+    uri = image_data_uri(ENVA_HOME_BANNER_PATH)
+    if uri:
+        return (
+            f'<img src="{uri}" style="display:block;width:100%;height:{int(height)}px;'
+            f'object-fit:cover;" alt="ENVA Home Banner">'
+        )
+    return enva_cover_banner_svg()
+
+
+# ======================================================
+# CURRENT 100MT CONTEXT — shared by updated legacy pages
+# ======================================================
+def current_100mt_context():
+    bundle = load_100mt_bundle()
+    boundary = bundle.get("boundary", {}) or {}
+    dashboard = bundle.get("dashboard", {}) or {}
+    priority = bundle.get("priority", {}) or {}
+    water = bundle.get("water", {}) or {}
+
+    def val(obj, keys, default=None):
+        return get_first_value(obj, keys, default)
+
+    return {
+        "study_area": val(boundary, ["study_area", "study_area_en"], "Kafr El Dawwar City"),
+        "area_km2": float(val(boundary, ["area_km2"], 5.9154) or 5.9154),
+        "ndvi_mean": 0.1906,
+        "ndvi_min": -0.2860,
+        "ndvi_max": 0.8904,
+        "vegetation_area_km2": 1.5718,
+        "vegetation_percent": 26.57,
+        "sentinel_start": "2026-05-28",
+        "sentinel_end": "2026-08-26",
+        "sentinel_images": 46,
+        "osm_segments": 6454,
+        "osm_length_km": 262.61,
+        "eligible_length_km": 179.963,
+        "excluded_length_km": 82.654,
+        "proposed_trees": int(val(dashboard, ["proposed_trees_total", "proposed_tree_count", "tree_count", "total_trees"], 23000) or 23000),
+        "high_priority_streets": int(val(priority, ["high_priority_streets", "high_priority_count"], val(dashboard, ["high_priority_streets", "high_priority_count"], 1710)) or 1710),
+        "daily_water_liters": int(val(water, ["city_daily_water_liters", "city_daily_liters"], val(dashboard, ["city_daily_water_liters"], 345000)) or 345000),
+        "monthly_water_liters": int(val(water, ["city_monthly_water_liters", "city_monthly_liters"], val(dashboard, ["city_monthly_water_liters"], 10350000)) or 10350000),
+        "prototype_cost_egp": 11500000,
+    }
+
+
+CURRENT_100MT = current_100mt_context()
 
 
 # ======================================================
@@ -1003,7 +984,7 @@ with st.sidebar:
     st.markdown(
         f"""
         <div style="text-align:center; padding-bottom:6px;">
-            {real_logo_html(100)}
+            {render_real_logo(100)}
         </div>
         <div style="text-align:center; font-size:22px; font-weight:800; letter-spacing:1px;">
             ENVA
@@ -1236,12 +1217,12 @@ def render_indicator_specific_chart(indicator_name, selected_data, class_df=None
 
 if page == "🏠 Home":
 
-    st.markdown(real_cover_html(), unsafe_allow_html=True)
+    st.markdown(render_real_home_banner(), unsafe_allow_html=True)
 
     st.markdown(
         f"""
         <div class="platform-header">
-            {real_logo_html(64)}
+            {render_real_logo(64)}
             <div>
                 <div style="font-size:30px; font-weight:800; color:#145A32;">ENVA</div>
                 <div style="font-size:14px; color:#555;">
@@ -1287,10 +1268,10 @@ with full evidence, methodology, and confidence tracking.
     st.markdown("---")
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("📍 Study Area", "Kafr El Dawwar City")
-    c2.metric("📅 Current Analysis", "2026-05-28 → 2026-08-26")
-    c3.metric("🌿 Vegetated Area", f"{CURRENT_VEG_PCT:.2f}%")
-    c4.metric("🌳 Proposed Trees", f"{CURRENT_TREES:,}")
+    c1.metric("📍 Study Area", CURRENT_100MT["study_area"])
+    c2.metric("📅 Current Analysis", f'{CURRENT_100MT["sentinel_start"]} → {CURRENT_100MT["sentinel_end"]}')
+    c3.metric("🧪 NDVI Mean", f'{CURRENT_100MT["ndvi_mean"]:.4f}')
+    c4.metric("🌳 Vegetated Area", f'{CURRENT_100MT["vegetation_percent"]:.2f}%')
 
     if INDICATORS_AVAILABLE:
         st.markdown("---")
@@ -1332,44 +1313,41 @@ This section presents the satellite image analysis results generated by ENVA.
 
     st.markdown("---")
 
-    st.write("### 🛰️ Current Satellite Evidence")
-    sc1, sc2, sc3, sc4 = st.columns(4)
-    sc1.metric("Sentinel-2 Images", "46")
-    sc2.metric("NDVI Mean", f"{CURRENT_NDVI_MEAN:.4f}")
-    sc3.metric("Vegetated Area", f"{CURRENT_VEG_AREA_KM2:.4f} km²")
-    sc4.metric("Vegetation Share", f"{CURRENT_VEG_PCT:.2f}%")
-    st.caption("الفترة الحالية: 2026-05-28 → 2026-08-26. الجدول القديم محفوظ كمرجع فقط.")
+    st.write("### Current Sentinel-2 Statistics")
+    current_satellite_df = pd.DataFrame([
+        {
+            "Metric": "Analysis Period",
+            "Value": f'{CURRENT_100MT["sentinel_start"]} → {CURRENT_100MT["sentinel_end"]}',
+        },
+        {"Metric": "Valid Images", "Value": CURRENT_100MT["sentinel_images"]},
+        {"Metric": "Mean NDVI", "Value": CURRENT_100MT["ndvi_mean"]},
+        {"Metric": "Vegetated Area (km²)", "Value": CURRENT_100MT["vegetation_area_km2"]},
+        {"Metric": "Vegetated Share (%)", "Value": CURRENT_100MT["vegetation_percent"]},
+    ])
+    st.dataframe(current_satellite_df, use_container_width=True, hide_index=True)
+
     st.markdown("---")
 
-    st.write("### Land Cover Statistics")
-    st.dataframe(SUMMARY, use_container_width=True)
-
-    st.markdown("---")
-
-    st.write("### Environmental Indicators")
+    st.write("### Current Environmental Context")
 
     col1, col2, col3 = st.columns(3)
 
-    vegetation = float(SUMMARY.loc[SUMMARY["Class_Name"] == "Vegetation", "Area_km2"].sum())
-    urban = float(SUMMARY.loc[SUMMARY["Class_Name"] == "Urban", "Area_km2"].sum())
-    bare = float(SUMMARY.loc[SUMMARY["Class_Name"] == "Bare Soil", "Area_km2"].sum())
-
-    col1.metric("🌳 Vegetation", f"{vegetation:.2f} km²")
-    col2.metric("🏙️ Urban", f"{urban:.2f} km²")
-    col3.metric("🟤 Bare Soil", f"{bare:.2f} km²")
+    col1.metric("🌳 Vegetation", f'{CURRENT_100MT["vegetation_area_km2"]:.4f} km²')
+    col2.metric("🧪 NDVI Mean", f'{CURRENT_100MT["ndvi_mean"]:.4f}')
+    col3.metric("📍 City AOI", f'{CURRENT_100MT["area_km2"]:.4f} km²')
 
     st.markdown("---")
 
-    if vegetation >= urban and vegetation >= bare:
+    if CURRENT_100MT["vegetation_percent"] > 0:
         st.success(
             """
 ### AI Summary
 
-✅ Vegetation is the dominant land cover.
+✅ Current vegetation extent is 1.5718 km², representing 26.57% of the city AOI.
 
 ### ملخص الذكاء الاصطناعي
 
-✅ الغطاء النباتي يمثل النسبة الأكبر.
+✅ المساحة النباتية الحالية المثبتة في الحزمة الحالية 1.5718 كم²، أي 26.57% من نطاق المدينة.
 """
         )
     else:
@@ -1507,11 +1485,7 @@ elif page == "📡 Environmental Indicators":
                 original_map_html = f.read()
 
             components.html(
-                render_official_map_html(
-                    original_map_html,
-                    height=760,
-                    scrolling=False
-                ),
+                render_official_map_html(original_map_html, height=760, scrolling=False),
                 height=780,
                 scrolling=False
             )
@@ -2013,12 +1987,8 @@ elif page == "🌍 Interactive Map":
                     with open(map_path, encoding="utf-8") as map_file:
                         original_map_html = map_file.read()
 
-                    st_html(
-                        render_official_map_html(
-                            original_map_html,
-                            height=650,
-                            scrolling=False
-                        ),
+                    components.html(
+                        render_official_map_html(original_map_html, height=650, scrolling=False),
                         height=670,
                         scrolling=False
                     )
@@ -2083,29 +2053,29 @@ This dashboard summarizes the environmental indicators extracted from satellite 
 
     c1, c2, c3, c4 = st.columns(4)
 
-    total_area = CURRENT_AREA_KM2
-    vegetation = CURRENT_VEG_AREA_KM2
-    urban = max(total_area - vegetation, 0.0)
-    bare = 0.0
+    total_area = CURRENT_100MT["area_km2"]
+    vegetation = CURRENT_100MT["vegetation_area_km2"]
+    urban = None
+    bare = None
 
     c1.metric(
         "📍 Study Area",
-        "Kafr El Dawwar City"
+        CURRENT_100MT["study_area"]
     )
 
     c2.metric(
-        "🛰️ Classes",
-        7
+        "🛰️ Valid Images",
+        CURRENT_100MT["sentinel_images"]
     )
 
     c3.metric(
         "🌳 Vegetation",
-        f"{CURRENT_VEG_AREA_KM2:.4f} km²"
+        f'{vegetation:.4f} km²'
     )
 
     c4.metric(
-        "📐 Total Area",
-        f"{CURRENT_AREA_KM2:.4f} km²"
+        "📐 City AOI",
+        f'{total_area:.4f} km²'
     )
 
     st.markdown("---")
@@ -2114,12 +2084,16 @@ This dashboard summarizes the environmental indicators extracted from satellite 
     # LAND COVER TABLE
     # ===========================
 
-    st.subheader("Land Cover Statistics")
+    st.subheader("Current Environmental Statistics")
 
-    st.dataframe(
-        SUMMARY,
-        use_container_width=True
-    )
+    current_dashboard_df = pd.DataFrame([
+        {"Metric": "Vegetated area (km²)", "Value": CURRENT_100MT["vegetation_area_km2"]},
+        {"Metric": "Vegetated share (%)", "Value": CURRENT_100MT["vegetation_percent"]},
+        {"Metric": "Road segments", "Value": CURRENT_100MT["osm_segments"]},
+        {"Metric": "Eligible planting length (km)", "Value": CURRENT_100MT["eligible_length_km"]},
+        {"Metric": "Proposed trees", "Value": CURRENT_100MT["proposed_trees"]},
+    ])
+    st.dataframe(current_dashboard_df, use_container_width=True, hide_index=True)
 
     st.markdown("---")
 
@@ -2127,13 +2101,13 @@ This dashboard summarizes the environmental indicators extracted from satellite 
     # SIMPLE BAR CHART
     # ===========================
 
-    st.subheader("Land Cover Distribution")
+    st.subheader("Current Planning Indicators")
 
-    chart_data = (
-        SUMMARY
-        .set_index("Class_Name")["Area_km2"]
-    )
-
+    chart_data = pd.Series({
+        "Vegetated area (km²)": CURRENT_100MT["vegetation_area_km2"],
+        "Eligible planting length (km)": CURRENT_100MT["eligible_length_km"],
+        "Excluded length (km)": CURRENT_100MT["excluded_length_km"],
+    })
     st.bar_chart(chart_data)
 
     st.markdown("---")
@@ -2144,7 +2118,7 @@ This dashboard summarizes the environmental indicators extracted from satellite 
 
     st.subheader("🤖 AI Insights")
 
-    if vegetation > bare:
+    if CURRENT_100MT["vegetation_percent"] > 0:
 
         st.success(
             """
@@ -2154,23 +2128,23 @@ Vegetation is the dominant land cover.
 """
         )
 
-    if bare > urban:
+    if False:
 
         st.info(
             """
-Bare soil is larger than urban expansion.
+Current planning evidence identifies 179.963 km of eligible planting length.
 
-الأراضي الجرداء ما زالت أكبر من التوسع العمراني.
+بيانات التخطيط الحالية تحدد 179.963 كم من أطوال الطرق المؤهلة للتشجير.
 """
         )
 
-    if urban < vegetation:
+    if CURRENT_100MT["eligible_length_km"] > 0:
 
         st.success(
             """
-Urban expansion is still limited.
+The current model identifies 23,000 proposed trees under the independent 100MT planning bundle.
 
-التوسع العمراني ما زال محدودًا مقارنة بالغطاء النباتي.
+النموذج الحالي يقترح 23,000 شجرة ضمن حزمة مبادرة 100 مليون شجرة.
 """
         )
 
@@ -2200,10 +2174,10 @@ and generates environmental insights.
     # Load Statistics
     # =====================================
 
-    vegetation = CURRENT_VEG_AREA_KM2
-    urban = max(CURRENT_AREA_KM2 - CURRENT_VEG_AREA_KM2, 0.0)
-    bare = 0.0
-    total = CURRENT_AREA_KM2
+    vegetation = CURRENT_100MT["vegetation_area_km2"]
+    urban = None
+    bare = None
+    total = CURRENT_100MT["area_km2"]
 
     # =====================================
     # Prevent ZeroDivisionError
@@ -2211,9 +2185,9 @@ and generates environmental insights.
 
     if total > 0:
 
-        vegetation_percent = vegetation / total * 100
-        urban_percent = urban / total * 100
-        bare_percent = bare / total * 100
+        vegetation_percent = CURRENT_100MT["vegetation_percent"]
+        urban_percent = None
+        bare_percent = None
 
     else:
 
@@ -2277,7 +2251,7 @@ Current observations are summarized for decision support; they do not by themsel
     else:
         risk = "🟢 Low"
 
-    confidence = None
+    confidence = REPORT.get("overall_accuracy")
 
     col1, col2, col3 = st.columns(3)
 
@@ -2293,7 +2267,7 @@ Current observations are summarized for decision support; they do not by themsel
 
     col3.metric(
         "Model / Data Confidence",
-        "N/A — indicator-specific confidence is shown on the Environmental Indicators page"
+        f"{confidence}%" if isinstance(confidence, (int, float)) else "N/A"
     )
 
     st.markdown("---")
@@ -2720,32 +2694,34 @@ and support sustainable environmental planning.
     try:
 
         AFF_REPORT = {
-            "Module": "Smart Afforestation",
-            "Study_Area": "Kafr El Dawwar City",
-            "Source": "Current verified 100 Million Trees planning bundle",
-            "Current_Evidence": {
-                "vegetated_area_km2": CURRENT_VEG_AREA_KM2,
-                "vegetated_share_percent": CURRENT_VEG_PCT,
-                "eligible_planting_length_km": CURRENT_ELIGIBLE_KM,
-                "proposed_trees": CURRENT_TREES,
-                "prototype_cost_egp": CURRENT_COST_EGP,
-                "daily_water_liters": CURRENT_DAILY_WATER
-            },
             "AI_Summary": {
-                "status": "CURRENT_EVIDENCE",
-                "note": "Displayed metrics are refreshed from the current city-only planning bundle."
+                "source": "100 Million Trees current planning bundle",
+                "study_area": CURRENT_100MT["study_area"],
+                "proposed_trees": CURRENT_100MT["proposed_trees"],
+                "eligible_planting_length_km": CURRENT_100MT["eligible_length_km"],
+                "high_priority_streets": CURRENT_100MT["high_priority_streets"],
+                "prototype_cost_egp": CURRENT_100MT["prototype_cost_egp"],
+                "validation_status": "PLANNING_PROTOTYPE — PENDING_LOCAL_VALIDATION",
             },
             "Carbon_Report": {
-                "Status": "NOT_QUANTIFIED_IN_CURRENT_BUNDLE",
-                "Reason": "A validated local biomass/carbon model is not supplied by the current bundle."
-            }
+                "Estimated Trees": CURRENT_100MT["proposed_trees"],
+                "Estimated Annual Carbon (ton CO₂)": "N/A — not modeled in the current 100MT bundle",
+            },
         }
-        AFF_SUMMARY = build_current_afforestation_compatibility()
+
+        AFF_SUMMARY = pd.DataFrame([{
+            "Estimated Trees": CURRENT_100MT["proposed_trees"],
+            "Recommended Tree": "Multiple species — PENDING_LOCAL_HORTICULTURE_VALIDATION",
+            "Estimated Cost (EGP)": CURRENT_100MT["prototype_cost_egp"],
+            "Eligible Planting Length (km)": CURRENT_100MT["eligible_length_km"],
+            "Excluded Length (km)": CURRENT_100MT["excluded_length_km"],
+            "High-Priority Streets": CURRENT_100MT["high_priority_streets"],
+        }])
 
     except Exception as e:
 
         st.error(
-            f"❌ Error loading current Smart Afforestation data\n\n{e}"
+            f"❌ Error loading Smart Afforestation files\n\n{e}"
         )
 
         st.stop()
@@ -2817,18 +2793,19 @@ and support sustainable environmental planning.
 
     if "Annual Carbon (ton CO₂)" in AFF_SUMMARY.columns:
 
-        _carbon_value = AFF_SUMMARY["Annual Carbon (ton CO₂)"].iloc[0]
-        carbon = float(_carbon_value) if isinstance(_carbon_value, (int, float)) else None
+        carbon = float(
+            AFF_SUMMARY["Annual Carbon (ton CO₂)"].iloc[0]
+        )
 
     else:
 
-        carbon = None
+        carbon = 0.0
 
     c1, c2, c3 = st.columns(3)
 
     c1.metric(
-        "🌱 Target Area",
-        f"{area:.2f} km²"
+        "🛣️ Eligible Length",
+        f'{CURRENT_100MT["eligible_length_km"]:.3f} km'
     )
 
     c2.metric(
@@ -2838,7 +2815,7 @@ and support sustainable environmental planning.
 
     c3.metric(
         "🌍 Annual CO₂",
-        f"{carbon:,.1f} ton" if isinstance(carbon, (int, float)) else "N/A"
+        f"{carbon:,.1f} ton"
     )
 
     st.markdown("---")
@@ -2960,8 +2937,8 @@ The generated recommendations are analytical and do not by themselves establish 
     )
 
     col2.metric(
-        "🌳 Recommended Area",
-        f"{recommended_area:.2f} km²"
+        "🛣️ Eligible Length",
+        f'{CURRENT_100MT["eligible_length_km"]:.3f} km'
     )
 
     col3.metric(
@@ -3027,21 +3004,7 @@ for afforestation according to environmental suitability.
             f"🌲 Plant approximately {trees:,} trees."
         )
 
-    if "Annual Carbon (ton CO₂)" in AFF_SUMMARY.columns:
-
-        carbon = float(
-            AFF_SUMMARY["Annual Carbon (ton CO₂)"].iloc[0]
-        )
-
-        if isinstance(carbon, (int, float)):
-            actions.append(
-                f"🌍 Expected annual CO₂ sequestration: "
-                f"{carbon:,.1f} tons."
-            )
-        else:
-            actions.append(
-                "🌍 Annual CO₂ sequestration: N/A — validated local biomass model required."
-            )
+    # Absolute annual carbon is intentionally not claimed by the current 100MT planning bundle.
 
     for action in actions:
 
@@ -3099,7 +3062,7 @@ Any implementation, species selection, or quantified carbon claim requires techn
 
     else:
 
-        annual_carbon = carbon
+        annual_carbon = "N/A — not modeled"
 
     c1, c2 = st.columns(2)
 
@@ -3110,7 +3073,7 @@ Any implementation, species selection, or quantified carbon claim requires techn
 
     c2.metric(
         "🌍 Annual CO₂",
-        f"{float(annual_carbon):,.1f} ton" if isinstance(annual_carbon, (int, float)) else "N/A"
+        str(annual_carbon)
     )
 
     st.markdown("---")
