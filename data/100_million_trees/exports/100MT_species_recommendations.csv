@@ -1,0 +1,6 @@
+﻿species_id,arabic_name,english_name,scientific_name,water_demand,heat_tolerance,salinity_tolerance,growth_rate,canopy_size_m,root_risk,urban_suitability,road_suitability,open_space_suitability,recommended_spacing_m,source,confidence,source_date,road_context_score
+SP-001,نيم,Neem,Azadirachta indica,Low,High,Medium,Fast,8,Low,High,High,High,8,Common Egyptian urban-forestry reference species,PENDING_VALIDATION,2026,100.0
+SP-005,كازوارينا,Casuarina,Casuarina equisetifolia,Low,High,High,Fast,7,Low,Medium,High,High,7,Common Egyptian urban-forestry reference species,PENDING_VALIDATION,2026,100.0
+SP-003,كونوكاربس,Conocarpus,Conocarpus erectus,Medium,High,High,Fast,6,Medium,High,High,Medium,6,Common Egyptian urban-forestry reference species,PENDING_VALIDATION,2026,92.0
+SP-004,جاكاراندا,Jacaranda,Jacaranda mimosifolia,Medium,Medium,Low,Medium,9,Low,Medium,Medium,High,9,Common Egyptian urban-forestry reference species,PENDING_VALIDATION,2026,60.0
+SP-002,فيكس نيتيدا,Indian Laurel Fig,Ficus nitida,Medium,High,Low,Fast,10,High,Medium,Low,High,10,Common Egyptian urban-forestry reference species,PENDING_VALIDATION,2026,52.0

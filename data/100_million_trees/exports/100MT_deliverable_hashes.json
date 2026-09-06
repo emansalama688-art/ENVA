@@ -1,0 +1,15 @@
+{
+  "run_id": "ENVA_100MT_20260906_012208",
+  "hashes": {
+    "reports/ENVA_100_Million_Trees_Official_Report.pdf": "f37365544250079468ee93081d0d021b3b2ba23be62d8d4a031e6a19590024fd",
+    "presentation/ENVA_100_Million_Trees_Decision_Maker_Presentation.pptx": "621a46f6134e4eeda869bba9824e4ddf66a7996dbbab638c02acacf02257aebe",
+    "exports/100MT_evidence_register.csv": "04bd507beb1a1d6209e56c9fe1a7d3a309fb9ad2767bbc0995be4cbdcd012c7b",
+    "exports/100MT_tree_level_results.csv": "503eecbcf83a393e5146d18a73a055b9af1096325e66c33df3d560afdd4d3431",
+    "exports/100MT_street_level_results.csv": "d9e20b4dbcccba5291cf2ad5612dbadfd420f1fbb56593ef1b8fa54e55d55852",
+    "exports/100MT_priority_results.csv": "1228cf8fb3efb3d9b5342b33adf6eebeca2f49e5d2469a7f2e3085178b7dcfa7",
+    "exports/100MT_water_by_street.csv": "506918d052b6eba659de8f5ac6c7cfe1cb40b5bff03f04283a5c9b9375ce9c78",
+    "maps/planting_map.html": "9ffdb8e2e1491cca13778f8925c76e378da9f2f517320e8d106be1b76c39d60e",
+    "maps/priority_map.html": "698fdcaacfd44de4760e9c58a5690d699735ac514eec62ee05e7d397725065ea"
+  },
+  "generated_at": "2026-09-06T02:23:47.595060+00:00"
+}
