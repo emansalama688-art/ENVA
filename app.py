@@ -1,9 +1,11 @@
 import base64
 import json
+import html
 from datetime import datetime
 from pathlib import Path
 
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -198,6 +200,106 @@ def load_json_file(path):
             return json.load(file_handle)
     except Exception:
         return {}
+
+
+# ======================================================
+# 100 MILLION TREES — INDEPENDENT MODULE LOADERS
+# This module is intentionally separate from Smart Afforestation.
+# ======================================================
+
+TREES100_ROOT = DATA_PATH / "100_million_trees"
+TREES100_APP_DATA = TREES100_ROOT / "app_data"
+TREES100_MAPS = TREES100_ROOT / "maps"
+TREES100_EXPORTS = TREES100_ROOT / "exports"
+TREES100_REPORTS = TREES100_ROOT / "reports"
+TREES100_PRESENTATION = TREES100_ROOT / "presentation"
+
+
+def load_100mt_json(filename):
+    path = TREES100_APP_DATA / filename
+    if path.exists():
+        return load_json_file(path)
+    return {}
+
+
+def load_100mt_csv(filename):
+    path = TREES100_EXPORTS / filename
+    if path.exists():
+        try:
+            return pd.read_csv(path)
+        except Exception:
+            return pd.DataFrame()
+    return pd.DataFrame()
+
+
+def load_100mt_bundle():
+    return {
+        "dashboard": load_100mt_json("afforestation_dashboard_current.json"),
+        "boundary": load_100mt_json("boundary_current.json"),
+        "water": load_100mt_json("water_current.json"),
+        "priority": load_100mt_json("priority_current.json"),
+        "priority_reasons": load_100mt_json("priority_reasons_current.json"),
+        "maps": load_100mt_json("afforestation_maps_current.json"),
+        "street_summary": load_100mt_json("street_tree_summary_current.json"),
+        "tree_csv": load_100mt_csv("100MT_tree_level_results.csv"),
+        "street_csv": load_100mt_csv("100MT_street_level_results.csv"),
+        "priority_csv": load_100mt_csv("100MT_priority_results.csv"),
+        "water_csv": load_100mt_csv("100MT_water_by_street.csv"),
+        "species_csv": load_100mt_csv("100MT_species_recommendations.csv"),
+        "evidence_csv": load_100mt_csv("100MT_evidence_register.csv"),
+    }
+
+
+def get_first_value(obj, keys, default=None):
+    if not isinstance(obj, dict):
+        return default
+    for key in keys:
+        value = obj.get(key)
+        if value is not None and value != "":
+            return value
+    return default
+
+
+def normalize_100mt_records(obj):
+    if isinstance(obj, list):
+        return obj
+    if isinstance(obj, dict):
+        for key in ("records", "rows", "streets", "items", "data"):
+            value = obj.get(key)
+            if isinstance(value, list):
+                return value
+    return []
+
+
+def render_100mt_evidence_card(record):
+    if not isinstance(record, dict):
+        return ""
+    title = html.escape(str(record.get("result_name", "Evidence")))
+    rid = html.escape(str(record.get("result_id", "")))
+    cls = html.escape(str(record.get("classification", "N/A")))
+    conf = html.escape(str(record.get("confidence", "N/A")))
+    source = html.escape(str(record.get("source", "N/A")))
+    date = html.escape(str(record.get("date", "N/A")))
+    method = html.escape(str(record.get("method", "N/A")))
+    formula = html.escape(str(record.get("formula", "N/A")))
+    assumptions = html.escape(str(record.get("assumptions", "N/A")))
+    validation = html.escape(str(record.get("validation_status", "N/A")))
+    return f"""
+    <div style="background:#fff;border:1px solid #dfe7e2;border-radius:14px;padding:16px;margin:8px 0;">
+      <div style="font-size:17px;font-weight:800;color:#145A32;">{title}</div>
+      <div style="font-size:12px;color:#777;margin:3px 0 10px;">{rid}</div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;font-size:13px;">
+        <div><b>Classification:</b> {cls}</div>
+        <div><b>Confidence:</b> {conf}</div>
+        <div><b>Source:</b> {source}</div>
+        <div><b>Date:</b> {date}</div>
+        <div><b>Method:</b> {method}</div>
+        <div><b>Formula:</b> {formula}</div>
+        <div><b>Assumptions:</b> {assumptions}</div>
+        <div><b>Validation:</b> {validation}</div>
+      </div>
+    </div>
+    """
 
 
 def score_text(value, indicator_name=None):
@@ -825,6 +927,7 @@ with st.sidebar:
             "🚨 Early Warning",
             "🚜 Agricultural Encroachments",
             "🌳 Smart Afforestation",
+            "🌴 100 Million Trees Initiative",
             "📥 Reports",
             "🔮 Future Expansion",
         ],
@@ -3089,6 +3192,418 @@ and project implementation indicators.
 # AI ENVIRONMENTAL REPORT
 # ==========================================================
 
+elif page == "🌴 100 Million Trees Initiative":
+
+    # ======================================================
+    # 100 MILLION TREES INITIATIVE — INDEPENDENT PAGE
+    # ======================================================
+
+    st.title("🌴 100 Million Trees Initiative")
+    st.subheader("نظام تخطيط التشجير القابل للتدقيق — مدينة كفر الدوار")
+
+    st.markdown(
+        """
+        <div style="background:linear-gradient(135deg,#0d3d24,#1b7a43);
+                    color:white;padding:18px 22px;border-radius:16px;margin-bottom:16px;">
+            <div style="font-size:24px;font-weight:800;">Evidence-Based Afforestation Planning System</div>
+            <div style="font-size:14px;margin-top:6px;opacity:.92;">
+                Independent from Smart Afforestation • Kafr El Dawwar City • CITY ONLY
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    bundle = load_100mt_bundle()
+    dashboard = bundle["dashboard"]
+    boundary = bundle["boundary"]
+    water = bundle["water"]
+    priority = bundle["priority"]
+    priority_reasons = bundle["priority_reasons"]
+    street_summary = bundle["street_summary"]
+    evidence_df = bundle["evidence_csv"]
+
+    planting_map_path = TREES100_MAPS / "planting_map.html"
+
+    if not any([
+        dashboard, boundary, water, priority, priority_reasons,
+        street_summary, not evidence_df.empty, planting_map_path.exists()
+    ]):
+        st.error(
+            "❌ لم يتم العثور على ملفات 100 Million Trees. "
+            "ضعي الحزمة داخل data/100_million_trees/ ثم أعيدي تشغيل التطبيق."
+        )
+        st.stop()
+
+    # ------------------------------------------------------
+    # HEADLINE VALUES — flexible across current JSON schema
+    # ------------------------------------------------------
+
+    tree_count = get_first_value(
+        dashboard,
+        ["tree_count", "proposed_tree_count", "trees", "total_trees"],
+        get_first_value(boundary, ["tree_count"], 23000),
+    )
+
+    high_priority = get_first_value(
+        dashboard,
+        ["high_priority_streets", "high_priority_count"],
+        get_first_value(priority, ["high_priority_streets", "high_priority_count"], None),
+    )
+
+    daily_water = get_first_value(
+        dashboard,
+        ["city_daily_water_liters", "estimated_daily_water_liters", "city_daily_liters"],
+        get_first_value(water, ["city_daily_water_liters", "city_daily_liters"], None),
+    )
+
+    monthly_water = get_first_value(
+        dashboard,
+        ["city_monthly_water_liters", "estimated_monthly_water_liters", "city_monthly_liters"],
+        get_first_value(water, ["city_monthly_water_liters", "city_monthly_liters"], None),
+    )
+
+    estimated_cost = get_first_value(
+        dashboard,
+        ["estimated_total_cost_egp", "estimated_cost_egp", "total_cost_egp"],
+        None,
+    )
+
+    def fmt_number(v):
+        try:
+            return f"{float(v):,.0f}"
+        except Exception:
+            return "N/A"
+
+    # ------------------------------------------------------
+    # ICON TABS — same interaction concept as Indicators
+    # ------------------------------------------------------
+
+    if "selected_100mt_section" not in st.session_state:
+        st.session_state.selected_100mt_section = "overview"
+
+    sections = [
+        ("overview", "🌍", "Overview"),
+        ("map", "🗺️", "Tree Map"),
+        ("streets", "🏙️", "Streets"),
+        ("trees", "🌳", "Trees"),
+        ("priority", "🎯", "Priority"),
+        ("water", "💧", "Water"),
+        ("cost", "💰", "Cost"),
+        ("evidence", "🔎", "Evidence"),
+        ("reports", "📊", "Reports"),
+    ]
+
+    cols = st.columns(len(sections))
+
+    for col, (key, icon, label) in zip(cols, sections):
+        with col:
+            if st.button(
+                f"{icon}\n{label}",
+                key=f"100mt_tab_{key}",
+                use_container_width=True,
+            ):
+                st.session_state.selected_100mt_section = key
+                st.rerun()
+
+    st.markdown("---")
+
+    selected_section = st.session_state.selected_100mt_section
+
+    # ======================================================
+    # OVERVIEW
+    # ======================================================
+
+    if selected_section == "overview":
+
+        st.header("🌍 Initiative Overview")
+
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("🌳 Proposed Trees", fmt_number(tree_count))
+        c2.metric("🎯 High-Priority Streets", fmt_number(high_priority))
+        c3.metric("💧 Daily Water", f"{fmt_number(daily_water)} L/day")
+        c4.metric("💰 Estimated Cost", f"{fmt_number(estimated_cost)} EGP")
+
+        st.markdown("### نطاق الدراسة")
+        st.info(
+            "مدينة كفر الدوار فقط (CITY_ONLY). هذه الصفحة مستقلة عن صفحة Smart Afforestation "
+            "وتستخدم مخرجات النوتبوك المستقل لمبادرة 100 Million Trees."
+        )
+
+        area = get_first_value(boundary, ["area_km2"], None)
+        run_id = get_first_value(dashboard, ["run_id"], get_first_value(boundary, ["run_id"], "N/A"))
+
+        a1, a2, a3 = st.columns(3)
+        a1.metric("📍 City Area", f"{float(area):,.4f} km²" if isinstance(area,(int,float)) else "N/A")
+        a2.metric("🧪 Model Status", "PROTOTYPE")
+        a3.metric("🆔 Run ID", str(run_id))
+
+        st.markdown("### تصنيف النتائج")
+        st.markdown(
+            "🟢 **Measured** &nbsp;&nbsp; 🔵 **Derived** &nbsp;&nbsp; 🟡 **Estimated** &nbsp;&nbsp; "
+            "🟠 **Prototype** &nbsp;&nbsp; 🔴 **Field Validation Required**",
+            unsafe_allow_html=True,
+        )
+
+    # ======================================================
+    # TREE MAP
+    # ======================================================
+
+    elif selected_section == "map":
+
+        st.header("🗺️ Interactive Tree Map")
+
+        st.write(
+            "الخريطة تعرض مواقع الأشجار المقترحة داخل حدود مدينة كفر الدوار، "
+            "مع طبقات الطرق والمناطق المؤهلة والأولوية المتاحة في ملف الخريطة."
+        )
+
+        if planting_map_path.exists():
+            map_html = planting_map_path.read_text(encoding="utf-8")
+            components.html(
+                map_html,
+                height=760,
+                scrolling=False,
+            )
+            st.caption("Official interactive map asset: planting_map.html")
+        else:
+            st.warning("⚠️ planting_map.html غير موجود داخل data/100_million_trees/maps/")
+
+    # ======================================================
+    # STREET DETAIL
+    # ======================================================
+
+    elif selected_section == "streets":
+
+        st.header("🏙️ Street-Level Planning")
+
+        street_df = bundle["street_csv"]
+        if street_df.empty:
+            records = normalize_100mt_records(street_summary)
+            if records:
+                street_df = pd.DataFrame(records)
+
+        if street_df.empty:
+            st.warning("لا تتوفر حاليًا بيانات street-level قابلة للعرض.")
+        else:
+            st.write(
+                f"عدد سجلات الشوارع المتاحة: **{len(street_df):,}**"
+            )
+            search = st.text_input(
+                "🔎 ابحثي باسم الشارع أو road_id",
+                key="100mt_street_search",
+            )
+            view_df = street_df.copy()
+            if search:
+                mask = pd.Series(False, index=view_df.index)
+                for col in ["road_name", "street_name", "road_id"]:
+                    if col in view_df.columns:
+                        mask = mask | view_df[col].astype(str).str.contains(search, case=False, na=False)
+                view_df = view_df[mask]
+            st.dataframe(view_df, use_container_width=True, height=520)
+
+    # ======================================================
+    # TREE-LEVEL DETAIL
+    # ======================================================
+
+    elif selected_section == "trees":
+
+        st.header("🌳 Tree-Level Planning Records")
+
+        tree_df = bundle["tree_csv"]
+
+        if tree_df.empty:
+            st.warning(
+                "ملف 100MT_tree_level_results.csv غير موجود. "
+                "يمكن عرض العدد الإجمالي من dashboard، لكن سجل كل شجرة يحتاج الملف التفصيلي."
+            )
+        else:
+            st.write(
+                f"عدد الأشجار المسجلة: **{len(tree_df):,}**"
+            )
+            st.dataframe(
+                tree_df,
+                use_container_width=True,
+                height=560,
+            )
+
+    # ======================================================
+    # PRIORITY
+    # ======================================================
+
+    elif selected_section == "priority":
+
+        st.header("🎯 Transparent Street Priority Model")
+
+        p_df = bundle["priority_csv"]
+        if p_df.empty:
+            records = normalize_100mt_records(priority)
+            if records:
+                p_df = pd.DataFrame(records)
+
+        st.markdown(
+            "**Priority logic:** Heat context **35%** + vegetation deficit **35%** + "
+            "planting feasibility **30%**."
+        )
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric("🔴 High", fmt_number(high_priority))
+        medium = int((p_df["priority_class"] == "Medium").sum()) if "priority_class" in p_df.columns else None
+        low = int((p_df["priority_class"] == "Low").sum()) if "priority_class" in p_df.columns else None
+        c2.metric("🟡 Medium", fmt_number(medium))
+        c3.metric("🟢 Low", fmt_number(low))
+
+        if not p_df.empty:
+            st.dataframe(p_df, use_container_width=True, height=520)
+
+        if priority_reasons:
+            st.markdown("### لماذا حصل الشارع على هذه الأولوية؟")
+            st.json(priority_reasons)
+
+    # ======================================================
+    # WATER
+    # ======================================================
+
+    elif selected_section == "water":
+
+        st.header("💧 Water Demand")
+
+        c1, c2 = st.columns(2)
+        c1.metric("Estimated Daily Demand", f"{fmt_number(daily_water)} L/day")
+        c2.metric("Estimated 30-Day Demand", f"{fmt_number(monthly_water)} L")
+
+        w_df = bundle["water_csv"]
+        if not w_df.empty:
+            st.dataframe(w_df, use_container_width=True, height=520)
+        else:
+            by_species = get_first_value(water, ["by_species"], None)
+            if by_species:
+                st.dataframe(pd.DataFrame(by_species), use_container_width=True)
+
+        st.warning(
+            "هذه أرقام Estimated وليست حصة ري تشغيلية؛ يلزم معايرتها على بيانات الري المحلية "
+            "وخصائص الأنواع وعمر الأشجار والموسم."
+        )
+
+    # ======================================================
+    # COST
+    # ======================================================
+
+    elif selected_section == "cost":
+
+        st.header("💰 Cost Scenario")
+
+        st.metric(
+            "Estimated Tree Portfolio Cost",
+            f"{fmt_number(estimated_cost)} EGP"
+        )
+
+        st.info(
+            "التكلفة الحالية Estimated مبنية على افتراض تكلفة الوحدة الموجود في نموذج المبادرة. "
+            "يجب استبدالها بأسعار شراء/تنفيذ معتمدة قبل اعتماد موازنة تنفيذية."
+        )
+
+    # ======================================================
+    # EVIDENCE
+    # ======================================================
+
+    elif selected_section == "evidence":
+
+        st.header("🔎 Evidence & Audit Trail")
+
+        if evidence_df.empty:
+            st.warning("Evidence Register غير موجود حاليًا داخل exports.")
+        else:
+            st.write(
+                "كل نتيجة يجب أن تُقرأ مع المصدر والتاريخ والطريقة والمعادلة والافتراضات والثقة وحالة التحقق."
+            )
+
+            classifications = evidence_df.get("classification", pd.Series(dtype=str)).astype(str).unique().tolist()
+            selected_class = st.selectbox(
+                "Filter by classification",
+                ["All"] + sorted(classifications),
+                key="100mt_evidence_class",
+            )
+
+            view = evidence_df.copy()
+            if selected_class != "All" and "classification" in view.columns:
+                view = view[view["classification"].astype(str) == selected_class]
+
+            for _, record in view.iterrows():
+                st.markdown(
+                    render_100mt_evidence_card(record.to_dict()),
+                    unsafe_allow_html=True,
+                )
+
+    # ======================================================
+    # REPORTS
+    # ======================================================
+
+    elif selected_section == "reports":
+
+        st.header("📊 Initiative Reports & Exports")
+
+        report_path = TREES100_REPORTS / "ENVA_100_Million_Trees_Official_Report.pdf"
+        presentation_path = TREES100_PRESENTATION / "ENVA_100_Million_Trees_Decision_Maker_Presentation.pptx"
+
+        if report_path.exists():
+            st.download_button(
+                "⬇️ Official 100 Million Trees Report (PDF)",
+                data=report_path.read_bytes(),
+                file_name=report_path.name,
+                mime="application/pdf",
+                key="100mt_official_pdf",
+            )
+        else:
+            st.caption("Official PDF not found in data/100_million_trees/reports/")
+
+        if presentation_path.exists():
+            st.download_button(
+                "⬇️ Decision-Maker Presentation (PowerPoint)",
+                data=presentation_path.read_bytes(),
+                file_name=presentation_path.name,
+                mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                key="100mt_presentation",
+            )
+        else:
+            st.caption("PowerPoint not found in data/100_million_trees/presentation/")
+
+        export_files = [
+            "100MT_tree_level_results.csv",
+            "100MT_street_level_results.csv",
+            "100MT_priority_results.csv",
+            "100MT_water_by_street.csv",
+            "100MT_species_recommendations.csv",
+            "100MT_evidence_register.csv",
+            "100MT_evidence_register.json",
+            "100MT_deliverable_hashes.json",
+        ]
+
+        st.markdown("### Downloadable Data")
+
+        for filename in export_files:
+            path = TREES100_EXPORTS / filename
+            if path.exists():
+                mime = "application/json" if path.suffix.lower() == ".json" else "text/csv"
+                st.download_button(
+                    f"⬇️ {filename}",
+                    data=path.read_bytes(),
+                    file_name=filename,
+                    mime=mime,
+                    key=f"100mt_download_{filename}",
+                )
+
+    # ======================================================
+    # FOOTNOTE
+    # ======================================================
+
+    st.markdown("---")
+    st.caption(
+        "ENVA — 100 Million Trees Initiative | Independent planning module | "
+        "CITY_ONLY | Planning prototype requiring field and competent-authority validation."
+    )
+
+
 elif page == "🔮 Future Expansion":
 
     # ==================================================
@@ -4897,6 +5412,31 @@ This page consolidates all downloadable reports and data files from the ENVA pla
         file_name="ENVA_Final_Report.json",
         mime="application/json",
     )
+
+    st.markdown("---")
+
+    st.subheader("🌴 100 Million Trees Initiative")
+
+    mt_report_path = DATA_PATH / "100_million_trees" / "reports" / "ENVA_100_Million_Trees_Official_Report.pdf"
+    mt_ppt_path = DATA_PATH / "100_million_trees" / "presentation" / "ENVA_100_Million_Trees_Decision_Maker_Presentation.pptx"
+
+    if mt_report_path.exists():
+        st.download_button(
+            label="⬇️ 100 Million Trees Official Report (PDF)",
+            data=mt_report_path.read_bytes(),
+            file_name=mt_report_path.name,
+            mime="application/pdf",
+            key="reports_100mt_pdf",
+        )
+
+    if mt_ppt_path.exists():
+        st.download_button(
+            label="⬇️ 100 Million Trees Presentation (PowerPoint)",
+            data=mt_ppt_path.read_bytes(),
+            file_name=mt_ppt_path.name,
+            mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            key="reports_100mt_ppt",
+        )
 
     st.markdown("---")
 
