@@ -507,69 +507,6 @@ st.markdown(
 #  no external image asset or internet connection required)
 # ======================================================
 
-# ======================================================
-# REAL IMAGE ASSETS (LOGO / COVER) — checked FIRST, SVG is the fallback
-# ======================================================
-#
-# WHY THIS EXISTS:
-# The platform previously rendered ONLY the inline SVG mark, even after
-# real logo/cover image files were added to the GitHub repo — nothing in
-# the code ever looked for them, so they were silently ignored no matter
-# where they were placed. This checks every common location/name a
-# contributor would reasonably use, and only falls back to the SVG if no
-# real image file is found at all.
-
-ASSET_DIR_CANDIDATES = [
-    Path("assets"),
-    Path("static"),
-    DATA_PATH / "assets",
-    DATA_PATH,
-    Path("."),
-]
-
-LOGO_FILENAME_CANDIDATES = [
-    "logo.png", "logo.jpg", "logo.jpeg", "logo.svg", "logo.webp",
-    "enva_logo.png", "enva_logo.jpg", "ENVA_logo.png",
-]
-
-COVER_FILENAME_CANDIDATES = [
-    "cover.png", "cover.jpg", "cover.jpeg", "cover.webp",
-    "banner.png", "banner.jpg",
-    "enva_cover.png", "ENVA_cover.png", "cover_image.png",
-]
-
-
-def find_asset_file(filename_candidates):
-    for directory in ASSET_DIR_CANDIDATES:
-        for filename in filename_candidates:
-            candidate = directory / filename
-            if candidate.exists() and candidate.is_file():
-                return candidate
-    return None
-
-
-LOGO_IMAGE_PATH = find_asset_file(LOGO_FILENAME_CANDIDATES)
-COVER_IMAGE_PATH = find_asset_file(COVER_FILENAME_CANDIDATES)
-
-
-def render_logo(size=110):
-    """Displays the real uploaded logo image if one exists anywhere in the
-    checked asset locations; otherwise renders the built-in SVG mark."""
-    if LOGO_IMAGE_PATH is not None:
-        st.image(str(LOGO_IMAGE_PATH), width=size)
-    else:
-        st.markdown(enva_logo_svg(size), unsafe_allow_html=True)
-
-
-def render_cover():
-    """Displays the real uploaded cover/banner image if one exists;
-    otherwise renders the built-in SVG banner."""
-    if COVER_IMAGE_PATH is not None:
-        st.image(str(COVER_IMAGE_PATH), use_container_width=True)
-    else:
-        st.markdown(enva_cover_banner_svg(), unsafe_allow_html=True)
-
-
 def enva_logo_svg(size=110):
     """ENVA emblem: a glowing AI half-brain (left) merging into a tree
     (center), with a satellite orbiting above — intelligence, nature and
