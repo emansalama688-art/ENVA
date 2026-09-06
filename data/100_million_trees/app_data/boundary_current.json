@@ -1,0 +1,8 @@
+{
+  "study_area_en": "Kafr El Dawwar City",
+  "study_area_ar": "مدينة كفر الدوار",
+  "scope": "CITY_ONLY",
+  "area_km2": 5.916352574701496,
+  "boundary_file": "/content/drive/MyDrive/ENVA/100_Million_Trees/boundaries/kafr_el_dawwar_city_boundary.geojson",
+  "run_id": "ENVA_100MT_20260906_012208"
+}

@@ -1,0 +1,38 @@
+{
+  "run_id": "ENVA_100MT_20260906_012208",
+  "study_area": "Kafr El Dawwar City (CITY ONLY)",
+  "total_roads_analyzed": 6454,
+  "total_road_length_km": 262.61114000000003,
+  "eligible_planting_length_km": 179.96331,
+  "proposed_trees_total": 23000,
+  "species_recommended_count": 5,
+  "species_breakdown": [
+    {
+      "species_id": "SP-001",
+      "species_english": "Neem",
+      "species_arabic": "نيم",
+      "tree_count": 1999,
+      "total_cost_egp": 999500.0
+    },
+    {
+      "species_id": "SP-005",
+      "species_english": "Casuarina",
+      "species_arabic": "كازوارينا",
+      "tree_count": 21001,
+      "total_cost_egp": 10500500.0
+    }
+  ],
+  "cost_assumptions_egp": {
+    "sapling_cost_per_tree": 150.0,
+    "planting_labor_per_tree": 100.0,
+    "first_year_maintenance_irrigation_per_tree": 250.0,
+    "currency": "EGP",
+    "classification": "Prototype Estimate",
+    "source": "Indicative Egyptian municipal urban-forestry cost range — PENDING_VALIDATION against actual local nursery and contractor quotes."
+  },
+  "unit_cost_egp_per_tree": 500.0,
+  "estimated_total_cost_egp": 11500000.0,
+  "result_type": "Derived Planning Estimate",
+  "field_verification_status": "Pending",
+  "generated_at": "2026-09-06T01:25:07.069214+00:00"
+}

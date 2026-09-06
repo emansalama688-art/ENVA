@@ -1,0 +1,22 @@
+{
+  "city_daily_liters": 345000.0,
+  "city_monthly_liters": 10350000.0,
+  "by_species": [
+    {
+      "species_id": "SP-001",
+      "tree_count": 1999,
+      "liters_per_day_total": 29985.0,
+      "english_name": "Neem",
+      "arabic_name": "نيم",
+      "liters_per_month_total": 899550.0
+    },
+    {
+      "species_id": "SP-005",
+      "tree_count": 21001,
+      "liters_per_day_total": 315015.0,
+      "english_name": "Casuarina",
+      "arabic_name": "كازوارينا",
+      "liters_per_month_total": 9450450.0
+    }
+  ]
+}

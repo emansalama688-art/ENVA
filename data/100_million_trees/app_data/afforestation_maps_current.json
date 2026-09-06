@@ -1,0 +1,22 @@
+{
+  "run_id": "ENVA_100MT_20260906_012208",
+  "study_area": "Kafr El Dawwar City",
+  "scope": "CITY_ONLY",
+  "maps": {
+    "planting_map": {
+      "file": "/content/drive/MyDrive/ENVA/100_Million_Trees/maps/planting_map.html",
+      "layers": 6,
+      "description": "Interactive city map showing boundary, roads, eligible planting zones, contextual buildings/water, and proposed tree locations."
+    },
+    "priority_map": {
+      "file": "/content/drive/MyDrive/ENVA/100_Million_Trees/maps/priority_map.html",
+      "layers": 1,
+      "description": "Road priority map showing High, Medium, and Low priority."
+    }
+  },
+  "tree_count": 23000,
+  "road_count": 6454,
+  "eligible_segment_count": 4792,
+  "display_method": "Direct display(tree_map) in Colab without IFrame or localhost path.",
+  "self_validated": true
+}
