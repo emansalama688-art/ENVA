@@ -1395,11 +1395,12 @@ elif page == "📡 Environmental Indicators":
             with open(map_path, encoding="utf-8") as f:
                 original_map_html = f.read()
 
-            # IMPORTANT: render the ORIGINAL complete Leaflet/Folium HTML directly.
-            # Do not wrap it in a nested data: iframe; that can break the map's
-            # JavaScript/CSS execution and make colors/borders disappear.
             st_html(
-                original_map_html,
+                render_official_map_html(
+                    original_map_html,
+                    height=760,
+                    scrolling=False
+                ),
                 height=780,
                 scrolling=False
             )
@@ -1901,10 +1902,12 @@ elif page == "🌍 Interactive Map":
                     with open(map_path, encoding="utf-8") as map_file:
                         original_map_html = map_file.read()
 
-                    # Render the original map HTML directly so all original
-                    # Leaflet/Folium styles, layers, colors and boundaries remain intact.
                     st_html(
-                        original_map_html,
+                        render_official_map_html(
+                            original_map_html,
+                            height=650,
+                            scrolling=False
+                        ),
                         height=670,
                         scrolling=False
                     )
