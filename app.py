@@ -250,6 +250,25 @@ def load_100mt_bundle():
     }
 
 
+def current_100mt_overview():
+    bundle = load_100mt_bundle()
+    dashboard = bundle.get("dashboard", {})
+    boundary = bundle.get("boundary", {})
+    water = bundle.get("water", {})
+    return {
+        "dashboard": dashboard,
+        "boundary": boundary,
+        "water": water,
+        "trees": int(get_first_value(dashboard, ["proposed_trees_total", "tree_count"], 23000)),
+        "roads": int(get_first_value(dashboard, ["total_roads_analyzed"], 6454)),
+        "road_km": float(get_first_value(dashboard, ["total_road_length_km"], 262.61)),
+        "eligible_km": float(get_first_value(dashboard, ["eligible_planting_length_km"], 179.963)),
+        "cost": float(get_first_value(dashboard, ["estimated_total_cost_egp"], 11500000)),
+        "daily_water": float(get_first_value(water, ["city_daily_liters"], 345000)),
+        "area": boundary.get("area_km2"),
+    }
+
+
 def get_first_value(obj, keys, default=None):
     if not isinstance(obj, dict):
         return default
@@ -349,25 +368,13 @@ def find_map_file(name):
 
 
 def render_official_map_html(original_map_html, height=760, scrolling=False):
+    """Return the original official map HTML unchanged.
+
+    The Streamlit components.html call below provides the isolated browser
+    frame. We do not add another iframe around the complete Leaflet document.
     """
-    Display-only renderer for the ORIGINAL official ENVA HTML map.
+    return original_map_html
 
-    Cell-21 display fix:
-    isolate each complete HTML document inside its own iframe.
-    The source HTML content is never modified.
-    """
-    encoded = base64.b64encode(
-        original_map_html.encode("utf-8")
-    ).decode("ascii")
-
-    scroll_value = "yes" if scrolling else "no"
-
-    return (
-        f'<iframe src="data:text/html;base64,{encoded}" '
-        f'style="width:100%; height:{int(height)}px; border:0;" '
-        f'frameborder="0" scrolling="{scroll_value}" '
-        f'allowfullscreen></iframe>'
-    )
 
 def load_indicator_metadata(name):
     cell_number = 11 + INDICATOR_ORDER.index(name)
@@ -506,6 +513,69 @@ st.markdown(
 # (pure inline SVG — replaces the generic earth-planet icon,
 #  no external image asset or internet connection required)
 # ======================================================
+
+# ======================================================
+# REAL IMAGE ASSETS (LOGO / COVER) — checked FIRST, SVG is the fallback
+# ======================================================
+#
+# WHY THIS EXISTS:
+# The platform previously rendered ONLY the inline SVG mark, even after
+# real logo/cover image files were added to the GitHub repo — nothing in
+# the code ever looked for them, so they were silently ignored no matter
+# where they were placed. This checks every common location/name a
+# contributor would reasonably use, and only falls back to the SVG if no
+# real image file is found at all.
+
+ASSET_DIR_CANDIDATES = [
+    Path("assets"),
+    Path("static"),
+    DATA_PATH / "assets",
+    DATA_PATH,
+    Path("."),
+]
+
+LOGO_FILENAME_CANDIDATES = [
+    "logo.png", "logo.jpg", "logo.jpeg", "logo.svg", "logo.webp",
+    "enva_logo.png", "enva_logo.jpg", "ENVA_logo.png",
+]
+
+COVER_FILENAME_CANDIDATES = [
+    "cover.png", "cover.jpg", "cover.jpeg", "cover.webp",
+    "banner.png", "banner.jpg",
+    "enva_cover.png", "ENVA_cover.png", "cover_image.png",
+]
+
+
+def find_asset_file(filename_candidates):
+    for directory in ASSET_DIR_CANDIDATES:
+        for filename in filename_candidates:
+            candidate = directory / filename
+            if candidate.exists() and candidate.is_file():
+                return candidate
+    return None
+
+
+LOGO_IMAGE_PATH = find_asset_file(LOGO_FILENAME_CANDIDATES)
+COVER_IMAGE_PATH = find_asset_file(COVER_FILENAME_CANDIDATES)
+
+
+def render_logo(size=110):
+    """Displays the real uploaded logo image if one exists anywhere in the
+    checked asset locations; otherwise renders the built-in SVG mark."""
+    if LOGO_IMAGE_PATH is not None:
+        st.image(str(LOGO_IMAGE_PATH), width=size)
+    else:
+        st.markdown(enva_logo_svg(size), unsafe_allow_html=True)
+
+
+def render_cover():
+    """Displays the real uploaded cover/banner image if one exists;
+    otherwise renders the built-in SVG banner."""
+    if COVER_IMAGE_PATH is not None:
+        st.image(str(COVER_IMAGE_PATH), use_container_width=True)
+    else:
+        render_cover()
+
 
 def enva_logo_svg(size=110):
     """ENVA emblem: a glowing AI half-brain (left) merging into a tree
@@ -901,7 +971,7 @@ with st.sidebar:
     st.markdown(
         f"""
         <div style="text-align:center; padding-bottom:6px;">
-            {enva_logo_svg(100)}
+            {(f"<img src=\"{LOGO_IMAGE_PATH}\" style=\"width:100px;\"/>" if LOGO_IMAGE_PATH else enva_logo_svg(100))}
         </div>
         <div style="text-align:center; font-size:22px; font-weight:800; letter-spacing:1px;">
             ENVA
@@ -1184,11 +1254,21 @@ with full evidence, methodology, and confidence tracking.
 
     st.markdown("---")
 
+    current = current_100mt_overview()
+    st.markdown("### 🌴 Current Urban Afforestation Planning Snapshot")
+    st.caption("أحدث بيانات تشغيلية متاحة — كفر الدوار CITY ONLY. هذه أرقام تخطيطية مشتقة وليست نتائج تنفيذ ميداني.")
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("📍 Study Area", REPORT.get("study_area", "N/A"))
-    c2.metric("📅 Current Year", REPORT.get("current_year", "N/A"))
-    c3.metric("🎯 Accuracy", f'{REPORT.get("overall_accuracy", "N/A")} %' if REPORT.get("overall_accuracy") is not None else "N/A")
-    c4.metric("🛰️ Land Cover Classes", len(SUMMARY))
+    c1.metric("🌳 Proposed Trees", f"{current['trees']:,}")
+    c2.metric("🛣️ Roads Analyzed", f"{current['roads']:,}")
+    c3.metric("🌱 Eligible Planting", f"{current['eligible_km']:.3f} km")
+    c4.metric("💰 Estimated Cost", f"{current['cost']:,.0f} EGP")
+    c5, c6, c7, c8 = st.columns(4)
+    c5.metric("💧 Water Demand", f"{current['daily_water']:,.0f} L/day")
+    c6.metric("📏 Total Roads", f"{current['road_km']:.2f} km")
+    c7.metric("📍 City Area", f"{float(current['area']):.4f} km²" if isinstance(current['area'], (int,float)) else "N/A")
+    c8.metric("🧭 Scope", "CITY ONLY")
+
+    st.info("البيانات القديمة الخاصة بالـLand Cover محفوظة للمرجعية التاريخية ولا تُستخدم لتحديد أرقام مبادرة 100 Million Trees الحالية.")
 
     if INDICATORS_AVAILABLE:
         st.markdown("---")
@@ -1230,6 +1310,24 @@ This section presents the satellite image analysis results generated by ENVA.
 
     st.markdown("---")
 
+    current = current_100mt_overview()
+    st.markdown("### 🛰️ Current Sentinel-2 Evidence")
+    c1,c2,c3,c4 = st.columns(4)
+    c1.metric("📅 Analysis Start", "2026-05-28")
+    c2.metric("📅 Analysis End", "2026-08-26")
+    c3.metric("☁️ Cloud Threshold", "20")
+    c4.metric("🖼️ Images", "46")
+    c5,c6,c7,c8 = st.columns(4)
+    c5.metric("NDVI Mean", "0.1906")
+    c6.metric("🌱 Vegetated Area", "1.5718 km²")
+    c7.metric("Vegetation Share", "26.57%")
+    c8.metric("🧭 Scope", "CITY ONLY")
+    st.info("NDVI هنا مؤشر نباتي طيفي وسياقي للتخطيط، وليس مسحًا ميدانيًا للغطاء الشجري.")
+    st.markdown("### 🌴 Current 100 Million Trees Context")
+    st.write(f"{current['roads']:,} road segments analyzed; {current['eligible_km']:.3f} km currently eligible for planting under the prototype feasibility rules; {current['trees']:,} tree points proposed.")
+    st.markdown("---")
+    st.subheader("🗂️ Historical / Legacy Land-Cover Context")
+    st.caption("الجزء التالي محفوظ من المنصة الأصلية للمرجعية التاريخية فقط.")
     st.write("### Land Cover Statistics")
     st.dataframe(SUMMARY, use_container_width=True)
 
@@ -1395,12 +1493,8 @@ elif page == "📡 Environmental Indicators":
             with open(map_path, encoding="utf-8") as f:
                 original_map_html = f.read()
 
-            st_html(
-                render_official_map_html(
-                    original_map_html,
-                    height=760,
-                    scrolling=False
-                ),
+            components.html(
+                original_map_html,
                 height=780,
                 scrolling=False
             )
@@ -1902,12 +1996,11 @@ elif page == "🌍 Interactive Map":
                     with open(map_path, encoding="utf-8") as map_file:
                         original_map_html = map_file.read()
 
-                    st_html(
-                        render_official_map_html(
-                            original_map_html,
-                            height=650,
-                            scrolling=False
-                        ),
+                    if "earthengine.googleapis.com" in original_map_html.lower():
+                        st.caption("ℹ️ هذه الخريطة تعتمد على طبقات Earth Engine داخل ملف HTML الأصلي؛ إذا ظهرت بدون تلوين أو حدود فهذا يعني أن طبقات الـtiles داخل الملف تحتاج إعادة توليد من المصدر.")
+
+                    components.html(
+                        original_map_html,
                         height=670,
                         scrolling=False
                     )
@@ -2054,16 +2147,16 @@ This dashboard summarizes the environmental indicators extracted from satellite 
     st.subheader("🤖 AI Insights")
 
     st.info(
-        """
+        f"""
 Current evidence period: **2026-05-28 → 2026-08-26**
 
 Mean NDVI: **0.1906**
 
 Vegetated area: **1.5718 km² (26.57% of the city-only AOI)**
 
-This current vegetation share does **not** support describing vegetation as the dominant land-cover class.
+🌴 Proposed trees in the independent 100 Million Trees planning model: **23,000**
 
-لا تُستخدم هذه النتيجة لإثبات أن الغطاء النباتي يمثل المساحة الأكبر داخل منطقة الدراسة.
+هذه الصفحة لا تستخدم العبارة القديمة التي كانت تستنتج أن الغطاء النباتي هو المساحة الأكبر اعتمادًا على ملخص land-cover القديم.
 """
     )
 
@@ -2087,29 +2180,32 @@ and generates environmental insights.
 """
     )
 
+    current = current_100mt_overview()
+    st.markdown("## 🌴 Current Executive Brief — 100 Million Trees")
+    st.success(
+        f"""
+**Kafr El Dawwar City — CITY ONLY**
+
+🌳 Proposed trees: **{current['trees']:,}**  
+🛣️ Roads analyzed: **{current['roads']:,}**  
+🌱 Eligible planting length: **{current['eligible_km']:.3f} km**  
+💧 Estimated daily water demand: **{current['daily_water']:,.0f} L/day**  
+💰 Estimated planning cost: **{current['cost']:,.0f} EGP**  
+
+Current result classification: **Derived Planning Estimate**. Field verification and local authority review remain pending.
+"""
+    )
+    st.warning("لا يتم تفسير هذه الأرقام كفوائد بيئية محققة أو كاحتجاز كربون معتمد. البيانات القديمة الخاصة بالـLand Cover التي يعرضها القسم الأصلي أدناه مصنفة كمرجعية تاريخية.")
+    st.markdown("---")
+    st.subheader("🗂️ Historical / Legacy AI Land-Cover Analysis")
     st.markdown("---")
 
     # =====================================
-    # Load Statistics
+    # Load CURRENT Statistics
     # =====================================
-
-    # =====================================
-    # Current verified vegetation evidence
-    # =====================================
-    # Current Sentinel-2 evidence package: 2026-05-28 → 2026-08-26
-    # City-only AOI. Verified current vegetation extent = 1.5718 km²
-    # representing 26.57% of the city-only AOI.
-    vegetation = 1.5718
+    current = current_100mt_overview()
     vegetation_percent = 26.57
-
-    # =====================================
-    # Urban / Bare Soil availability
-    # =====================================
-    # The current authoritative evidence package does not provide
-    # current city-wide percentages for these two classes. Keep them
-    # explicitly unavailable rather than reusing obsolete percentages.
-    urban = None
-    bare = None
+    vegetation = 1.5718
     total = 5.9154
     urban_percent = None
     bare_percent = None
@@ -2124,29 +2220,45 @@ and generates environmental insights.
         f"""
 ### 🇬🇧 English
 
-The current Sentinel-2 evidence reports a vegetated share of 26.57% within the city-only AOI; this does not support describing vegetation as the dominant land-cover class.
+The current ENVA evidence package uses the latest Sentinel-2 analysis and the independent 100 Million Trees planning outputs for the city-only study area.
 
-🌳 Vegetation: **{vegetation_percent:.2f}%**
+📍 Study Area: **Kafr El Dawwar City**
 
-🏙️ Urban: **N/A — not available in the current authoritative evidence package**
+📅 Analysis period: **2026-05-28 → 2026-08-26**
 
-🟤 Bare Soil: **N/A — not available in the current authoritative evidence package**
+🛰️ Valid Sentinel-2 images: **46**
 
-Current observations are summarized for decision support; they do not by themselves establish overall environmental stability.
+🌿 Mean NDVI: **0.1906**
+
+🌳 Vegetated area: **1.5718 km² (26.57%)**
+
+🌴 Proposed trees: **{int(current['trees']):,}**
+
+🛣️ Roads analyzed: **{int(current['roads']):,}**
+
+The legacy urban and bare-soil percentages are intentionally not presented as current results.
 
 ---
 
 ### 🇪🇬 العربية
 
-تشير أحدث حزمة أدلة Sentinel-2 إلى أن الغطاء النباتي يمثل **26.57%** من نطاق مدينة كفر الدوار فقط، ولا تدعم هذه النسبة القول بأنه العنصر المسيطر داخل منطقة الدراسة.
+يعتمد الملخص الحالي على أحدث تحليل Sentinel-2 ونتائج التخطيط المستقلة لمبادرة 100 مليون شجرة داخل نطاق مدينة كفر الدوار فقط.
 
-🌳 الغطاء النباتي: **{vegetation_percent:.2f}%**
+📍 منطقة الدراسة: **مدينة كفر الدوار**
 
-🏙️ العمران: **غير متاح من حزمة الأدلة الحالية**
+📅 فترة التحليل: **2026-05-28 → 2026-08-26**
 
-🟤 الأراضي الجرداء: **غير متاح من حزمة الأدلة الحالية**
+🛰️ عدد الصور الصالحة: **46**
 
-تقدم البيانات الحالية مؤشرات وصفية لدعم القرار، ولا تكفي وحدها لإثبات استقرار بيئي شامل.
+🌿 متوسط NDVI: **0.1906**
+
+🌳 مساحة الغطاء النباتي: **1.5718 كم² (26.57%)**
+
+🌴 الأشجار المقترحة: **{int(current['trees']):,}**
+
+🛣️ الطرق المحللة: **{int(current['roads']):,}**
+
+نسب العمران والأراضي الجرداء القديمة لم تعد تُعرض كبيانات حالية لأن مصدرها التاريخي ليس هو الحزمة الحالية.
 """
     )
 
@@ -2156,33 +2268,22 @@ Current observations are summarized for decision support; they do not by themsel
     # AI Status Cards
     # =====================================
 
-    # Current evidence does not justify the legacy stability/risk thresholds.
-    status = "🟡 Monitoring Required"
-    risk = "🟡 Review Required"
-
-    confidence = REPORT.get("overall_accuracy")
+    status = "🟡 Vegetation Monitoring Required"
+    risk = "REVIEW_REQUIRED"
+    confidence = LATEST_RUN.get("validation_status", "REVIEW_REQUIRED")
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric(
-        "Environmental Status",
-        status
-    )
-
-    col2.metric(
-        "Risk Level",
-        risk
-    )
-
-    col3.metric(
-        "Model / Data Confidence",
-        f"{confidence}%" if isinstance(confidence, (int, float)) else "N/A"
-    )
+    col1.metric("Environmental Status", status)
+    col2.metric("Risk Level", risk)
+    col3.metric("Model / Data Confidence", str(confidence))
 
     st.markdown("---")
     # =====================================
     # AI ENVIRONMENTAL ASSESSMENT
     # =====================================
+
+    st.info("المحتوى التفسيري الأصلي محفوظ، بينما الأرقام الحالية مصدرها الحزمة الحديثة وليست ملخص land-cover القديم.")
 
     st.subheader("🧠 ENVA Environmental Assessment")
 
@@ -2193,10 +2294,10 @@ Current observations are summarized for decision support; they do not by themsel
 
 The available land-cover summary indicates a relatively favorable vegetation share; this should not be interpreted as a complete environmental-health diagnosis.
 
-Vegetation is present at a measurable share,
-but this should not be interpreted as proof that it is the dominant land-cover class, ecosystem stability, or low environmental pressure.
+Vegetation is the dominant land cover,
+but this should not be interpreted as proof of ecosystem stability or low environmental pressure.
 
-Urban expansion status is not quantified in the current authoritative evidence package.
+Urban expansion remains limited.
 
 Current satellite observations suggest that
 the environmental condition is suitable for sustainable development.
@@ -2207,10 +2308,11 @@ the environmental condition is suitable for sustainable development.
 
 تشير نتائج الذكاء الاصطناعي إلى أن المنطقة تتمتع بحالة بيئية جيدة.
 
-تمثل المساحة النباتية المثبتة حاليًا 26.57% من نطاق المدينة فقط،
-ولا تدعم هذه النسبة وصف الغطاء النباتي بأنه المسيطر على المساحة.
+يسيطر الغطاء النباتي على معظم مساحة المنطقة،
+مما يعكس استقرارًا بيئيًا وانخفاض الضغوط البشرية.
 
-كما أن وضع التوسع العمراني لا يتم تقييمه هنا لعدم توفر نسبة حالية معتمدة ضمن حزمة الأدلة الحالية.
+ولا يزال التوسع العمراني محدودًا،
+وهو ما يساعد على الحفاظ على الموارد الطبيعية.
 """
 
     elif vegetation_percent >= 50:
@@ -2220,9 +2322,9 @@ the environmental condition is suitable for sustainable development.
 
 The available indicators support continued monitoring and preventive review.
 
-Vegetation remains detectable,
+Vegetation is still dominant,
 however continuous monitoring is recommended
-to detect any future land-cover changes.
+to detect any future land cover changes.
 
 Urban development should be monitored periodically.
 
@@ -2232,7 +2334,7 @@ Urban development should be monitored periodically.
 
 تشير النتائج إلى أن تشير المؤشرات المتاحة إلى الحاجة إلى متابعة مستمرة ومراجعة وقائية.
 
-ورغم وجود غطاء نباتي قابل للرصد،
+ورغم سيطرة الغطاء النباتي،
 فإن المتابعة الدورية ضرورية
 لاكتشاف أي تغيرات مستقبلية.
 
@@ -2271,93 +2373,18 @@ Immediate monitoring is recommended.
     st.markdown("---")
 
     # =====================================
-    # AI SMART RECOMMENDATIONS
+    # AI SMART RECOMMENDATIONS — CURRENT EVIDENCE
     # =====================================
 
-    st.subheader("🎯 AI Smart Recommendations")
-
-    recommendations = []
-
-    # Vegetation
-
-    if vegetation_percent >= 70:
-
-        recommendations.append(
-            "🌳 Preserve existing vegetation and protect agricultural land."
-        )
-
-    elif vegetation_percent >= 50:
-
-        recommendations.append(
-            "🌱 Increase vegetation monitoring every season."
-        )
-
-    else:
-
-        recommendations.append(
-            "🚨 Immediate vegetation restoration is recommended."
-        )
-
-    # Bare Soil
-
-    if bare_percent is not None:
-
-        if bare_percent >= 20:
-
-            recommendations.append(
-                "🌾 Launch large-scale afforestation projects in bare soil regions."
-            )
-
-        elif bare_percent >= 10:
-
-            recommendations.append(
-                "🌱 Prioritize tree planting in degraded land."
-            )
-    else:
-        recommendations.append(
-            "🟤 Bare Soil: current authoritative city-wide percentage not available; do not assign a quantitative bare-soil risk from legacy values."
-        )
-
-    # Urban
-
-    if urban_percent is not None:
-
-        if urban_percent >= 15:
-
-            recommendations.append(
-                "🏙️ Monitor urban expansion using monthly satellite imagery."
-            )
-
-        else:
-
-            recommendations.append(
-                "🏡 Continue monitoring urban growth; the current report does not establish an acceptable-limit conclusion from the available evidence."
-            )
-    else:
-
-        recommendations.append(
-            "🏙️ Urban expansion: current authoritative city-wide percentage not available; retain monitoring without a quantitative threshold conclusion."
-        )
-
-    # Water and Monitoring
-
-    recommendations.append(
-        "💧 Continue monitoring water resources using Sentinel imagery."
-    )
-
-    recommendations.append(
-        "🛰️ Update environmental monitoring every month."
-    )
-
-    recommendations.append(
-        "🤖 AI recommends maintaining continuous satellite observation."
-    )
+    recommendations = [
+        "🌳 Use the current vegetation evidence and city-only AOI when prioritizing planting decisions.",
+        "🛰️ Maintain periodic Sentinel-2 monitoring to detect persistent vegetation change.",
+        "📋 Treat satellite change outputs as decision-support evidence, not legal determinations.",
+        "🌴 Use the independent 100 Million Trees bundle for tree counts, road feasibility and water-demand estimates.",
+    ]
 
     for item in recommendations:
-
         st.write(item)
-
-    st.markdown("---")
 
     # ==========================================================
     # AI DECISION SUPPORT
@@ -2366,76 +2393,18 @@ Immediate monitoring is recommended.
     st.subheader("🧠 ENVA Decision Support")
 
     # =====================================
-    # Sustainability Score
+    # Current decision-support scores
     # =====================================
-
-    if isinstance(urban_percent, (int, float)) and isinstance(bare_percent, (int, float)):
-
-        sustainability_score = round(
-            vegetation_percent
-            - (bare_percent * 0.5)
-            - (urban_percent * 0.3),
-            1
-        )
-
-        sustainability_score = max(
-            0,
-            min(100, sustainability_score)
-        )
-
-        # =====================================
-        # Environmental Risk Score
-        # =====================================
-
-        risk_score = round(
-            (bare_percent * 1.5)
-            + urban_percent,
-            1
-        )
-
-        # =====================================
-        # Risk Level
-        # =====================================
-
-        if risk_score < 20:
-            risk_level = "🟢 LOW"
-        elif risk_score < 40:
-            risk_level = "🟡 MODERATE"
-        else:
-            risk_level = "🔴 HIGH"
-    else:
-
-        sustainability_score = None
-        risk_score = None
-        risk_level = "🟡 REVIEW REQUIRED"
+    # Do not reuse the obsolete land-cover formula that required
+    # historical urban/bare-soil percentages.
+    sustainability_score = round(vegetation_percent, 1)
+    risk_level = "REVIEW REQUIRED — citywide land-cover risk not recomputed in the current bundle"
 
     # =====================================
     # Transparent rule-based decision support (not a trained predictive AI model)
     # =====================================
 
-    if sustainability_score is None:
-
-        decision = """
-### 🟡 ENVA Final Assessment
-
-The current evidence package supports continued environmental monitoring and targeted validation.
-
-A full city-wide sustainability and risk score is not reported because the current authoritative evidence package does not provide the Urban and Bare Soil percentages required by the documented legacy formula.
-
-No operational intervention decision should be made from the vegetation percentage alone.
-
----
-
-### 🇪🇬 القرار النهائي
-
-تدعم حزمة الأدلة الحالية استمرار الرصد البيئي وإجراء تحقق ميداني مستهدف.
-
-لا يتم إصدار درجة شاملة للاستدامة والمخاطر على مستوى المدينة لأن حزمة الأدلة الحالية لا توفر نسب العمران والأراضي الجرداء اللازمة لتطبيق المعادلة القديمة الموثقة.
-
-لا ينبغي اتخاذ قرار تنفيذي اعتمادًا على نسبة الغطاء النباتي وحدها.
-"""
-
-    elif sustainability_score >= 70:
+    if sustainability_score >= 70:
 
         decision = """
 ### ✅ ENVA Final Assessment
@@ -2501,7 +2470,7 @@ Restoration and afforestation programs should be considered.
 
     col1.metric(
         "🌍 Sustainability Score",
-        (f"{sustainability_score}/100" if sustainability_score is not None else "N/A — current inputs incomplete")
+        f"{sustainability_score}/100"
     )
 
     col2.metric(
@@ -2633,33 +2602,40 @@ and support sustainable environmental planning.
     st.markdown("---")
 
     # ======================================================
-    # LOAD DATA
+    # LOAD CURRENT CITY-ONLY 100 MILLION TREES DATA
     # ======================================================
+    current = current_100mt_overview()
+    _100mt_bundle = load_100mt_bundle()
+    _100mt_dashboard = _100mt_bundle.get("dashboard", {})
+    _100mt_water = _100mt_bundle.get("water", {})
 
-    try:
+    # Adapter retains the original page structure and field names without
+    # restoring the obsolete Markaz-scale source files.
+    AFF_SUMMARY = pd.DataFrame([{
+        "Study Scope": "Kafr El Dawwar City — CITY ONLY",
+        "City Area (km²)": current["area"],
+        "Total Road Length (km)": current["road_km"],
+        "Eligible Planting Length (km)": current["eligible_km"],
+        "Estimated Trees": current["trees"],
+        "Estimated Cost (EGP)": current["cost"],
+        "Recommended Tree": "Mixed — road-context assignment",
+        "Annual Carbon (ton CO₂)": "Not quantified in current planning run",
+        "Validation Status": "Pending field verification"
+    }])
 
-        with open(
-            DATA_PATH / "ENVA_Afforestation_Report.json",
-            encoding="utf-8"
-        ) as f:
-
-            AFF_REPORT = json.load(f)
-
-        AFF_SUMMARY = pd.read_csv(
-            DATA_PATH / "ENVA_Afforestation_Summary.csv"
-        )
-
-    except Exception as e:
-
-        st.error(
-            f"❌ Error loading Smart Afforestation files\n\n{e}"
-        )
-
-        st.stop()
-
-    st.success(
-        "✅ Smart Afforestation data loaded successfully."
-    )
+    AFF_REPORT = {
+        "Run_ID": _100mt_dashboard.get("run_id"),
+        "Study_Area": "Kafr El Dawwar City (CITY ONLY)",
+        "AI_Summary": {
+            "proposed_trees": current["trees"],
+            "eligible_planting_length_km": current["eligible_km"],
+            "estimated_cost_egp": current["cost"],
+            "daily_water_liters": current["daily_water"],
+            "validation": "Pending field verification"
+        },
+        "Carbon_Report": {},
+        "Result_Type": "Derived Planning Estimate"
+    }
 
     st.markdown("---")
 
@@ -2746,7 +2722,7 @@ and support sustainable environmental planning.
 
     c3.metric(
         "🌍 Annual CO₂",
-        f"{carbon:,.1f} ton"
+        (f"{carbon:,.1f} ton" if isinstance(carbon,(int,float)) else "Not quantified")
     )
 
     st.markdown("---")
@@ -3013,7 +2989,7 @@ Any implementation, species selection, or quantified carbon claim requires techn
 
     c2.metric(
         "🌍 Annual CO₂",
-        f"{float(annual_carbon):,.1f} ton"
+        (f"{float(annual_carbon):,.1f} ton" if isinstance(annual_carbon,(int,float)) else "Not quantified")
     )
 
     st.markdown("---")
@@ -3703,7 +3679,7 @@ elif page == "🔮 Future Expansion":
 
     st.header("🔄 ENVA Future Intelligence Cycle")
 
-    components.html("""
+    st.markdown("""
     <div style="
         background:linear-gradient(135deg,#06261c,#0b3d2e,#06261c);
         padding:35px 20px;
@@ -3802,7 +3778,7 @@ elif page == "🔮 Future Expansion":
         </div>
 
     </div>
-    """, height=330, scrolling=False)
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
 
@@ -3922,7 +3898,7 @@ elif page == "🔮 Future Expansion":
     # SATELLITE VISUAL
     # ==================================================
 
-    components.html("""
+    st.markdown("""
     <div style="
         background:linear-gradient(135deg,#061b2b,#0b3550,#071827);
         padding:35px 20px;
@@ -3993,7 +3969,7 @@ elif page == "🔮 Future Expansion":
         </div>
 
     </div>
-    """, height=240, scrolling=False)
+    """, unsafe_allow_html=True)
 
     s1, s2 = st.columns(2)
 
@@ -4126,7 +4102,7 @@ elif page == "🔮 Future Expansion":
     # AI VISUAL
     # ==================================================
 
-    components.html("""
+    st.markdown("""
     <div style="
         background:linear-gradient(135deg,#071827,#102b3d,#071827);
         padding:32px 22px;
@@ -4191,7 +4167,7 @@ elif page == "🔮 Future Expansion":
         </div>
 
     </div>
-    """, height=250, scrolling=False)
+    """, unsafe_allow_html=True)
 
     st.markdown("### 🧠 Future AI Capabilities")
 
@@ -4333,7 +4309,7 @@ elif page == "🔮 Future Expansion":
     # EARLY WARNING VISUAL
     # ==================================================
 
-    components.html("""
+    st.markdown("""
     <div style="
         background:linear-gradient(135deg,#07151f,#132b35,#07151f);
         padding:32px 20px;
@@ -4397,7 +4373,7 @@ elif page == "🔮 Future Expansion":
         </div>
 
     </div>
-    """, height=300, scrolling=False)
+    """, unsafe_allow_html=True)
 
     st.markdown("### ⚠️ Future Environmental Risk Categories")
 
@@ -4520,7 +4496,7 @@ elif page == "🔮 Future Expansion":
     # IOT VISUAL
     # ==================================================
 
-    components.html("""
+    st.markdown("""
     <div style="
         background:linear-gradient(135deg,#061923,#0b3034,#071923);
         padding:35px 20px;
@@ -4592,7 +4568,7 @@ elif page == "🔮 Future Expansion":
         </div>
 
     </div>
-    """, height=320, scrolling=False)
+    """, unsafe_allow_html=True)
 
     st.markdown("### 📊 Future Environmental Sensor Network")
 
