@@ -349,8 +349,15 @@ def find_map_file(name):
 
 
 def render_official_map_html(original_map_html, height=760, scrolling=False):
-    """Return the complete official HTML map unchanged for components.html()."""
-    return original_map_html
+    """Render the original official HTML map inside an isolated Base64 iframe."""
+    encoded = base64.b64encode(original_map_html.encode("utf-8")).decode("ascii")
+    scroll_value = "yes" if scrolling else "no"
+    return (
+        f'<iframe src="data:text/html;base64,{encoded}" '
+        f'style="width:100%;height:{int(height)}px;border:0;" '
+        f'frameborder="0" scrolling="{scroll_value}" allowfullscreen></iframe>'
+    )
+
 
 def load_indicator_metadata(name):
     cell_number = 11 + INDICATOR_ORDER.index(name)
@@ -2120,11 +2127,11 @@ This dashboard summarizes the environmental indicators extracted from satellite 
 
     if CURRENT_100MT["vegetation_percent"] > 0:
 
-        st.success(
-            """
-Vegetation is the dominant land cover.
+        st.info(
+            f"""
+Current satellite evidence records a vegetated area of **{CURRENT_100MT["vegetation_area_km2"]:.4f} km²**, representing **{CURRENT_100MT["vegetation_percent"]:.2f}%** of the city-only study area.
 
-الغطاء النباتي يمثل المساحة الأكبر داخل منطقة الدراسة.
+تسجل البيانات الحالية مساحة نباتية قدرها **{CURRENT_100MT["vegetation_area_km2"]:.4f} كم²**، أي **{CURRENT_100MT["vegetation_percent"]:.2f}%** من نطاق المدينة فقط؛ لذلك لا يتم وصف الغطاء النباتي بأنه الفئة المسيطرة اعتمادًا على هذه النسبة وحدها.
 """
         )
 
@@ -2180,20 +2187,13 @@ and generates environmental insights.
     total = CURRENT_100MT["area_km2"]
 
     # =====================================
-    # Prevent ZeroDivisionError
+    # Current evidence availability
     # =====================================
-
-    if total > 0:
-
-        vegetation_percent = CURRENT_100MT["vegetation_percent"]
-        urban_percent = None
-        bare_percent = None
-
-    else:
-
-        vegetation_percent = 0.0
-        urban_percent = 0.0
-        bare_percent = 0.0
+    # Current evidence verifies vegetation share for the city-only AOI.
+    # Urban/bare-soil percentages are not recomputed in this page.
+    vegetation_percent = CURRENT_100MT["vegetation_percent"] if total > 0 else 0.0
+    urban_percent = None
+    bare_percent = None
 
     # =====================================
     # Executive Summary
@@ -2205,13 +2205,13 @@ and generates environmental insights.
         f"""
 ### 🇬🇧 English
 
-The AI environmental analysis indicates that vegetation is the dominant land cover.
+Current satellite evidence records a vegetation share of **{vegetation_percent:.2f}%** within the city-only study area. This percentage does not by itself establish that vegetation is the dominant land-cover class.
 
-🌳 Vegetation: **{vegetation_percent:.1f}%**
+🌳 Vegetation: **{vegetation_percent:.2f}%**
 
-🏙️ Urban: **{urban_percent:.1f}%**
+🏙️ Urban: **N/A — not recomputed in the current evidence package**
 
-🟤 Bare Soil: **{bare_percent:.1f}%**
+🟤 Bare Soil: **N/A — not recomputed in the current evidence package**
 
 Current observations are summarized for decision support; they do not by themselves establish overall environmental stability.
 
@@ -2219,13 +2219,13 @@ Current observations are summarized for decision support; they do not by themsel
 
 ### 🇪🇬 العربية
 
-يشير تحليل الذكاء الاصطناعي إلى أن الغطاء النباتي هو العنصر المسيطر داخل منطقة الدراسة.
+تسجل الأدلة الحالية نسبة غطاء نباتي قدرها **{vegetation_percent:.2f}%** من نطاق المدينة فقط، ولا تسمح هذه النسبة وحدها بوصف الغطاء النباتي بأنه الفئة المسيطرة.
 
-🌳 الغطاء النباتي: **{vegetation_percent:.1f}%**
+🌳 الغطاء النباتي: **{vegetation_percent:.2f}%**
 
-🏙️ العمران: **{urban_percent:.1f}%**
+🏙️ العمران: **غير متاح — لم يُعاد حسابه ضمن حزمة الأدلة الحالية**
 
-🟤 الأراضي الجرداء: **{bare_percent:.1f}%**
+🟤 الأراضي الجرداء: **غير متاح — لم يُعاد حسابها ضمن حزمة الأدلة الحالية**
 
 تقدم البيانات الحالية مؤشرات وصفية لدعم القرار، ولا تكفي وحدها لإثبات استقرار بيئي شامل.
 """
@@ -2244,12 +2244,15 @@ Current observations are summarized for decision support; they do not by themsel
     else:
         status = "🔴 Critical"
 
-    if bare_percent >= 20:
-        risk = "🔴 High"
-    elif bare_percent >= 10:
-        risk = "🟡 Medium"
+    if isinstance(bare_percent, (int, float)):
+        if bare_percent >= 20:
+            risk = "🔴 High"
+        elif bare_percent >= 10:
+            risk = "🟡 Medium"
+        else:
+            risk = "🟢 Low"
     else:
-        risk = "🟢 Low"
+        risk = "⚪ Review Required"
 
     confidence = REPORT.get("overall_accuracy")
 
@@ -2277,85 +2280,38 @@ Current observations are summarized for decision support; they do not by themsel
 
     st.subheader("🧠 ENVA Environmental Assessment")
 
-    if vegetation_percent >= 70:
-
+    if vegetation_percent >= 50:
         ai_text = """
 ### 🌿 Environmental Interpretation
 
-The available land-cover summary indicates a relatively favorable vegetation share; this should not be interpreted as a complete environmental-health diagnosis.
+The current evidence supports continued environmental monitoring and preventive review. The vegetation share is a current descriptive measure and should not be interpreted alone as proof of environmental stability or dominance of one land-cover class.
 
-Vegetation is the dominant land cover,
-but this should not be interpreted as proof of ecosystem stability or low environmental pressure.
-
-Urban expansion remains limited.
-
-Current satellite observations suggest that
-the environmental condition is suitable for sustainable development.
+Urban and bare-soil percentages were not recomputed in the current evidence package.
 
 ---
 
 ### 🇪🇬 التفسير البيئي
 
-تشير نتائج الذكاء الاصطناعي إلى أن المنطقة تتمتع بحالة بيئية جيدة.
+تدعم الأدلة الحالية استمرار الرصد البيئي والمراجعة الوقائية. ونسبة الغطاء النباتي الحالية هي نتيجة وصفية للحالة الراهنة ولا ينبغي تفسيرها وحدها باعتبارها إثباتًا لاستقرار بيئي شامل أو سيطرة فئة واحدة من الغطاء الأرضي.
 
-يسيطر الغطاء النباتي على معظم مساحة المنطقة،
-مما يعكس استقرارًا بيئيًا وانخفاض الضغوط البشرية.
-
-ولا يزال التوسع العمراني محدودًا،
-وهو ما يساعد على الحفاظ على الموارد الطبيعية.
-"""
-
-    elif vegetation_percent >= 50:
-
-        ai_text = """
-### 🌿 Environmental Interpretation
-
-The available indicators support continued monitoring and preventive review.
-
-Vegetation is still dominant,
-however continuous monitoring is recommended
-to detect any future land cover changes.
-
-Urban development should be monitored periodically.
-
----
-
-### 🇪🇬 التفسير البيئي
-
-تشير النتائج إلى أن تشير المؤشرات المتاحة إلى الحاجة إلى متابعة مستمرة ومراجعة وقائية.
-
-ورغم سيطرة الغطاء النباتي،
-فإن المتابعة الدورية ضرورية
-لاكتشاف أي تغيرات مستقبلية.
-
-كما يوصى بمراقبة التوسع العمراني باستمرار.
+لم تتم إعادة حساب نسب العمران والأراضي الجرداء ضمن حزمة الأدلة الحالية.
 """
 
     else:
-
         ai_text = """
 ### ⚠ Environmental Interpretation
 
-The AI engine detected a decline in vegetation.
+The current evidence records a vegetation share of **26.57%** of the city-only study area. This is a descriptive current-state measure and does not by itself prove vegetation decline, urban expansion, or land degradation.
 
-This may indicate environmental degradation,
-urban expansion,
-or increasing land degradation.
-
-Immediate monitoring is recommended.
+Targeted monitoring is recommended, with temporal comparison and field verification before attributing causes to the observed vegetation pattern.
 
 ---
 
 ### 🇪🇬 التفسير البيئي
 
-اكتشف الذكاء الاصطناعي انخفاضًا واضحًا في الغطاء النباتي.
+تسجل الأدلة الحالية نسبة غطاء نباتي قدرها **26.57%** من نطاق المدينة فقط. وهذه نتيجة وصفية للحالة الحالية ولا تثبت وحدها حدوث تراجع نباتي أو توسع عمراني أو تدهور للأراضي.
 
-وقد يشير ذلك إلى
-التوسع العمراني،
-أو تدهور الأراضي،
-أو انخفاض جودة البيئة.
-
-يوصى بإجراء متابعة عاجلة.
+يوصى بالمتابعة المستهدفة والمقارنة الزمنية والتحقق الميداني قبل إسناد أسباب محددة للنمط النباتي المرصود.
 """
 
     st.success(ai_text)
@@ -2392,30 +2348,34 @@ Immediate monitoring is recommended.
 
     # Bare Soil
 
-    if bare_percent >= 20:
-
+    if isinstance(bare_percent, (int, float)):
+        if bare_percent >= 20:
+            recommendations.append(
+                "🌾 Launch large-scale afforestation projects in bare soil regions."
+            )
+        elif bare_percent >= 10:
+            recommendations.append(
+                "🌱 Prioritize tree planting in degraded land."
+            )
+    else:
         recommendations.append(
-            "🌾 Launch large-scale afforestation projects in bare soil regions."
-        )
-
-    elif bare_percent >= 10:
-
-        recommendations.append(
-            "🌱 Prioritize tree planting in degraded land."
+            "🌱 Bare-soil-specific planting recommendations require a current verified bare-soil percentage."
         )
 
     # Urban
 
-    if urban_percent >= 15:
-
-        recommendations.append(
-            "🏙️ Monitor urban expansion using monthly satellite imagery."
-        )
-
+    if isinstance(urban_percent, (int, float)):
+        if urban_percent >= 15:
+            recommendations.append(
+                "🏙️ Monitor urban expansion using monthly satellite imagery."
+            )
+        else:
+            recommendations.append(
+                "🏡 Urban-growth interpretation should be based on current cover and temporal evidence."
+            )
     else:
-
         recommendations.append(
-            "🏡 Urban growth is currently under acceptable limits."
+            "🏙️ Urban-growth interpretation is deferred because a current urban-cover percentage was not recomputed in this evidence package."
         )
 
     # Water and Monitoring
@@ -2445,53 +2405,49 @@ Immediate monitoring is recommended.
     st.subheader("🧠 ENVA Decision Support")
 
     # =====================================
-    # Sustainability Score
+    # Sustainability Score / Environmental Risk Score
     # =====================================
 
-    sustainability_score = round(
-        vegetation_percent
-        - (bare_percent * 0.5)
-        - (urban_percent * 0.3),
-        1
-    )
-
-    sustainability_score = max(
-        0,
-        min(100, sustainability_score)
-    )
-
-    # =====================================
-    # Environmental Risk Score
-    # =====================================
-
-    risk_score = round(
-        (bare_percent * 1.5)
-        + urban_percent,
-        1
-    )
-
-    # =====================================
-    # Risk Level
-    # =====================================
-
-    if risk_score < 20:
-
-        risk_level = "🟢 LOW"
-
-    elif risk_score < 40:
-
-        risk_level = "🟡 MODERATE"
-
+    if isinstance(urban_percent, (int, float)) and isinstance(bare_percent, (int, float)):
+        sustainability_score = round(
+            vegetation_percent - (bare_percent * 0.5) - (urban_percent * 0.3), 1
+        )
+        sustainability_score = max(0, min(100, sustainability_score))
+        risk_score = round((bare_percent * 1.5) + urban_percent, 1)
+        if risk_score < 20:
+            risk_level = "🟢 LOW"
+        elif risk_score < 40:
+            risk_level = "🟡 MODERATE"
+        else:
+            risk_level = "🔴 HIGH"
     else:
-
-        risk_level = "🔴 HIGH"
+        sustainability_score = None
+        risk_score = None
+        risk_level = "⚪ REVIEW REQUIRED"
 
     # =====================================
     # Transparent rule-based decision support (not a trained predictive AI model)
     # =====================================
 
-    if sustainability_score >= 70:
+    if sustainability_score is None:
 
+        decision = """
+### ⚪ ENVA Final Assessment
+
+The current evidence package does not provide verified current urban and bare-soil percentages required by the legacy composite score formula.
+
+No unconditional sustainability or environmental-risk score is issued from incomplete inputs. Targeted review, temporal comparison, and field verification are recommended.
+
+---
+
+### 🇪🇬 القرار النهائي
+
+لا تتضمن حزمة الأدلة الحالية نسبًا موثقة وحديثة للعمران والأراضي الجرداء تكفي لتطبيق معادلة التقييم المركب القديمة.
+
+لذلك لا يتم إصدار درجة استدامة أو مخاطر بيئية شاملة من مدخلات غير مكتملة، ويوصى بالمراجعة المستهدفة والمقارنة الزمنية والتحقق الميداني.
+"""
+
+    elif sustainability_score >= 70:
         decision = """
 ### ✅ ENVA Final Assessment
 
@@ -2556,7 +2512,7 @@ Restoration and afforestation programs should be considered.
 
     col1.metric(
         "🌍 Sustainability Score",
-        f"{sustainability_score}/100"
+        f"{sustainability_score}/100" if sustainability_score is not None else "N/A"
     )
 
     col2.metric(
@@ -2575,7 +2531,9 @@ Restoration and afforestation programs should be considered.
 ### Decision Support
 
 ENVA automatically summarizes the available environmental indicators using the documented decision-support rules.
-to support environmental planning and decision making.
+When required current land-cover inputs are unavailable, the platform reports review status rather than inventing a composite score.
+
+This supports environmental planning and decision making without treating incomplete inputs as a definitive environmental diagnosis.
 
 يقوم الذكاء الاصطناعي بتحويل نتائج تحليل صور الأقمار الصناعية
 إلى ملخص واضح يساعد متخذي القرار، مع الحفاظ على كون المخرجات تحليلية وداعمة للقرار.
