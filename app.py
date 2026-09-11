@@ -1015,7 +1015,7 @@ with st.sidebar:
             "📊 Dashboard",
             "🤖 AI Report",
             "🚨 Early Warning",
-            "🌾 ENVA_Agricultural_Encroachment",
+            "🚜 Agricultural Encroachments",
             "🌳 Smart Afforestation",
             "🌴 100 Million Trees Initiative",
             "📥 Reports",
@@ -4757,27 +4757,18 @@ elif page == "🔮 Future Expansion":
     st.caption(
         "Generated automatically by ENVA Future Vision."
     )
-
-elif page == "🌾 ENVA_Agricultural_Encroachment":
+elif page == "🚜 Agricultural Encroachments":
 
     # ======================================================
-    # ENVA — AGRICULTURAL ENCROACHMENT MONITORING MODULE
-    # Based on the 10-cell ENVA Agricultural Encroachment notebook.
-    # The app reads the verified outputs copied from Google Drive/GitHub;
-    # it does not fabricate analytical values when an output is missing.
+    # ENVA — AGRICULTURAL ENCROACHMENT MONITORING
+    # Updated implementation of the EXISTING page.
+    # It reads the verified outputs produced by the 10-cell notebook.
     # ======================================================
-
-    from pathlib import Path
 
     st.title("🌾 ENVA_Agricultural_Encroachment")
     st.subheader("رصد التعديات والتغيرات على الأراضي الزراعية — Kafr El Dawwar City")
-    st.caption(
-        "ENVA Agricultural Encroachment Monitoring | Baseline 2016 → Comparison 2026"
-    )
+    st.caption("Baseline 2016 → Comparison 2026 | Satellite-derived decision support")
 
-    # ------------------------------------------------------
-    # ROOT DISCOVERY
-    # ------------------------------------------------------
     ENCROACHMENT_ROOT_CANDIDATES = [
         Path("data/ENVA-Agricultural-Encroachment"),
         Path("data/ENVA_Agricultural_Encroachment"),
@@ -4791,11 +4782,11 @@ elif page == "🌾 ENVA_Agricultural_Encroachment":
         ENCROACHMENT_ROOT_CANDIDATES[0],
     )
 
-    def _enva_agri_path(relative_path):
+    def _agri_path(relative_path):
         return ENCROACHMENT_ROOT / relative_path
 
-    def _load_agri_json(relative_path):
-        path = _enva_agri_path(relative_path)
+    def _agri_json(relative_path):
+        path = _agri_path(relative_path)
         if not path.exists():
             return {}
         try:
@@ -4803,7 +4794,7 @@ elif page == "🌾 ENVA_Agricultural_Encroachment":
         except Exception:
             return {}
 
-    def _first_value(obj, keys, default=None):
+    def _pick(obj, keys, default=None):
         if not isinstance(obj, dict):
             return default
         for key in keys:
@@ -4812,89 +4803,48 @@ elif page == "🌾 ENVA_Agricultural_Encroachment":
                 return value
         return default
 
-    def _fmt_num(value, decimals=2):
+    def _num(value, decimals=2):
         try:
             return f"{float(value):,.{decimals}f}"
         except Exception:
             return "N/A"
 
-    def _fmt_area_km2(value):
+    def _area(value):
         try:
             return f"{float(value):,.4f} km²"
         except Exception:
             return "N/A"
 
-    def _file_status(relative_path):
-        return _enva_agri_path(relative_path).exists()
-
-    def _file_card(icon, title, relative_path, description="", downloadable=True):
-        full_path = _enva_agri_path(relative_path)
-        exists = full_path.exists() and full_path.is_file()
-        status = "✅ متوفر" if exists else "⬜ لم يُرفع بعد"
-        border = "#2E8B57" if exists else "#cfd8d3"
-        bg = "#f5fbf7" if exists else "#fafafa"
-        st.markdown(
-            f"""
-            <div style="
-                background:{bg};
-                border:1px solid {border};
-                border-radius:14px;
-                padding:14px;
-                min-height:150px;
-                margin-bottom:10px;
-            ">
-                <div style="font-size:30px;">{icon}</div>
-                <div style="font-weight:800;color:#145A32;font-size:15px;">{title}</div>
-                <div style="font-size:12px;color:#555;margin-top:4px;">{relative_path}</div>
-                <div style="font-size:12px;margin-top:6px;">{description}</div>
-                <div style="font-size:12px;font-weight:700;margin-top:8px;">{status}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        if exists and downloadable:
-            suffix = full_path.suffix.lower()
-            if suffix in {".json", ".csv", ".geojson", ".html", ".pdf", ".txt", ".yml"}:
-                try:
-                    data_bytes = full_path.read_bytes()
-                    st.download_button(
-                        label=f"⬇️ فتح/تنزيل {full_path.name}",
-                        data=data_bytes,
-                        file_name=full_path.name,
-                        key=f"download_{relative_path.replace('/', '_')}",
-                        use_container_width=True,
-                    )
-                except Exception:
-                    pass
+    def _download_file(relative_path, label=None):
+        path = _agri_path(relative_path)
+        if not path.exists() or not path.is_file():
+            return
+        try:
+            st.download_button(
+                label=label or f"⬇️ {path.name}",
+                data=path.read_bytes(),
+                file_name=path.name,
+                key=f"dl_{relative_path.replace('/', '_')}",
+                use_container_width=True,
+            )
+        except Exception:
+            pass
 
     # ------------------------------------------------------
-    # LOAD NOTEBOOK OUTPUTS
+    # Notebook outputs
     # ------------------------------------------------------
-    export_index = _load_agri_json("exports/cell_10_export_index.json")
-    change_meta = _load_agri_json(
-        "config/cell_5_change_detection_metadata.json"
-    )
-    carbon_meta = _load_agri_json(
-        "config/cell_6_carbon_loss_metadata.json"
-    )
-    hotspot_summary = _load_agri_json(
-        "evidence/hotspot_summary_current.json"
-    )
-    monitoring = _load_agri_json(
-        "app_data/encroachment_monitoring_current.json"
-    )
-    alert = _load_agri_json(
-        "app_data/encroachment_alerts_current.json"
-    )
-    last_run = _load_agri_json(
-        "app_data/last_verified_encroachment_run.json"
-    )
-    analysis_config = _load_agri_json(
-        "config/analysis_config.json"
-    )
-    latest_log = _load_agri_json(
-        "logs/monitoring_log.json"
-    )
+    export_index = _agri_json("exports/cell_10_export_index.json")
+    config = _agri_json("config/analysis_config.json")
+    boundary_evidence = _agri_json("evidence/boundary_evidence.json")
+    baseline_meta = _agri_json("config/cell_3_baseline_metadata.json")
+    comparison_meta = _agri_json("config/cell_4_comparison_metadata.json")
+    change_meta = _agri_json("config/cell_5_change_detection_metadata.json")
+    carbon_meta = _agri_json("config/cell_6_carbon_loss_metadata.json")
+    hotspot_summary = _agri_json("evidence/hotspot_summary_current.json")
+    monitoring = _agri_json("app_data/encroachment_monitoring_current.json")
+    alerts = _agri_json("app_data/encroachment_alerts_current.json")
+    last_run = _agri_json("app_data/last_verified_encroachment_run.json")
+    monitoring_log = _agri_json("logs/monitoring_log.json")
 
     key_results = export_index.get("key_results", {}) if isinstance(export_index, dict) else {}
     if not key_results and isinstance(change_meta, dict):
@@ -4902,485 +4852,241 @@ elif page == "🌾 ENVA_Agricultural_Encroachment":
             "encroachment_area_m2": change_meta.get("precise_encroachment_area_m2"),
             "encroachment_area_km2": change_meta.get("precise_encroachment_area_km2"),
             "encroachment_area_feddan": change_meta.get("precise_encroachment_area_feddan"),
-            "percent_of_2016_agricultural_land": change_meta.get(
-                "percent_of_2016_agricultural_land"
-            ),
+            "percent_of_2016_agricultural_land": change_meta.get("percent_of_2016_agricultural_land"),
             "percent_of_city_area": change_meta.get("percent_of_city_area"),
         }
 
+    run_id = _pick(export_index, ["run_id"], _pick(change_meta, ["run_id"], "N/A"))
+    model_version = _pick(config, ["model_version"], "1.1.0")
+    monitoring_status = _pick(monitoring, ["monitoring_status", "status"], "N/A")
+    alert_triggered = bool(_pick(alerts, ["alert_triggered"], False))
+    severity = _pick(alerts, ["severity"], "NONE")
+
     # ------------------------------------------------------
-    # HEADER / STATUS
+    # Status + key results
     # ------------------------------------------------------
-    model_version = _first_value(analysis_config, ["model_version"], "1.1.0")
-    run_id = _first_value(
-        export_index, ["run_id"],
-        _first_value(change_meta, ["run_id"], "N/A")
-    )
-
-    legal_determination = key_results.get(
-        "legal_encroachment_determination",
-        False,
-    )
-
-    monitoring_status = _first_value(
-        monitoring,
-        ["monitoring_status", "status"],
-        _first_value(alert, ["monitoring_status"], "N/A"),
-    )
-
-    alert_triggered = bool(
-        _first_value(alert, ["alert_triggered"], False)
-    )
-    severity = _first_value(alert, ["severity"], "NONE")
-
-    status_col1, status_col2, status_col3, status_col4 = st.columns(4)
-    with status_col1:
-        st.metric("📌 Run ID", str(run_id)[:24])
-    with status_col2:
-        st.metric("🧠 Model", str(model_version))
-    with status_col3:
-        st.metric(
-            "🛰️ Monitoring",
-            str(monitoring_status).replace("_", " "),
-        )
-    with status_col4:
-        st.metric(
-            "🚨 Alert",
-            str(severity) if alert_triggered else "NONE",
-        )
+    s1, s2, s3, s4 = st.columns(4)
+    s1.metric("📌 Run ID", str(run_id)[:22])
+    s2.metric("🧠 Model", str(model_version))
+    s3.metric("📡 Monitoring", str(monitoring_status).replace("_", " "))
+    s4.metric("🚨 Alert", str(severity) if alert_triggered else "NONE")
 
     st.markdown("---")
-
-    # ------------------------------------------------------
-    # EXECUTIVE METRICS
-    # ------------------------------------------------------
     st.header("📊 النتائج الرئيسية الموثقة")
 
     m1, m2, m3, m4, m5 = st.columns(5)
-
-    with m1:
-        st.metric(
-            "🚨 المساحة المكتشفة",
-            _fmt_area_km2(key_results.get("encroachment_area_km2")),
-        )
-
-    with m2:
-        st.metric(
-            "🌾 بالفدان",
-            _fmt_num(key_results.get("encroachment_area_feddan")),
-        )
-
-    with m3:
-        st.metric(
-            "% من الأراضي الزراعية 2016",
-            f"{_fmt_num(key_results.get('percent_of_2016_agricultural_land'))}%",
-        )
-
-    with m4:
-        st.metric(
-            "% من مساحة المدينة",
-            f"{_fmt_num(key_results.get('percent_of_city_area'))}%",
-        )
-
-    with m5:
-        carbon_loss = key_results.get(
-            "relative_carbon_loss_percent",
-            carbon_meta.get("relative_carbon_loss_percent_of_city_2016_potential"),
-        )
-        st.metric(
-            "🌱 فقد الكربون النسبي",
-            f"{_fmt_num(carbon_loss)}%",
-        )
+    m1.metric("🚨 المساحة المكتشفة", _area(key_results.get("encroachment_area_km2")))
+    m2.metric("🌾 بالفدان", _num(key_results.get("encroachment_area_feddan")))
+    m3.metric(
+        "% من الأراضي الزراعية 2016",
+        f"{_num(key_results.get('percent_of_2016_agricultural_land'))}%",
+    )
+    m4.metric(
+        "% من مساحة المدينة",
+        f"{_num(key_results.get('percent_of_city_area'))}%",
+    )
+    carbon_loss = key_results.get(
+        "relative_carbon_loss_percent",
+        carbon_meta.get("relative_carbon_loss_percent_of_city_2016_potential"),
+    )
+    m5.metric("🌱 فقد الكربون النسبي", f"{_num(carbon_loss)}%")
 
     st.info(
-        "⚠️ النتيجة تمثل مؤشر تغير مكاني مستخرجًا من صور الأقمار الصناعية "
-        "2016→2026 وفق تعريف النوتبوك. لا تُعامل كحكم قانوني نهائي على وجود تعدٍ؛ "
-        "النوتبوك نفسه يثبت أن legal_encroachment_determination = False."
+        "⚠️ هذه مخرجات رصد فضائي لتغير الغطاء/الاستخدام بين 2016 و2026. "
+        "النوتبوك يعرّفها كـ proxy لكشف التعدي، وليست حكمًا قانونيًا نهائيًا."
     )
 
     # ------------------------------------------------------
-    # NOTEBOOK METHOD
+    # Methodology
     # ------------------------------------------------------
-    with st.expander("🔬 منهجية الرصد المعتمدة في النوتبوك", expanded=True):
-        cfg1, cfg2, cfg3 = st.columns(3)
-        with cfg1:
-            st.markdown(
-                f"**📅 خط الأساس:** {analysis_config.get('baseline_year', 2016)}"
-            )
-            st.markdown(
-                f"**🛰️ فترة الأساس:** "
-                f"{_first_value(analysis_config.get('baseline_period', {}), ['start'], '2016-05-01')} → "
-                f"{_first_value(analysis_config.get('baseline_period', {}), ['end'], '2016-09-30')}"
-            )
-        with cfg2:
-            st.markdown(
-                f"**📅 سنة المقارنة:** {analysis_config.get('comparison_year', 2026)}"
-            )
-            st.markdown(
-                f"**🛰️ فترة المقارنة:** "
-                f"{_first_value(analysis_config.get('comparison_period', {}), ['start'], '2026-05-01')} → "
-                f"{_first_value(analysis_config.get('comparison_period', {}), ['end'], '2026-09-30')}"
-            )
-        with cfg3:
-            st.markdown(
-                f"**🌿 NDVI الزراعي:** ≥ {analysis_config.get('ndvi_agricultural_threshold', {}).get('value', 0.35)}"
-            )
-            st.markdown(
-                f"**🏙️ NDBI العمراني:** > {analysis_config.get('ndbi_builtup_threshold', {}).get('value', 0.05)}"
-            )
+    with st.expander("🔬 المنهجية والإعدادات المعتمدة في النوتبوك", expanded=True):
+        a, b, c = st.columns(3)
+        with a:
+            st.markdown(f"**📅 Baseline:** {config.get('baseline_year', 2016)}")
+            period = config.get("baseline_period", {}) or {}
+            st.markdown(f"**الفترة:** {period.get('start', '2016-05-01')} → {period.get('end', '2016-09-30')}")
+        with b:
+            st.markdown(f"**📅 Comparison:** {config.get('comparison_year', 2026)}")
+            period = config.get("comparison_period", {}) or {}
+            st.markdown(f"**الفترة:** {period.get('start', '2026-05-01')} → {period.get('end', '2026-09-30')}")
+        with c:
+            st.markdown(f"**🌾 NDVI threshold:** {config.get('ndvi_agricultural_threshold', {}).get('value', 0.35)}")
+            st.markdown(f"**🏙️ NDBI threshold:** {config.get('ndbi_builtup_threshold', {}).get('value', 0.05)}")
 
-        st.markdown(
-            """
-            **تعريف التعدي في النموذج:** البكسل يُصنف كتغير متسق مع التعدي
-            عندما يكون زراعيًا في خط الأساس 2016 ثم يصبح مبنيًا في 2026.
-            هذا تعريف رصدي/تحليلي بالقمر الصناعي وليس تحديدًا قانونيًا.
-            """
-        )
+        st.markdown("**تعريف الكشف:** زراعي في خط الأساس → مبني في سنة المقارنة، وفق قواعد النوتبوك.")
+        st.caption("The notebook explicitly treats the output as a satellite-derived change-detection proxy, not a legal determination.")
 
     # ------------------------------------------------------
-    # NAVIGATION TABS
+    # Tabs
     # ------------------------------------------------------
-    tab_overview, tab_satellite, tab_hotspots, tab_monitoring, tab_files = st.tabs(
-        [
-            "🏠 نظرة عامة",
-            "🛰️ الصور والخرائط",
-            "📍 البؤر الساخنة",
-            "🚨 المراقبة والإنذار",
-            "🗂️ الملفات والأدلة",
-        ]
-    )
+    tab_overview, tab_maps, tab_hotspots, tab_monitoring, tab_files = st.tabs([
+        "📌 Overview",
+        "🛰️ Maps & Evidence",
+        "📍 Hotspots",
+        "🚨 Monitoring",
+        "🗂️ Files",
+    ])
 
     with tab_overview:
-        st.subheader("🧭 لوحة الوحدة")
+        st.subheader("🏙️ المنطقة والبيانات المرجعية")
+        b1, b2, b3 = st.columns(3)
+        b1.metric("📐 Area", _pick(boundary_evidence, ["area_km2"], "N/A"))
+        b2.metric("📍 Geometry", _pick(boundary_evidence, ["geometry_type"], "N/A"))
+        b3.metric("🔐 Boundary SHA-256", str(_pick(boundary_evidence, ["sha256"], "N/A"))[:16] + "…")
 
-        overview_cols = st.columns(3)
-        with overview_cols[0]:
-            st.markdown("### 🌾 Change Detection")
-            st.write(
-                "اكتشاف المناطق التي انتقلت من الإشارة الزراعية في 2016 "
-                "إلى الإشارة العمرانية في 2026."
-            )
-        with overview_cols[1]:
-            st.markdown("### 📍 Hotspots")
-            st.write(
-                "تحويل مناطق التغير إلى مضلعات وترتيبها حسب المساحة "
-                "والمؤشرات المكانية المرتبطة بها."
-            )
-        with overview_cols[2]:
-            st.markdown("### 🌱 Carbon")
-            st.write(
-                "قياس فقد إمكانات احتجاز الكربون كنسبة نسبية، "
-                "دون اختلاق كمية مطلقة من أطنان CO₂."
-            )
+        st.markdown("### 🛰️ بيانات 2016")
+        if baseline_meta:
+            st.json(baseline_meta)
+        else:
+            st.info("ملف بيانات خط الأساس غير مرفوع بعد.")
 
-        st.markdown("---")
-        st.subheader("🧾 ملخص المخرجات")
+        st.markdown("### 🛰️ بيانات 2026")
+        if comparison_meta:
+            st.json(comparison_meta)
+        else:
+            st.info("ملف بيانات المقارنة غير مرفوع بعد.")
 
-        summary_rows = [
-            ("المساحة المكتشفة", _fmt_area_km2(key_results.get("encroachment_area_km2"))),
-            ("المساحة بالفدان", _fmt_num(key_results.get("encroachment_area_feddan"))),
-            ("نسبة من الأراضي الزراعية 2016", f"{_fmt_num(key_results.get('percent_of_2016_agricultural_land'))}%"),
-            ("نسبة من مساحة المدينة", f"{_fmt_num(key_results.get('percent_of_city_area'))}%"),
-            ("فقد الكربون النسبي", f"{_fmt_num(key_results.get('relative_carbon_loss_percent', carbon_meta.get('relative_carbon_loss_percent_of_city_2016_potential')))}%"),
-            ("كمية CO₂ المطلقة", "غير محسوبة"),
-            ("تحديد قانوني للتعدي", "غير مثبت"),
-        ]
-        st.dataframe(
-            pd.DataFrame(summary_rows, columns=["المؤشر", "القيمة"]),
-            use_container_width=True,
-            hide_index=True,
-        )
+    with tab_maps:
+        st.subheader("🗺️ الخرائط والنتائج المكانية")
+        historical_map = _agri_path("maps/encroachment_before_after_map.html")
+        latest_map = _agri_path("maps/encroachment_monitoring_latest.html")
 
-    with tab_satellite:
-        st.subheader("🛰️ Before / After / Encroachment")
+        if historical_map.exists():
+            st.markdown("### 🛰️ Historical 2016 → 2026 Map")
+            try:
+                components.html(historical_map.read_text(encoding="utf-8"), height=760, scrolling=True)
+                _download_file("maps/encroachment_before_after_map.html", "⬇️ تنزيل الخريطة التاريخية")
+            except Exception as e:
+                st.error(f"تعذر عرض الخريطة التاريخية: {e}")
+        else:
+            st.warning("الخريطة التاريخية غير موجودة بعد: maps/encroachment_before_after_map.html")
 
-        map_path = _enva_agri_path(
-            "maps/encroachment_before_after_map.html"
-        )
-        latest_map_path = _enva_agri_path(
-            "maps/encroachment_monitoring_latest.html"
-        )
+        if latest_map.exists():
+            st.markdown("### 📡 Latest Monitoring Map")
+            try:
+                components.html(latest_map.read_text(encoding="utf-8"), height=760, scrolling=True)
+                _download_file("maps/encroachment_monitoring_latest.html", "⬇️ تنزيل خريطة المراقبة الأحدث")
+            except Exception as e:
+                st.error(f"تعذر عرض خريطة المراقبة: {e}")
+        else:
+            st.info("لا توجد خريطة مراقبة أحدث محفوظة حتى الآن.")
 
-        map_col1, map_col2 = st.columns(2)
-        with map_col1:
-            st.markdown("### 🗺️ الخريطة التاريخية 2016 → 2026")
-            if map_path.exists():
-                try:
-                    components.html(
-                        map_path.read_text(encoding="utf-8"),
-                        height=720,
-                        scrolling=True,
-                    )
-                except Exception as e:
-                    st.error(f"تعذر عرض الخريطة: {e}")
-            else:
-                st.warning(
-                    "الخريطة التاريخية غير موجودة بعد: "
-                    "`maps/encroachment_before_after_map.html`"
-                )
-
-        with map_col2:
-            st.markdown("### 📡 أحدث خريطة مراقبة")
-            if latest_map_path.exists():
-                try:
-                    components.html(
-                        latest_map_path.read_text(encoding="utf-8"),
-                        height=720,
-                        scrolling=True,
-                    )
-                except Exception as e:
-                    st.error(f"تعذر عرض أحدث خريطة: {e}")
-            else:
-                st.info(
-                    "سيظهر هنا آخر ناتج مراقبة بمجرد رفع: "
-                    "`maps/encroachment_monitoring_latest.html`"
-                )
-
-        st.markdown("---")
-        st.subheader("🛰️ طبقات بيانات الأقمار الصناعية")
-
-        sat_cols = st.columns(4)
-        satellite_files = [
-            ("🛰️", "True Color 2016", "raw_data/baseline_2016/true_color_2016.tif"),
-            ("🌾", "Agricultural Mask 2016", "raw_data/baseline_2016/agricultural_mask_2016.tif"),
-            ("🛰️", "True Color 2026", "raw_data/comparison_2026/true_color_2026.tif"),
-            ("🏙️", "Built-up Mask 2026", "raw_data/comparison_2026/builtup_mask_2026.tif"),
-        ]
-        for col, (icon, title, rel) in zip(sat_cols, satellite_files):
-            with col:
-                _file_card(icon, title, rel, "خرج مباشر من خلايا البيانات الفضائية.", downloadable=False)
-
-        st.markdown("---")
-        st.markdown(
-            "🔴 **قناع التعدي:** `processed_data/change_detection/encroachment_mask.tif`"
-        )
-        st.markdown(
-            "🗺️ **مضلعات التعدي:** `processed_data/change_detection/encroachment_patches.geojson`"
-        )
+        st.markdown("### 📐 Change Detection")
+        if change_meta:
+            st.json(change_meta)
+        else:
+            st.info("ملف change detection metadata غير متوفر.")
 
     with tab_hotspots:
         st.subheader("📍 Encroachment Hotspots")
-
-        hotspots_path = _enva_agri_path("results/encroachment_hotspots.csv")
-        hotspot_json_path = _enva_agri_path("evidence/hotspot_summary_current.json")
-
+        hotspots_path = _agri_path("results/encroachment_hotspots.csv")
         if hotspots_path.exists():
             try:
                 hotspots_df = pd.read_csv(hotspots_path)
-                st.dataframe(
-                    hotspots_df.head(100),
-                    use_container_width=True,
-                    hide_index=True,
-                )
-                st.caption(
-                    f"تم تحميل {len(hotspots_df):,} سجل من ملف البؤر المصدّر من النوتبوك."
-                )
+                st.dataframe(hotspots_df.head(200), use_container_width=True, hide_index=True)
+                st.caption(f"تم تحميل {len(hotspots_df):,} سجل.")
+                _download_file("results/encroachment_hotspots.csv", "⬇️ تنزيل ملف البؤر")
             except Exception as e:
                 st.error(f"تعذر قراءة ملف البؤر: {e}")
         else:
-            st.warning(
-                "ملف البؤر غير موجود بعد: `results/encroachment_hotspots.csv`"
-            )
+            st.warning("results/encroachment_hotspots.csv غير موجود بعد.")
 
-        st.markdown("---")
-        st.subheader("🏷️ تصنيف أحجام البؤر")
-
-        if isinstance(hotspot_summary, dict):
-            size_distribution = hotspot_summary.get("size_distribution")
-            if isinstance(size_distribution, list) and size_distribution:
-                st.dataframe(
-                    pd.DataFrame(size_distribution),
-                    use_container_width=True,
-                    hide_index=True,
-                )
-            else:
-                st.info("لا يوجد توزيع حجمي محفوظ في ملف الملخص الحالي.")
-        else:
-            st.info("ملف ملخص البؤر غير متوفر.")
+        if hotspot_summary:
+            st.markdown("### 🧩 Hotspot Summary")
+            st.json(hotspot_summary)
 
     with tab_monitoring:
         st.subheader("🚨 Continuous Monitoring & Early Warning")
-
-        mon1, mon2, mon3, mon4 = st.columns(4)
-        with mon1:
-            st.metric(
-                "📡 الحالة",
-                str(monitoring_status).replace("_", " "),
-            )
-        with mon2:
-            st.metric(
-                "🆕 تغير جديد",
-                _fmt_area_km2(
-                    _first_value(
-                        monitoring,
-                        ["new_encroachment_area_km2", "new_encroachment_since_last_run_km2"],
-                        0,
-                    )
-                ),
-            )
-        with mon3:
-            st.metric(
-                "📈 المساحة التراكمية",
-                _fmt_area_km2(
-                    _first_value(
-                        monitoring,
-                        ["current_total_encroachment_area_km2", "encroachment_area_km2"],
-                        key_results.get("encroachment_area_km2"),
-                    )
-                ),
-            )
-        with mon4:
-            st.metric(
-                "🚨 مستوى الإنذار",
-                str(severity),
-            )
+        q1, q2, q3, q4 = st.columns(4)
+        q1.metric("📡 الحالة", str(monitoring_status).replace("_", " "))
+        q2.metric("🆕 تغير جديد", _area(_pick(monitoring, ["new_encroachment_area_km2", "new_encroachment_since_last_run_km2"], 0)))
+        q3.metric("📈 المساحة التراكمية", _area(_pick(monitoring, ["current_total_encroachment_area_km2", "encroachment_area_km2"], key_results.get("encroachment_area_km2"))))
+        q4.metric("🚨 الإنذار", str(severity))
 
         if alert_triggered:
-            if severity == "HIGH":
-                st.error(
-                    "🚨 إنذار مرتفع: تم تسجيل تغير جديد وفق منطق المراقبة الموثق."
-                )
-            else:
-                st.warning(
-                    "⚠️ تم تشغيل إنذار مراقبة وفق الحالة المحفوظة."
-                )
+            st.error("🚨 تم تشغيل إنذار وفق الحالة المحفوظة من آخر تشغيل.")
         else:
-            st.success(
-                "✅ لا يوجد إنذار جديد فوق منطق التنبيه المسجل في آخر تشغيل موثق."
-            )
+            st.success("✅ لا يوجد إنذار جديد في آخر تشغيل موثق.")
 
-        st.markdown("---")
-        st.subheader("🧾 سجل آخر تشغيل")
-        if latest_log:
-            st.json(latest_log)
-        else:
-            st.json(
-                {
-                    "monitoring": monitoring,
-                    "alert": alert,
-                    "last_verified_run": last_run,
-                }
-            )
+        with st.expander("🧾 آخر حالة مراقبة", expanded=False):
+            st.json({"monitoring": monitoring, "alerts": alerts, "last_run": last_run})
+        with st.expander("📜 Monitoring Log", expanded=False):
+            if monitoring_log:
+                st.json(monitoring_log)
+            else:
+                st.info("سجل المراقبة غير متوفر بعد.")
 
     with tab_files:
         st.subheader("🗂️ مستودع ملفات ENVA_Agricultural_Encroachment")
+        st.caption(f"📁 المسار المكتشف: `{ENCROACHMENT_ROOT.as_posix()}`")
 
-        st.caption(
-            f"📁 المسار المكتشف: `{ENCROACHMENT_ROOT.as_posix()}`"
-        )
-
-        st.markdown("### ⚙️ Configuration")
-        config_cols = st.columns(3)
-        config_files = [
-            ("⚙️", "Analysis Configuration", "config/analysis_config.json"),
-            ("📐", "Baseline Metadata", "config/cell_3_baseline_metadata.json"),
-            ("📐", "Comparison Metadata", "config/cell_4_comparison_metadata.json"),
+        sections = [
+            ("⚙️ Configuration", [
+                ("⚙️", "Analysis Configuration", "config/analysis_config.json"),
+                ("📐", "Baseline Metadata", "config/cell_3_baseline_metadata.json"),
+                ("📐", "Comparison Metadata", "config/cell_4_comparison_metadata.json"),
+                ("🔄", "Change Detection Metadata", "config/cell_5_change_detection_metadata.json"),
+                ("🌱", "Carbon Loss Metadata", "config/cell_6_carbon_loss_metadata.json"),
+                ("📦", "Export Index", "exports/cell_10_export_index.json"),
+            ]),
+            ("🗺️ Spatial Outputs", [
+                ("🛰️", "2016 True Color", "raw_data/baseline_2016/true_color_2016.tif"),
+                ("🌾", "2016 Agricultural Mask", "raw_data/baseline_2016/agricultural_mask_2016.tif"),
+                ("🛰️", "2026 True Color", "raw_data/comparison_2026/true_color_2026.tif"),
+                ("🏙️", "2026 Built-up Mask", "raw_data/comparison_2026/builtup_mask_2026.tif"),
+                ("🔴", "Encroachment Raster", "processed_data/change_detection/encroachment_mask.tif"),
+                ("🧩", "Encroachment Patches", "processed_data/change_detection/encroachment_patches.geojson"),
+                ("🗺️", "Historical Map", "maps/encroachment_before_after_map.html"),
+                ("📡", "Latest Monitoring Map", "maps/encroachment_monitoring_latest.html"),
+                ("🧭", "Verified City Boundary", "boundaries/kafr_el_dawwar_city_boundary.geojson"),
+                ("🌱", "Carbon Potential 2016", "processed_data/carbon/carbon_potential_2016.tif"),
+            ]),
+            ("📊 Results & Monitoring", [
+                ("📍", "Encroachment Hotspots", "results/encroachment_hotspots.csv"),
+                ("🚨", "Current Alerts", "app_data/encroachment_alerts_current.json"),
+                ("📡", "Current Monitoring State", "app_data/encroachment_monitoring_current.json"),
+                ("✅", "Last Verified Run", "app_data/last_verified_encroachment_run.json"),
+                ("📜", "Monitoring Log", "logs/monitoring_log.json"),
+            ]),
+            ("🔎 Evidence & Official Reporting", [
+                ("🧾", "Consolidated Evidence Ledger", "evidence/consolidated_evidence_ledger.json"),
+                ("🔎", "Boundary Evidence", "evidence/boundary_evidence.json"),
+                ("🔎", "Change Detection Evidence", "evidence/change_detection_evidence.json"),
+                ("🌱", "Carbon Evidence", "evidence/carbon_loss_evidence.json"),
+                ("📍", "Hotspot Evidence", "evidence/hotspot_evidence.json"),
+                ("🗺️", "Map Manifest", "evidence/map_manifest.json"),
+                ("🛰️", "2016 Evidence", "evidence/baseline_2016_evidence.json"),
+                ("🛰️", "2026 Evidence", "evidence/comparison_2026_evidence.json"),
+                ("🧾", "Hotspot Summary", "evidence/hotspot_summary_current.json"),
+                ("📋", "Data Sources Registry", "config/data_sources_registry.json"),
+                ("📑", "Official ENVA Report", "exports/ENVA_Agricultural_Encroachment_Official_Report.pdf"),
+            ]),
         ]
-        for col, item in zip(config_cols, config_files):
-            with col:
-                _file_card(*item, description="إعدادات وبيانات تشغيل محفوظة من النوتبوك.")
 
-        config_cols2 = st.columns(3)
-        config_files2 = [
-            ("🔄", "Change Detection Metadata", "config/cell_5_change_detection_metadata.json"),
-            ("🌱", "Carbon Loss Metadata", "config/cell_6_carbon_loss_metadata.json"),
-            ("📦", "Export Index", "exports/cell_10_export_index.json"),
-        ]
-        for col, item in zip(config_cols2, config_files2):
-            with col:
-                _file_card(*item, description="ملف تشغيلي/نتيجة موثقة من الخلايا النهائية.")
-
-        st.markdown("---")
-        st.markdown("### 🗺️ Maps & Spatial Outputs")
-        map_cols = st.columns(3)
-        map_files = [
-            ("🗺️", "Historical Interactive Map", "maps/encroachment_before_after_map.html"),
-            ("📡", "Latest Monitoring Map", "maps/encroachment_monitoring_latest.html"),
-            ("🔴", "Encroachment Raster", "processed_data/change_detection/encroachment_mask.tif"),
-        ]
-        for col, item in zip(map_cols, map_files):
-            with col:
-                _file_card(*item, description="مخرج مكاني مباشر من التحليل.", downloadable=item[2].endswith(".html"))
-
-        map_cols2 = st.columns(3)
-        map_files2 = [
-            ("🧩", "Encroachment Patches", "processed_data/change_detection/encroachment_patches.geojson"),
-            ("🌱", "Carbon Potential 2016", "processed_data/carbon/carbon_potential_2016.tif"),
-            ("🧭", "Verified City Boundary", "boundaries/kafr_el_dawwar_city_boundary.geojson"),
-        ]
-        for col, item in zip(map_cols2, map_files2):
-            with col:
-                _file_card(*item, description="طبقة/مضلع/راستر يدعم نتائج الوحدة.", downloadable=item[2].endswith(".geojson"))
-
-        st.markdown("---")
-        st.markdown("### 📊 Results & Monitoring")
-        result_cols = st.columns(3)
-        result_files = [
-            ("📍", "Encroachment Hotspots", "results/encroachment_hotspots.csv"),
-            ("🚨", "Current Alerts", "app_data/encroachment_alerts_current.json"),
-            ("📡", "Current Monitoring State", "app_data/encroachment_monitoring_current.json"),
-        ]
-        for col, item in zip(result_cols, result_files):
-            with col:
-                _file_card(*item, description="مخرجات تشغيلية تُستخدم مباشرة في لوحة المتابعة.")
-
-        result_cols2 = st.columns(3)
-        result_files2 = [
-            ("✅", "Last Verified Run", "app_data/last_verified_encroachment_run.json"),
-            ("📜", "Monitoring Log", "logs/monitoring_log.json"),
-            ("🧾", "Consolidated Evidence Ledger", "evidence/consolidated_evidence_ledger.json"),
-        ]
-        for col, item in zip(result_cols2, result_files2):
-            with col:
-                _file_card(*item, description="سجل تحقق وأدلة تشغيلية قابلة للمراجعة.")
-
-        st.markdown("---")
-        st.markdown("### 📄 Official Reporting")
-        report_cols = st.columns(3)
-        report_files = [
-            ("📑", "Official ENVA Report", "exports/ENVA_Agricultural_Encroachment_Official_Report.pdf"),
-            ("🔍", "Boundary Evidence", "evidence/boundary_evidence.json"),
-            ("🔍", "Change Detection Evidence", "evidence/change_detection_evidence.json"),
-        ]
-        for col, item in zip(report_cols, report_files):
-            with col:
-                _file_card(*item, description="مخرجات للتدقيق والمراجعة الرسمية.")
-
-        report_cols2 = st.columns(3)
-        report_files2 = [
-            ("🔍", "Carbon Evidence", "evidence/carbon_loss_evidence.json"),
-            ("📍", "Hotspot Evidence", "evidence/hotspot_evidence.json"),
-            ("🗺️", "Map Manifest", "evidence/map_manifest.json"),
-        ]
-        for col, item in zip(report_cols2, report_files2):
-            with col:
-                _file_card(*item, description="أدلة مرتبطة بكل طبقة من طبقات النتيجة.")
-
-        st.markdown("---")
-        st.markdown("### 🧪 Baseline & Comparison Evidence")
-        evidence_cols = st.columns(4)
-        evidence_files = [
-            ("🛰️", "2016 Evidence", "evidence/baseline_2016_evidence.json"),
-            ("🛰️", "2026 Evidence", "evidence/comparison_2026_evidence.json"),
-            ("🧾", "Hotspot Summary", "evidence/hotspot_summary_current.json"),
-            ("📋", "Data Sources", "config/data_sources_registry.json"),
-        ]
-        for col, item in zip(evidence_cols, evidence_files):
-            with col:
-                _file_card(*item, description="سجل مصدر/أدلة من مراحل التنفيذ.", downloadable=True)
+        for section_title, items in sections:
+            st.markdown(f"### {section_title}")
+            cols = st.columns(3)
+            for idx, (icon, label, rel) in enumerate(items):
+                with cols[idx % 3]:
+                    exists = _agri_path(rel).exists()
+                    status = "✅ متوفر" if exists else "⬜ غير مرفوع"
+                    st.markdown(
+                        f"**{icon} {label}**\n\n`{rel}`\n\n{status}"
+                    )
+                    if exists and _agri_path(rel).suffix.lower() in {".json", ".csv", ".geojson", ".html", ".pdf", ".txt", ".yml"}:
+                        _download_file(rel, f"⬇️ {label}")
 
         st.success(
-            "✅ الصفحة الآن تقرأ ملفات وحدة ENVA Agricultural Encroachment نفسها. "
-            "لا يتم إنشاء نتائج بديلة عندما تكون ملفات النوتبوك غير موجودة؛ "
-            "يظهر مكان الملف وحالته فقط."
+            "✅ هذه هي الصفحة الأصلية نفسها بعد تحديثها لتقرأ مخرجات النوتبوك الفعلية، "
+            "مع الحفاظ على مسار التنقل الأصلي داخل المنصة."
         )
 
     st.markdown("---")
-    st.caption(
-        "ENVA — Agricultural Encroachment Monitoring | 2016 → 2026 | "
-        "Satellite-derived analytical decision support"
-    )
+    st.caption("ENVA — Agricultural Encroachment Monitoring | 2016 → 2026 | Satellite-derived analytical decision support")
 
+# ======================================================
+# EARLY WARNING (data-driven — built from real indicator risk classes)
+# ======================================================
 
 elif page == "🚨 Early Warning":
 
