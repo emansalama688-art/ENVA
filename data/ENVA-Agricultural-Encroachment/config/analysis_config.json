@@ -1,0 +1,37 @@
+{
+  "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+  "study_area": "Kafr El Dawwar City (CITY ONLY — same verified boundary as the Indicators and 100 Million Trees projects)",
+  "baseline_year": 2016,
+  "comparison_year": 2026,
+  "baseline_period": {
+    "start": "2016-05-01",
+    "end": "2016-09-30"
+  },
+  "comparison_period": {
+    "start": "2026-05-01",
+    "end": "2026-09-30"
+  },
+  "monitoring": {
+    "check_interval_days": 5,
+    "image_lookback_days": 10,
+    "alert_threshold_m2": 200,
+    "noise_floor_m2": 100,
+    "alert_on_any_verified_change": true,
+    "interpretation": "The automation checks for new valid Sentinel-2 acquisitions. A new verified result is processed only when genuinely new imagery exists. A scheduled check does not fabricate a new result."
+  },
+  "note_on_baseline": "Sentinel-2A launched June 2015, so 2016 has usable but sparser coverage than later years. The accepted image count for 2016 is logged explicitly in Cell 3 and is never assumed.",
+  "cloud_probability_threshold": 20,
+  "ndvi_agricultural_threshold": {
+    "value": 0.35,
+    "classification": "Prototype Parameter",
+    "source": "Higher than the general 0.20 vegetation threshold used elsewhere in ENVA, to target dense agricultural/cropland signal rather than any green cover. PENDING_VALIDATION."
+  },
+  "ndbi_builtup_threshold": {
+    "value": 0.05,
+    "classification": "Prototype Parameter",
+    "source": "Same threshold and NDBI-dominant rule used in the Indicators project's EUDI cell, for methodological consistency."
+  },
+  "encroachment_definition": "A pixel is classified as AGRICULTURAL ENCROACHMENT if it was agricultural (NDVI >= threshold, NDBI-dominant=False) in the baseline year AND is built-up (NDBI-dominant) in the comparison year. This is a satellite-derived change-detection proxy, not a legal/administrative determination of illegal encroachment.",
+  "model_version": "1.1.0",
+  "generated_at": "2026-09-11T00:20:50.430393+00:00"
+}
