@@ -1,0 +1,14 @@
+{
+  "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+  "map_path": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/maps/encroachment_before_after_map.html",
+  "embedded_layers": [
+    "true_color_2016",
+    "agricultural_mask_2016",
+    "true_color_2026",
+    "builtup_mask_2026",
+    "encroachment_mask",
+    "study_boundary"
+  ],
+  "live_earth_engine_tiles": false,
+  "generated_at": "2026-09-11T00:28:48.506994+00:00"
+}
