@@ -1015,7 +1015,7 @@ with st.sidebar:
             "📊 Dashboard",
             "🤖 AI Report",
             "🚨 Early Warning",
-            "🚜 Agricultural Encroachments",
+            "🌾 ENVA_Agricultural_Encroachment",
             "🌳 Smart Afforestation",
             "🌴 100 Million Trees Initiative",
             "📥 Reports",
@@ -4757,535 +4757,630 @@ elif page == "🔮 Future Expansion":
     st.caption(
         "Generated automatically by ENVA Future Vision."
     )
-elif page == "🚜 Agricultural Encroachments":
 
-    st.title("🌾 Agricultural Encroachment Monitoring")
+elif page == "🌾 ENVA_Agricultural_Encroachment":
 
-    st.subheader(
-        "رصد التعديات والتغيرات على الأراضي الزراعية"
-    )
-
-    st.markdown("""
-    يهدف هذا الجزء من ENVA إلى رصد التغيرات التي تحدث
-    على الأراضي الزراعية من خلال مقارنة صور الأقمار
-    الصناعية في فترتين زمنيتين مختلفتين.
-
-    **Before Image → After Image → Change Detection**
-    """)
-
-    st.warning("""
-    ⚠️ **نموذج أولي تجريبي**
-
-    النتائج الحالية تمثل كشفًا أوليًا للتغيرات بين الصور،
-    ولا تعتبر إثباتًا نهائيًا لوجود تعديات.
-    """)
-
-    st.markdown("---")
-
-
-    # ==================================================
-    # PATHS
-    # ==================================================
+    # ======================================================
+    # ENVA — AGRICULTURAL ENCROACHMENT MONITORING MODULE
+    # Based on the 10-cell ENVA Agricultural Encroachment notebook.
+    # The app reads the verified outputs copied from Google Drive/GitHub;
+    # it does not fabricate analytical values when an output is missing.
+    # ======================================================
 
     from pathlib import Path
-    import numpy as np
-    from PIL import Image
 
-    ENCROACHMENT_DIR = Path(
-        "data/agricultural_encroachment"
-    )
-
-    ENCROACHMENT_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    BEFORE_IMAGE = (
-        ENCROACHMENT_DIR / "before.png"
-    )
-
-    AFTER_IMAGE = (
-        ENCROACHMENT_DIR / "after.png"
-    )
-
-
-    # ==================================================
-    # 1. BEFORE / AFTER SATELLITE IMAGES
-    # ==================================================
-
-    st.header(
-        "🛰️ Satellite Image Comparison"
-    )
-
-    st.write(
-        "تبدأ عملية اكتشاف التغير من مقارنة صور الأقمار "
-        "الصناعية للمنطقة نفسها في فترتين زمنيتين مختلفتين."
-    )
-
-    before_col, after_col = st.columns(2)
-
-
-    # --------------------------------------------------
-    # BEFORE
-    # --------------------------------------------------
-
-    with before_col:
-
-        st.markdown(
-            "### 🛰️ Before — الصورة السابقة"
-        )
-
-        if BEFORE_IMAGE.exists():
-
-            before_preview = Image.open(
-                BEFORE_IMAGE
-            ).convert("RGB")
-
-            st.image(
-                before_preview,
-                use_container_width=True,
-                caption="Previous Satellite Image"
-            )
-
-        else:
-
-            st.info("""
-            🛰️ **Before Image**
-
-            لم يتم إضافة الصورة السابقة بعد.
-
-            المسار المطلوب:
-
-            `data/agricultural_encroachment/before.png`
-            """)
-
-
-    # --------------------------------------------------
-    # AFTER
-    # --------------------------------------------------
-
-    with after_col:
-
-        st.markdown(
-            "### 🛰️ After — الصورة الحديثة"
-        )
-
-        if AFTER_IMAGE.exists():
-
-            after_preview = Image.open(
-                AFTER_IMAGE
-            ).convert("RGB")
-
-            st.image(
-                after_preview,
-                use_container_width=True,
-                caption="Recent Satellite Image"
-            )
-
-        else:
-
-            st.info("""
-            🛰️ **After Image**
-
-            لم يتم إضافة الصورة الحديثة بعد.
-
-            المسار المطلوب:
-
-            `data/agricultural_encroachment/after.png`
-            """)
-
-
-    st.markdown("---")
-
-
-    # ==================================================
-    # 2. CHANGE DETECTION
-    # ==================================================
-
-    st.header(
-        "🔄 Change Detection"
-    )
-
-    st.write(
-        "يتم هنا إجراء مقارنة أولية بين صورتي Before وAfter "
-        "لاكتشاف المناطق التي يظهر بها اختلاف مكاني."
-    )
-
-
-    # --------------------------------------------------
-    # Check images
-    # --------------------------------------------------
-
-    if BEFORE_IMAGE.exists() and AFTER_IMAGE.exists():
-
-        try:
-
-            # ==========================================
-            # Load Images
-            # ==========================================
-
-            before = Image.open(
-                BEFORE_IMAGE
-            ).convert("RGB")
-
-            after = Image.open(
-                AFTER_IMAGE
-            ).convert("RGB")
-
-
-            # ==========================================
-            # Match Dimensions
-            # ==========================================
-
-            if before.size != after.size:
-
-                st.info(
-                    "ℹ️ أبعاد الصورتين مختلفة، "
-                    "سيتم توحيد أبعاد الصورة الحديثة."
-                )
-
-                after = after.resize(
-                    before.size
-                )
-
-
-            # ==========================================
-            # Convert to NumPy
-            # ==========================================
-
-            before_array = np.asarray(
-                before,
-                dtype=np.float32
-            )
-
-            after_array = np.asarray(
-                after,
-                dtype=np.float32
-            )
-
-
-            # ==========================================
-            # Pixel Difference
-            # ==========================================
-
-            difference = np.mean(
-                np.abs(
-                    before_array - after_array
-                ),
-                axis=2
-            )
-
-
-            # ==========================================
-            # Threshold
-            # ==========================================
-
-            threshold = st.slider(
-                "🔧 Change Detection Threshold",
-                min_value=5,
-                max_value=100,
-                value=35,
-                step=5,
-                help=(
-                    "القيم الأقل تكشف تغيرات أكثر، "
-                    "والقيم الأعلى تجعل الكشف أكثر تحفظًا."
-                )
-            )
-
-
-            # ==========================================
-            # Changed Pixels
-            # ==========================================
-
-            changed_pixels = (
-                difference >= threshold
-            )
-
-
-            # ==========================================
-            # Percentage
-            # ==========================================
-
-            changed_percentage = (
-                changed_pixels.mean() * 100
-            )
-
-
-            # ==========================================
-            # Normalize Difference Map
-            # ==========================================
-
-            max_difference = (
-                difference.max()
-            )
-
-            if max_difference > 0:
-
-                change_map = (
-                    difference
-                    / max_difference
-                    * 255
-                ).astype(np.uint8)
-
-            else:
-
-                change_map = np.zeros_like(
-                    difference,
-                    dtype=np.uint8
-                )
-
-
-            # ==========================================
-            # Change Mask
-            # ==========================================
-
-            change_mask = (
-                changed_pixels.astype(
-                    np.uint8
-                ) * 255
-            )
-
-
-            # ==================================================
-            # DISPLAY BEFORE / AFTER
-            # ==================================================
-
-            st.markdown(
-                "### 🛰️ Before / After"
-            )
-
-            result_col1, result_col2 = st.columns(2)
-
-            with result_col1:
-
-                st.image(
-                    before,
-                    caption="Before",
-                    use_container_width=True
-                )
-
-            with result_col2:
-
-                st.image(
-                    after,
-                    caption="After",
-                    use_container_width=True
-                )
-
-
-            # ==================================================
-            # CHANGE MAP
-            # ==================================================
-
-            st.markdown(
-                "### 🗺️ Detected Change Map"
-            )
-
-            st.image(
-                change_map,
-                caption=(
-                    "Pixel Difference — "
-                    "Higher intensity indicates greater change"
-                ),
-                use_container_width=True
-            )
-
-
-            # ==================================================
-            # SIGNIFICANT CHANGE MASK
-            # ==================================================
-
-            st.markdown(
-                "### 🔍 Significant Change Areas"
-            )
-
-            st.image(
-                change_mask,
-                caption=(
-                    "Thresholded Change Mask"
-                ),
-                use_container_width=True
-            )
-
-
-            # ==================================================
-            # STATISTICS
-            # ==================================================
-
-            st.markdown("---")
-
-            m1, m2, m3 = st.columns(3)
-
-            with m1:
-
-                st.metric(
-                    "Detected Change",
-                    f"{changed_percentage:.2f}%"
-                )
-
-            with m2:
-
-                st.metric(
-                    "Changed Pixels",
-                    f"{int(changed_pixels.sum()):,}"
-                )
-
-            with m3:
-
-                st.metric(
-                    "Threshold",
-                    threshold
-                )
-
-
-            # ==================================================
-            # INTERPRETATION
-            # ==================================================
-
-            if changed_percentage < 1:
-
-                st.success(
-                    f"""
-                    🟢 **Low Detected Change**
-
-                    نسبة البكسلات التي أظهرت تغيرًا:
-
-                    **{changed_percentage:.2f}%**
-                    """
-                )
-
-            elif changed_percentage < 10:
-
-                st.info(
-                    f"""
-                    🔵 **Moderate Detected Change**
-
-                    نسبة البكسلات التي أظهرت تغيرًا:
-
-                    **{changed_percentage:.2f}%**
-                    """
-                )
-
-            else:
-
-                st.warning(
-                    f"""
-                    🟡 **High Detected Change**
-
-                    نسبة البكسلات التي أظهرت تغيرًا:
-
-                    **{changed_percentage:.2f}%**
-
-                    هذه النسبة لا تعني تلقائيًا وجود تعديات.
-                    """
-                )
-
-
-            # ==================================================
-            # SCIENTIFIC WARNING
-            # ==================================================
-
-            st.markdown("---")
-
-            st.warning("""
-            ⚠️ **Important Scientific Interpretation**
-
-            اختلاف البكسلات بين الصورتين لا يعني تلقائيًا
-            وجود تعدٍ على الأراضي الزراعية.
-
-            يمكن أن ينتج التغير عن:
-
-            - اختلاف الإضاءة.
-            - اختلاف الموسم الزراعي.
-            - تغير الغطاء النباتي.
-            - الحصاد أو الزراعة الجديدة.
-            - اختلاف الرطوبة.
-            - السحب أو الظلال.
-            - اختلاف جودة أو ظروف التصوير.
-
-            لذلك تعتبر هذه النتيجة:
-
-            **Preliminary Change Detection**
-
-            وليست:
-
-            **Confirmed Agricultural Encroachment**
-            """)
-
-
-            # ==================================================
-            # SAVE RESULTS FOR PART 2
-            # ==================================================
-
-            st.session_state[
-                "encroachment_before"
-            ] = before
-
-            st.session_state[
-                "encroachment_after"
-            ] = after
-
-            st.session_state[
-                "changed_pixels"
-            ] = changed_pixels
-
-            st.session_state[
-                "change_map"
-            ] = change_map
-
-            st.session_state[
-                "change_mask"
-            ] = change_mask
-
-            st.session_state[
-                "change_percentage"
-            ] = changed_percentage
-
-            st.session_state[
-                "change_threshold"
-            ] = threshold
-
-
-            st.success(
-                "✅ Change Detection completed successfully."
-            )
-
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Unable to perform Change Detection: {e}"
-            )
-
-            st.exception(e)
-
-
-    else:
-
-        st.info("""
-        🛰️ **Change Detection is waiting for imagery**
-
-        أضيفي صورتَي Before وAfter أولًا:
-
-        `data/agricultural_encroachment/before.png`
-
-        `data/agricultural_encroachment/after.png`
-        """)
-
-
-    # ==================================================
-    # PART 1 END
-    # ==================================================
-
-    st.markdown("---")
-
+    st.title("🌾 ENVA_Agricultural_Encroachment")
+    st.subheader("رصد التعديات والتغيرات على الأراضي الزراعية — Kafr El Dawwar City")
     st.caption(
-        "ENVA — Agricultural Encroachment Monitoring | Part 1"
+        "ENVA Agricultural Encroachment Monitoring | Baseline 2016 → Comparison 2026"
     )
 
-# ======================================================
-# EARLY WARNING (data-driven — built from real indicator risk classes)
-# ======================================================
+    # ------------------------------------------------------
+    # ROOT DISCOVERY
+    # ------------------------------------------------------
+    ENCROACHMENT_ROOT_CANDIDATES = [
+        Path("data/ENVA-Agricultural-Encroachment"),
+        Path("data/ENVA_Agricultural_Encroachment"),
+        Path("data/Agricultural_Encroachment"),
+        Path("data/agricultural_encroachment"),
+        Path("ENVA_Agricultural_Encroachment"),
+        Path("Agricultural_Encroachment"),
+    ]
+    ENCROACHMENT_ROOT = next(
+        (p for p in ENCROACHMENT_ROOT_CANDIDATES if p.exists() and p.is_dir()),
+        ENCROACHMENT_ROOT_CANDIDATES[0],
+    )
+
+    def _enva_agri_path(relative_path):
+        return ENCROACHMENT_ROOT / relative_path
+
+    def _load_agri_json(relative_path):
+        path = _enva_agri_path(relative_path)
+        if not path.exists():
+            return {}
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+
+    def _first_value(obj, keys, default=None):
+        if not isinstance(obj, dict):
+            return default
+        for key in keys:
+            value = obj.get(key)
+            if value is not None and value != "":
+                return value
+        return default
+
+    def _fmt_num(value, decimals=2):
+        try:
+            return f"{float(value):,.{decimals}f}"
+        except Exception:
+            return "N/A"
+
+    def _fmt_area_km2(value):
+        try:
+            return f"{float(value):,.4f} km²"
+        except Exception:
+            return "N/A"
+
+    def _file_status(relative_path):
+        return _enva_agri_path(relative_path).exists()
+
+    def _file_card(icon, title, relative_path, description="", downloadable=True):
+        full_path = _enva_agri_path(relative_path)
+        exists = full_path.exists() and full_path.is_file()
+        status = "✅ متوفر" if exists else "⬜ لم يُرفع بعد"
+        border = "#2E8B57" if exists else "#cfd8d3"
+        bg = "#f5fbf7" if exists else "#fafafa"
+        st.markdown(
+            f"""
+            <div style="
+                background:{bg};
+                border:1px solid {border};
+                border-radius:14px;
+                padding:14px;
+                min-height:150px;
+                margin-bottom:10px;
+            ">
+                <div style="font-size:30px;">{icon}</div>
+                <div style="font-weight:800;color:#145A32;font-size:15px;">{title}</div>
+                <div style="font-size:12px;color:#555;margin-top:4px;">{relative_path}</div>
+                <div style="font-size:12px;margin-top:6px;">{description}</div>
+                <div style="font-size:12px;font-weight:700;margin-top:8px;">{status}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        if exists and downloadable:
+            suffix = full_path.suffix.lower()
+            if suffix in {".json", ".csv", ".geojson", ".html", ".pdf", ".txt", ".yml"}:
+                try:
+                    data_bytes = full_path.read_bytes()
+                    st.download_button(
+                        label=f"⬇️ فتح/تنزيل {full_path.name}",
+                        data=data_bytes,
+                        file_name=full_path.name,
+                        key=f"download_{relative_path.replace('/', '_')}",
+                        use_container_width=True,
+                    )
+                except Exception:
+                    pass
+
+    # ------------------------------------------------------
+    # LOAD NOTEBOOK OUTPUTS
+    # ------------------------------------------------------
+    export_index = _load_agri_json("exports/cell_10_export_index.json")
+    change_meta = _load_agri_json(
+        "config/cell_5_change_detection_metadata.json"
+    )
+    carbon_meta = _load_agri_json(
+        "config/cell_6_carbon_loss_metadata.json"
+    )
+    hotspot_summary = _load_agri_json(
+        "evidence/hotspot_summary_current.json"
+    )
+    monitoring = _load_agri_json(
+        "app_data/encroachment_monitoring_current.json"
+    )
+    alert = _load_agri_json(
+        "app_data/encroachment_alerts_current.json"
+    )
+    last_run = _load_agri_json(
+        "app_data/last_verified_encroachment_run.json"
+    )
+    analysis_config = _load_agri_json(
+        "config/analysis_config.json"
+    )
+    latest_log = _load_agri_json(
+        "logs/monitoring_log.json"
+    )
+
+    key_results = export_index.get("key_results", {}) if isinstance(export_index, dict) else {}
+    if not key_results and isinstance(change_meta, dict):
+        key_results = {
+            "encroachment_area_m2": change_meta.get("precise_encroachment_area_m2"),
+            "encroachment_area_km2": change_meta.get("precise_encroachment_area_km2"),
+            "encroachment_area_feddan": change_meta.get("precise_encroachment_area_feddan"),
+            "percent_of_2016_agricultural_land": change_meta.get(
+                "percent_of_2016_agricultural_land"
+            ),
+            "percent_of_city_area": change_meta.get("percent_of_city_area"),
+        }
+
+    # ------------------------------------------------------
+    # HEADER / STATUS
+    # ------------------------------------------------------
+    model_version = _first_value(analysis_config, ["model_version"], "1.1.0")
+    run_id = _first_value(
+        export_index, ["run_id"],
+        _first_value(change_meta, ["run_id"], "N/A")
+    )
+
+    legal_determination = key_results.get(
+        "legal_encroachment_determination",
+        False,
+    )
+
+    monitoring_status = _first_value(
+        monitoring,
+        ["monitoring_status", "status"],
+        _first_value(alert, ["monitoring_status"], "N/A"),
+    )
+
+    alert_triggered = bool(
+        _first_value(alert, ["alert_triggered"], False)
+    )
+    severity = _first_value(alert, ["severity"], "NONE")
+
+    status_col1, status_col2, status_col3, status_col4 = st.columns(4)
+    with status_col1:
+        st.metric("📌 Run ID", str(run_id)[:24])
+    with status_col2:
+        st.metric("🧠 Model", str(model_version))
+    with status_col3:
+        st.metric(
+            "🛰️ Monitoring",
+            str(monitoring_status).replace("_", " "),
+        )
+    with status_col4:
+        st.metric(
+            "🚨 Alert",
+            str(severity) if alert_triggered else "NONE",
+        )
+
+    st.markdown("---")
+
+    # ------------------------------------------------------
+    # EXECUTIVE METRICS
+    # ------------------------------------------------------
+    st.header("📊 النتائج الرئيسية الموثقة")
+
+    m1, m2, m3, m4, m5 = st.columns(5)
+
+    with m1:
+        st.metric(
+            "🚨 المساحة المكتشفة",
+            _fmt_area_km2(key_results.get("encroachment_area_km2")),
+        )
+
+    with m2:
+        st.metric(
+            "🌾 بالفدان",
+            _fmt_num(key_results.get("encroachment_area_feddan")),
+        )
+
+    with m3:
+        st.metric(
+            "% من الأراضي الزراعية 2016",
+            f"{_fmt_num(key_results.get('percent_of_2016_agricultural_land'))}%",
+        )
+
+    with m4:
+        st.metric(
+            "% من مساحة المدينة",
+            f"{_fmt_num(key_results.get('percent_of_city_area'))}%",
+        )
+
+    with m5:
+        carbon_loss = key_results.get(
+            "relative_carbon_loss_percent",
+            carbon_meta.get("relative_carbon_loss_percent_of_city_2016_potential"),
+        )
+        st.metric(
+            "🌱 فقد الكربون النسبي",
+            f"{_fmt_num(carbon_loss)}%",
+        )
+
+    st.info(
+        "⚠️ النتيجة تمثل مؤشر تغير مكاني مستخرجًا من صور الأقمار الصناعية "
+        "2016→2026 وفق تعريف النوتبوك. لا تُعامل كحكم قانوني نهائي على وجود تعدٍ؛ "
+        "النوتبوك نفسه يثبت أن legal_encroachment_determination = False."
+    )
+
+    # ------------------------------------------------------
+    # NOTEBOOK METHOD
+    # ------------------------------------------------------
+    with st.expander("🔬 منهجية الرصد المعتمدة في النوتبوك", expanded=True):
+        cfg1, cfg2, cfg3 = st.columns(3)
+        with cfg1:
+            st.markdown(
+                f"**📅 خط الأساس:** {analysis_config.get('baseline_year', 2016)}"
+            )
+            st.markdown(
+                f"**🛰️ فترة الأساس:** "
+                f"{_first_value(analysis_config.get('baseline_period', {}), ['start'], '2016-05-01')} → "
+                f"{_first_value(analysis_config.get('baseline_period', {}), ['end'], '2016-09-30')}"
+            )
+        with cfg2:
+            st.markdown(
+                f"**📅 سنة المقارنة:** {analysis_config.get('comparison_year', 2026)}"
+            )
+            st.markdown(
+                f"**🛰️ فترة المقارنة:** "
+                f"{_first_value(analysis_config.get('comparison_period', {}), ['start'], '2026-05-01')} → "
+                f"{_first_value(analysis_config.get('comparison_period', {}), ['end'], '2026-09-30')}"
+            )
+        with cfg3:
+            st.markdown(
+                f"**🌿 NDVI الزراعي:** ≥ {analysis_config.get('ndvi_agricultural_threshold', {}).get('value', 0.35)}"
+            )
+            st.markdown(
+                f"**🏙️ NDBI العمراني:** > {analysis_config.get('ndbi_builtup_threshold', {}).get('value', 0.05)}"
+            )
+
+        st.markdown(
+            """
+            **تعريف التعدي في النموذج:** البكسل يُصنف كتغير متسق مع التعدي
+            عندما يكون زراعيًا في خط الأساس 2016 ثم يصبح مبنيًا في 2026.
+            هذا تعريف رصدي/تحليلي بالقمر الصناعي وليس تحديدًا قانونيًا.
+            """
+        )
+
+    # ------------------------------------------------------
+    # NAVIGATION TABS
+    # ------------------------------------------------------
+    tab_overview, tab_satellite, tab_hotspots, tab_monitoring, tab_files = st.tabs(
+        [
+            "🏠 نظرة عامة",
+            "🛰️ الصور والخرائط",
+            "📍 البؤر الساخنة",
+            "🚨 المراقبة والإنذار",
+            "🗂️ الملفات والأدلة",
+        ]
+    )
+
+    with tab_overview:
+        st.subheader("🧭 لوحة الوحدة")
+
+        overview_cols = st.columns(3)
+        with overview_cols[0]:
+            st.markdown("### 🌾 Change Detection")
+            st.write(
+                "اكتشاف المناطق التي انتقلت من الإشارة الزراعية في 2016 "
+                "إلى الإشارة العمرانية في 2026."
+            )
+        with overview_cols[1]:
+            st.markdown("### 📍 Hotspots")
+            st.write(
+                "تحويل مناطق التغير إلى مضلعات وترتيبها حسب المساحة "
+                "والمؤشرات المكانية المرتبطة بها."
+            )
+        with overview_cols[2]:
+            st.markdown("### 🌱 Carbon")
+            st.write(
+                "قياس فقد إمكانات احتجاز الكربون كنسبة نسبية، "
+                "دون اختلاق كمية مطلقة من أطنان CO₂."
+            )
+
+        st.markdown("---")
+        st.subheader("🧾 ملخص المخرجات")
+
+        summary_rows = [
+            ("المساحة المكتشفة", _fmt_area_km2(key_results.get("encroachment_area_km2"))),
+            ("المساحة بالفدان", _fmt_num(key_results.get("encroachment_area_feddan"))),
+            ("نسبة من الأراضي الزراعية 2016", f"{_fmt_num(key_results.get('percent_of_2016_agricultural_land'))}%"),
+            ("نسبة من مساحة المدينة", f"{_fmt_num(key_results.get('percent_of_city_area'))}%"),
+            ("فقد الكربون النسبي", f"{_fmt_num(key_results.get('relative_carbon_loss_percent', carbon_meta.get('relative_carbon_loss_percent_of_city_2016_potential')))}%"),
+            ("كمية CO₂ المطلقة", "غير محسوبة"),
+            ("تحديد قانوني للتعدي", "غير مثبت"),
+        ]
+        st.dataframe(
+            pd.DataFrame(summary_rows, columns=["المؤشر", "القيمة"]),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+    with tab_satellite:
+        st.subheader("🛰️ Before / After / Encroachment")
+
+        map_path = _enva_agri_path(
+            "maps/encroachment_before_after_map.html"
+        )
+        latest_map_path = _enva_agri_path(
+            "maps/encroachment_monitoring_latest.html"
+        )
+
+        map_col1, map_col2 = st.columns(2)
+        with map_col1:
+            st.markdown("### 🗺️ الخريطة التاريخية 2016 → 2026")
+            if map_path.exists():
+                try:
+                    components.html(
+                        map_path.read_text(encoding="utf-8"),
+                        height=720,
+                        scrolling=True,
+                    )
+                except Exception as e:
+                    st.error(f"تعذر عرض الخريطة: {e}")
+            else:
+                st.warning(
+                    "الخريطة التاريخية غير موجودة بعد: "
+                    "`maps/encroachment_before_after_map.html`"
+                )
+
+        with map_col2:
+            st.markdown("### 📡 أحدث خريطة مراقبة")
+            if latest_map_path.exists():
+                try:
+                    components.html(
+                        latest_map_path.read_text(encoding="utf-8"),
+                        height=720,
+                        scrolling=True,
+                    )
+                except Exception as e:
+                    st.error(f"تعذر عرض أحدث خريطة: {e}")
+            else:
+                st.info(
+                    "سيظهر هنا آخر ناتج مراقبة بمجرد رفع: "
+                    "`maps/encroachment_monitoring_latest.html`"
+                )
+
+        st.markdown("---")
+        st.subheader("🛰️ طبقات بيانات الأقمار الصناعية")
+
+        sat_cols = st.columns(4)
+        satellite_files = [
+            ("🛰️", "True Color 2016", "raw_data/baseline_2016/true_color_2016.tif"),
+            ("🌾", "Agricultural Mask 2016", "raw_data/baseline_2016/agricultural_mask_2016.tif"),
+            ("🛰️", "True Color 2026", "raw_data/comparison_2026/true_color_2026.tif"),
+            ("🏙️", "Built-up Mask 2026", "raw_data/comparison_2026/builtup_mask_2026.tif"),
+        ]
+        for col, (icon, title, rel) in zip(sat_cols, satellite_files):
+            with col:
+                _file_card(icon, title, rel, "خرج مباشر من خلايا البيانات الفضائية.", downloadable=False)
+
+        st.markdown("---")
+        st.markdown(
+            "🔴 **قناع التعدي:** `processed_data/change_detection/encroachment_mask.tif`"
+        )
+        st.markdown(
+            "🗺️ **مضلعات التعدي:** `processed_data/change_detection/encroachment_patches.geojson`"
+        )
+
+    with tab_hotspots:
+        st.subheader("📍 Encroachment Hotspots")
+
+        hotspots_path = _enva_agri_path("results/encroachment_hotspots.csv")
+        hotspot_json_path = _enva_agri_path("evidence/hotspot_summary_current.json")
+
+        if hotspots_path.exists():
+            try:
+                hotspots_df = pd.read_csv(hotspots_path)
+                st.dataframe(
+                    hotspots_df.head(100),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+                st.caption(
+                    f"تم تحميل {len(hotspots_df):,} سجل من ملف البؤر المصدّر من النوتبوك."
+                )
+            except Exception as e:
+                st.error(f"تعذر قراءة ملف البؤر: {e}")
+        else:
+            st.warning(
+                "ملف البؤر غير موجود بعد: `results/encroachment_hotspots.csv`"
+            )
+
+        st.markdown("---")
+        st.subheader("🏷️ تصنيف أحجام البؤر")
+
+        if isinstance(hotspot_summary, dict):
+            size_distribution = hotspot_summary.get("size_distribution")
+            if isinstance(size_distribution, list) and size_distribution:
+                st.dataframe(
+                    pd.DataFrame(size_distribution),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+            else:
+                st.info("لا يوجد توزيع حجمي محفوظ في ملف الملخص الحالي.")
+        else:
+            st.info("ملف ملخص البؤر غير متوفر.")
+
+    with tab_monitoring:
+        st.subheader("🚨 Continuous Monitoring & Early Warning")
+
+        mon1, mon2, mon3, mon4 = st.columns(4)
+        with mon1:
+            st.metric(
+                "📡 الحالة",
+                str(monitoring_status).replace("_", " "),
+            )
+        with mon2:
+            st.metric(
+                "🆕 تغير جديد",
+                _fmt_area_km2(
+                    _first_value(
+                        monitoring,
+                        ["new_encroachment_area_km2", "new_encroachment_since_last_run_km2"],
+                        0,
+                    )
+                ),
+            )
+        with mon3:
+            st.metric(
+                "📈 المساحة التراكمية",
+                _fmt_area_km2(
+                    _first_value(
+                        monitoring,
+                        ["current_total_encroachment_area_km2", "encroachment_area_km2"],
+                        key_results.get("encroachment_area_km2"),
+                    )
+                ),
+            )
+        with mon4:
+            st.metric(
+                "🚨 مستوى الإنذار",
+                str(severity),
+            )
+
+        if alert_triggered:
+            if severity == "HIGH":
+                st.error(
+                    "🚨 إنذار مرتفع: تم تسجيل تغير جديد وفق منطق المراقبة الموثق."
+                )
+            else:
+                st.warning(
+                    "⚠️ تم تشغيل إنذار مراقبة وفق الحالة المحفوظة."
+                )
+        else:
+            st.success(
+                "✅ لا يوجد إنذار جديد فوق منطق التنبيه المسجل في آخر تشغيل موثق."
+            )
+
+        st.markdown("---")
+        st.subheader("🧾 سجل آخر تشغيل")
+        if latest_log:
+            st.json(latest_log)
+        else:
+            st.json(
+                {
+                    "monitoring": monitoring,
+                    "alert": alert,
+                    "last_verified_run": last_run,
+                }
+            )
+
+    with tab_files:
+        st.subheader("🗂️ مستودع ملفات ENVA_Agricultural_Encroachment")
+
+        st.caption(
+            f"📁 المسار المكتشف: `{ENCROACHMENT_ROOT.as_posix()}`"
+        )
+
+        st.markdown("### ⚙️ Configuration")
+        config_cols = st.columns(3)
+        config_files = [
+            ("⚙️", "Analysis Configuration", "config/analysis_config.json"),
+            ("📐", "Baseline Metadata", "config/cell_3_baseline_metadata.json"),
+            ("📐", "Comparison Metadata", "config/cell_4_comparison_metadata.json"),
+        ]
+        for col, item in zip(config_cols, config_files):
+            with col:
+                _file_card(*item, description="إعدادات وبيانات تشغيل محفوظة من النوتبوك.")
+
+        config_cols2 = st.columns(3)
+        config_files2 = [
+            ("🔄", "Change Detection Metadata", "config/cell_5_change_detection_metadata.json"),
+            ("🌱", "Carbon Loss Metadata", "config/cell_6_carbon_loss_metadata.json"),
+            ("📦", "Export Index", "exports/cell_10_export_index.json"),
+        ]
+        for col, item in zip(config_cols2, config_files2):
+            with col:
+                _file_card(*item, description="ملف تشغيلي/نتيجة موثقة من الخلايا النهائية.")
+
+        st.markdown("---")
+        st.markdown("### 🗺️ Maps & Spatial Outputs")
+        map_cols = st.columns(3)
+        map_files = [
+            ("🗺️", "Historical Interactive Map", "maps/encroachment_before_after_map.html"),
+            ("📡", "Latest Monitoring Map", "maps/encroachment_monitoring_latest.html"),
+            ("🔴", "Encroachment Raster", "processed_data/change_detection/encroachment_mask.tif"),
+        ]
+        for col, item in zip(map_cols, map_files):
+            with col:
+                _file_card(*item, description="مخرج مكاني مباشر من التحليل.", downloadable=item[2].endswith(".html"))
+
+        map_cols2 = st.columns(3)
+        map_files2 = [
+            ("🧩", "Encroachment Patches", "processed_data/change_detection/encroachment_patches.geojson"),
+            ("🌱", "Carbon Potential 2016", "processed_data/carbon/carbon_potential_2016.tif"),
+            ("🧭", "Verified City Boundary", "boundaries/kafr_el_dawwar_city_boundary.geojson"),
+        ]
+        for col, item in zip(map_cols2, map_files2):
+            with col:
+                _file_card(*item, description="طبقة/مضلع/راستر يدعم نتائج الوحدة.", downloadable=item[2].endswith(".geojson"))
+
+        st.markdown("---")
+        st.markdown("### 📊 Results & Monitoring")
+        result_cols = st.columns(3)
+        result_files = [
+            ("📍", "Encroachment Hotspots", "results/encroachment_hotspots.csv"),
+            ("🚨", "Current Alerts", "app_data/encroachment_alerts_current.json"),
+            ("📡", "Current Monitoring State", "app_data/encroachment_monitoring_current.json"),
+        ]
+        for col, item in zip(result_cols, result_files):
+            with col:
+                _file_card(*item, description="مخرجات تشغيلية تُستخدم مباشرة في لوحة المتابعة.")
+
+        result_cols2 = st.columns(3)
+        result_files2 = [
+            ("✅", "Last Verified Run", "app_data/last_verified_encroachment_run.json"),
+            ("📜", "Monitoring Log", "logs/monitoring_log.json"),
+            ("🧾", "Consolidated Evidence Ledger", "evidence/consolidated_evidence_ledger.json"),
+        ]
+        for col, item in zip(result_cols2, result_files2):
+            with col:
+                _file_card(*item, description="سجل تحقق وأدلة تشغيلية قابلة للمراجعة.")
+
+        st.markdown("---")
+        st.markdown("### 📄 Official Reporting")
+        report_cols = st.columns(3)
+        report_files = [
+            ("📑", "Official ENVA Report", "exports/ENVA_Agricultural_Encroachment_Official_Report.pdf"),
+            ("🔍", "Boundary Evidence", "evidence/boundary_evidence.json"),
+            ("🔍", "Change Detection Evidence", "evidence/change_detection_evidence.json"),
+        ]
+        for col, item in zip(report_cols, report_files):
+            with col:
+                _file_card(*item, description="مخرجات للتدقيق والمراجعة الرسمية.")
+
+        report_cols2 = st.columns(3)
+        report_files2 = [
+            ("🔍", "Carbon Evidence", "evidence/carbon_loss_evidence.json"),
+            ("📍", "Hotspot Evidence", "evidence/hotspot_evidence.json"),
+            ("🗺️", "Map Manifest", "evidence/map_manifest.json"),
+        ]
+        for col, item in zip(report_cols2, report_files2):
+            with col:
+                _file_card(*item, description="أدلة مرتبطة بكل طبقة من طبقات النتيجة.")
+
+        st.markdown("---")
+        st.markdown("### 🧪 Baseline & Comparison Evidence")
+        evidence_cols = st.columns(4)
+        evidence_files = [
+            ("🛰️", "2016 Evidence", "evidence/baseline_2016_evidence.json"),
+            ("🛰️", "2026 Evidence", "evidence/comparison_2026_evidence.json"),
+            ("🧾", "Hotspot Summary", "evidence/hotspot_summary_current.json"),
+            ("📋", "Data Sources", "config/data_sources_registry.json"),
+        ]
+        for col, item in zip(evidence_cols, evidence_files):
+            with col:
+                _file_card(*item, description="سجل مصدر/أدلة من مراحل التنفيذ.", downloadable=True)
+
+        st.success(
+            "✅ الصفحة الآن تقرأ ملفات وحدة ENVA Agricultural Encroachment نفسها. "
+            "لا يتم إنشاء نتائج بديلة عندما تكون ملفات النوتبوك غير موجودة؛ "
+            "يظهر مكان الملف وحالته فقط."
+        )
+
+    st.markdown("---")
+    st.caption(
+        "ENVA — Agricultural Encroachment Monitoring | 2016 → 2026 | "
+        "Satellite-derived analytical decision support"
+    )
+
 
 elif page == "🚨 Early Warning":
 
