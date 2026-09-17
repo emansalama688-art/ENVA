@@ -1,0 +1,52 @@
+{
+  "runs": [
+    {
+      "run_id": "ENVA_AGRI_MONITOR_20260909_161614",
+      "checked_at": "2026-09-09T16:16:21.395499+00:00",
+      "monitoring_status": "MONITORING_BASELINE_ESTABLISHED",
+      "new_scenes_found": 6,
+      "new_scene_ids": [
+        "20260830T083741_20260830T084957_T36RTV",
+        "20260830T083741_20260830T084957_T35RQQ",
+        "20260902T083559_20260902T084117_T36RTV",
+        "20260902T083559_20260902T084117_T35RQQ",
+        "20260907T083601_20260907T084303_T36RTV",
+        "20260907T083601_20260907T084303_T35RQQ"
+      ],
+      "latest_scene_time_ms": 1788771097859,
+      "encroachment_area_km2": 0.0968912531764012,
+      "new_encroachment_since_last_km2": 0.0,
+      "new_relative_carbon_loss_percent": 0.0,
+      "alert_triggered": false,
+      "severity": "NONE"
+    },
+    {
+      "run_id": "ENVA_AGRI_MONITOR_20260909_182757",
+      "checked_at": "2026-09-09T18:28:00.180563+00:00",
+      "monitoring_status": "NO_NEW_VALID_IMAGERY",
+      "new_scenes_found": 0,
+      "new_scene_ids": [],
+      "latest_scene_time_ms": 1788771097859,
+      "encroachment_area_km2": 0.0,
+      "new_encroachment_since_last_km2": 0.0,
+      "new_relative_carbon_loss_percent": 0.0,
+      "alert_triggered": false,
+      "severity": "NONE"
+    },
+    {
+      "run_id": "ENVA_AGRI_MONITOR_20260909_184011",
+      "checked_at": "2026-09-09T18:40:12.285598+00:00",
+      "monitoring_status": "NO_NEW_VALID_IMAGERY",
+      "new_scenes_found": 0,
+      "new_scene_ids": [],
+      "latest_scene_time_ms": 1788771097859,
+      "encroachment_area_km2": 0.0,
+      "new_encroachment_since_last_km2": 0.0,
+      "new_relative_carbon_loss_percent": 0.0,
+      "alert_triggered": false,
+      "severity": "NONE"
+    }
+  ],
+  "last_updated": "2026-09-09T18:40:12.285826+00:00",
+  "scheduling_note": "Recommended: run the automation checker at least every 5 days (daily is also safe). The notebook processes only genuinely new valid Sentinel-2 imagery and never fabricates an update."
+}
