@@ -1,0 +1,19 @@
+{
+  "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+  "generated_at": "2026-09-11T00:32:14.444675+00:00",
+  "exports": {
+    "consolidated_evidence": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/evidence/consolidated_evidence_ledger.json",
+    "official_pdf_report": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/exports/ENVA_Agricultural_Encroachment_Official_Report.pdf",
+    "encroachment_map": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/maps/encroachment_before_after_map.html"
+  },
+  "key_results": {
+    "encroachment_area_m2": 80823.52513768814,
+    "encroachment_area_km2": 0.08082352513768813,
+    "encroachment_area_feddan": 19.23989429176809,
+    "percent_of_2016_agricultural_land": 5.645279275591658,
+    "percent_of_city_area": 1.3663206552843679,
+    "relative_carbon_loss_percent": 4.4439350302308815,
+    "absolute_tons_co2_quantified": false,
+    "legal_encroachment_determination": false
+  }
+}

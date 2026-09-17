@@ -1,0 +1,262 @@
+{
+  "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+  "generated_at": "2026-09-11T00:32:08.812546+00:00",
+  "study_area": "Kafr El Dawwar City",
+  "scope": "CITY_ONLY",
+  "boundary": {
+    "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+    "boundary_source": "/content/drive/MyDrive/ENVA/Smart_Environmental_Indicators/boundaries/kafr_el_dawwar_city_aoi.geojson",
+    "boundary_source_sha256": "f3dea103309d0616971cd2c3028ac44030951477d44ebbe4070048c8f54ed49b",
+    "byte_identical_to_source": true,
+    "expected_sha256": "f3dea103309d0616971cd2c3028ac44030951477d44ebbe4070048c8f54ed49b",
+    "area_km2": 5.916352574701496,
+    "ee_area_m2": 5915414.13248024,
+    "scope": "CITY_ONLY",
+    "verified_at": "2026-09-11T00:21:01.999193+00:00"
+  },
+  "baseline_2016": {
+    "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+    "year": 2016,
+    "period": {
+      "start": "2016-05-01",
+      "end": "2016-09-30"
+    },
+    "images_used": 13,
+    "scene_ids": [
+      "20160512T084022_20160512T084750_T35RQQ",
+      "20160512T084022_20160512T084750_T36RTV",
+      "20160621T084012_20160621T084513_T35RQQ",
+      "20160621T084012_20160621T084513_T36RTV",
+      "20160711T084022_20160711T084751_T35RQQ",
+      "20160711T084022_20160711T084751_T36RTV",
+      "20160721T083602_20160721T084719_T35RQQ",
+      "20160721T083602_20160721T084719_T36RTV",
+      "20160820T084012_20160820T084833_T35RQQ",
+      "20160909T084012_20160909T084829_T35RQQ",
+      "20160909T084012_20160909T084829_T36RTV",
+      "20160919T083622_20160919T084726_T35RQQ",
+      "20160919T083622_20160919T084726_T36RTV"
+    ],
+    "ndvi_statistics": {
+      "NDVI_2016_max": 0.9159369555057039,
+      "NDVI_2016_mean": 0.229802943644043,
+      "NDVI_2016_min": -0.3085501817550445
+    },
+    "agricultural_area_km2": 1.431701093817318,
+    "agricultural_percent_of_city": 24.202888618671036,
+    "builtup_area_km2": 1.7999645061264629,
+    "builtup_percent_of_city": 30.428376878015236,
+    "agricultural_threshold": 0.35,
+    "builtup_threshold": 0.05,
+    "confidence": "PROTOTYPE — satellite-derived agricultural proxy.",
+    "generated_at": "2026-09-11T00:21:33.022033+00:00"
+  },
+  "comparison_2026": {
+    "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+    "year": 2026,
+    "period": {
+      "start": "2026-05-01",
+      "end": "2026-09-30"
+    },
+    "images_used": 64,
+    "scene_ids": [
+      "20260510T083601_20260510T084001_T35RQQ",
+      "20260510T083601_20260510T084001_T36RTV",
+      "20260512T083741_20260512T084550_T35RQQ",
+      "20260512T083741_20260512T084550_T36RTV",
+      "20260520T083601_20260520T084434_T36RTV",
+      "20260522T084501_20260522T084457_T35RQQ",
+      "20260522T084501_20260522T084457_T36RTV",
+      "20260525T083559_20260525T084502_T35RQQ",
+      "20260530T083601_20260530T084421_T35RQQ",
+      "20260530T083601_20260530T084421_T36RTV",
+      "20260604T083559_20260604T084416_T35RQQ",
+      "20260604T083559_20260604T084416_T36RTV",
+      "20260609T083601_20260609T084427_T35RQQ",
+      "20260609T083601_20260609T084427_T36RTV",
+      "20260611T084501_20260611T084520_T35RQQ",
+      "20260611T084501_20260611T084520_T36RTV",
+      "20260619T083601_20260619T084446_T35RQQ",
+      "20260624T083559_20260624T084509_T35RQQ",
+      "20260624T083559_20260624T084509_T36RTV",
+      "20260629T083601_20260629T084401_T35RQQ",
+      "20260629T083601_20260629T084401_T36RTV",
+      "20260701T084501_20260701T084529_T35RQQ",
+      "20260701T084501_20260701T084529_T36RTV",
+      "20260704T083559_20260704T084501_T35RQQ",
+      "20260704T083559_20260704T084501_T36RTV",
+      "20260709T083601_20260709T084428_T35RQQ",
+      "20260709T083601_20260709T084428_T36RTV",
+      "20260711T083741_20260711T084523_T35RQQ",
+      "20260711T083741_20260711T084523_T36RTV",
+      "20260714T083559_20260714T084514_T35RQQ",
+      "20260714T083559_20260714T084514_T36RTV",
+      "20260719T083601_20260719T084439_T35RQQ",
+      "20260719T083601_20260719T084439_T36RTV",
+      "20260721T083741_20260721T084810_T35RQQ",
+      "20260721T083741_20260721T084810_T36RTV",
+      "20260724T083559_20260724T084518_T35RQQ",
+      "20260724T083559_20260724T084518_T36RTV",
+      "20260729T083601_20260729T084440_T35RQQ",
+      "20260729T083601_20260729T084440_T36RTV",
+      "20260731T084501_20260731T084755_T35RQQ",
+      "20260731T084501_20260731T084755_T36RTV",
+      "20260803T083559_20260803T084247_T35RQQ",
+      "20260803T083559_20260803T084247_T36RTV",
+      "20260808T083601_20260808T084431_T35RQQ",
+      "20260808T083601_20260808T084431_T36RTV",
+      "20260810T083741_20260810T084152_T35RQQ",
+      "20260810T083741_20260810T084152_T36RTV",
+      "20260813T083559_20260813T084335_T35RQQ",
+      "20260813T083559_20260813T084335_T36RTV",
+      "20260818T083601_20260818T084436_T35RQQ",
+      "20260820T084501_20260820T084716_T35RQQ",
+      "20260820T084501_20260820T084716_T36RTV",
+      "20260823T083559_20260823T084141_T35RQQ",
+      "20260823T083559_20260823T084141_T36RTV",
+      "20260828T083601_20260828T084440_T35RQQ",
+      "20260828T083601_20260828T084440_T36RTV",
+      "20260830T083741_20260830T084957_T35RQQ",
+      "20260830T083741_20260830T084957_T36RTV",
+      "20260902T083559_20260902T084117_T35RQQ",
+      "20260902T083559_20260902T084117_T36RTV",
+      "20260907T083601_20260907T084303_T35RQQ",
+      "20260907T083601_20260907T084303_T36RTV",
+      "20260909T084501_20260909T084520_T35RQQ",
+      "20260909T084501_20260909T084520_T36RTV"
+    ],
+    "ndvi_statistics": {
+      "NDVI_2026_max": 0.8894095586400828,
+      "NDVI_2026_mean": 0.19065326568609314,
+      "NDVI_2026_min": -0.3040540627703215
+    },
+    "agricultural_area_km2": 1.187205783180237,
+    "agricultural_percent_of_city": 20.069698529838355,
+    "builtup_area_km2": 2.1278486134644754,
+    "builtup_percent_of_city": 35.97125350499006,
+    "net_agricultural_change_km2": -0.24449531063708105,
+    "confidence": "PROTOTYPE — satellite-derived land-cover proxy.",
+    "generated_at": "2026-09-11T00:22:39.523856+00:00"
+  },
+  "change_detection": {
+    "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+    "encroachment_definition": "A pixel is classified as AGRICULTURAL ENCROACHMENT if it was agricultural (NDVI >= threshold, NDBI-dominant=False) in the baseline year AND is built-up (NDBI-dominant) in the comparison year. This is a satellite-derived change-detection proxy, not a legal/administrative determination of illegal encroachment.",
+    "precise_encroachment_area_m2": 80823.52513768814,
+    "precise_encroachment_area_km2": 0.08082352513768813,
+    "precise_encroachment_area_feddan": 19.23989429176809,
+    "percent_of_2016_agricultural_land": 5.645279275591658,
+    "percent_of_city_area": 1.3663206552843679,
+    "calculation_method": "Pixel-level AND of baseline-agricultural and comparison-built-up masks, summed through ee.Image.pixelArea() at native 10 m resolution.",
+    "internal_consistency_check": "PASSED",
+    "full_change_matrix": {
+      "agricultural_2016_to_builtup_2026__ENCROACHMENT": {
+        "area_m2": 80823.52513768814,
+        "area_km2": 0.08082352513768813,
+        "area_feddan": 19.23989429176809,
+        "percent_of_city": 1.3663206552843679
+      },
+      "agricultural_2016_to_agricultural_2026__STABLE": {
+        "area_m2": 1048255.8961529302,
+        "area_km2": 1.0482558961529302,
+        "area_feddan": 249.53542422638628,
+        "percent_of_city": 17.720752472716782
+      },
+      "agricultural_2016_to_other_2026__NON_BUILTUP_LOSS": {
+        "area_m2": 302621.6725266999,
+        "area_km2": 0.3026216725266999,
+        "area_feddan": 72.03854298476728,
+        "percent_of_city": 5.115815490669888
+      },
+      "builtup_2016_to_builtup_2026__STABLE_URBAN": {
+        "area_m2": 1291807.4006868855,
+        "area_km2": 1.2918074006868854,
+        "area_feddan": 307.51242032809836,
+        "percent_of_city": 21.837987531487517
+      },
+      "other_2016_to_agricultural_2026__POSSIBLE_RECLAMATION": {
+        "area_m2": 131323.7470051485,
+        "area_km2": 0.1313237470051485,
+        "area_feddan": 31.261380966415803,
+        "percent_of_city": 2.220026257909461
+      }
+    },
+    "discrete_patches_identified": 182,
+    "confidence": "PROTOTYPE — satellite-derived change-detection proxy.",
+    "caveats": [
+      "Satellite-visible land-cover change consistent with encroachment is not a legal/administrative determination of illegal encroachment.",
+      "The agricultural baseline itself is a spectral proxy and should be validated against cadastral/agricultural authority data before legal action."
+    ],
+    "generated_at": "2026-09-11T00:23:08.466029+00:00"
+  },
+  "carbon_loss": {
+    "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+    "methodology_source": "NDVI-normalized relative potential over the 2016 agricultural baseline",
+    "mean_carbon_potential_2016_agricultural_land": 45.902855164047324,
+    "mean_carbon_potential_on_encroached_land": 36.134493280626074,
+    "relative_carbon_loss_percent_of_city_2016_potential": 4.4439350302308815,
+    "encroached_area_ha": 8.082352513768814,
+    "absolute_tons_co2_available": false,
+    "absolute_tons_co2_lost": null,
+    "primary_defensible_output": "relative_carbon_loss_percent_of_city_2016_potential",
+    "confidence": "PROTOTYPE for relative %; absolute tons CO2 NOT quantified.",
+    "caveats": [
+      "The percentage is a relative carbon-potential loss, not a direct carbon-stock measurement.",
+      "Absolute tons CO2 require a validated biomass/allometric model and local calibration."
+    ],
+    "generated_at": "2026-09-11T00:23:23.411295+00:00"
+  },
+  "hotspots": {
+    "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+    "patches_ranked": 182,
+    "largest_patch_id": "KED-ENCR-0171",
+    "largest_patch_area_m2": 14608.475358257245,
+    "largest_patch_area_feddan": 3.4775211942062034,
+    "size_distribution": [
+      {
+        "size_class": "Large (2,000–10,000 m²)",
+        "patch_count": 4,
+        "total_area_m2": 10249.57589310296,
+        "total_area_feddan": 2.4398930433040515
+      },
+      {
+        "size_class": "Medium (500–2000 m²)",
+        "patch_count": 33,
+        "total_area_m2": 28615.171333764683,
+        "total_area_feddan": 6.811789892417614
+      },
+      {
+        "size_class": "Small (<500 m²)",
+        "patch_count": 144,
+        "total_area_m2": 27590.034936237873,
+        "total_area_feddan": 6.567758023113973
+      },
+      {
+        "size_class": "Very Large (>10,000 m²)",
+        "patch_count": 1,
+        "total_area_m2": 14608.475358257245,
+        "total_area_feddan": 3.4775211942062034
+      }
+    ],
+    "generated_at": "2026-09-11T00:28:29.695429+00:00"
+  },
+  "map_manifest": {
+    "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+    "map_path": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/maps/encroachment_before_after_map.html",
+    "embedded_layers": [
+      "true_color_2016",
+      "agricultural_mask_2016",
+      "true_color_2026",
+      "builtup_mask_2026",
+      "encroachment_mask",
+      "study_boundary"
+    ],
+    "live_earth_engine_tiles": false,
+    "generated_at": "2026-09-11T00:28:48.506994+00:00"
+  },
+  "governance": {
+    "legal_encroachment_determination": false,
+    "absolute_carbon_tons_co2_claimed": false,
+    "source_boundary_modified": false,
+    "official_map_source_modified": false
+  }
+}
