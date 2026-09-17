@@ -4726,6 +4726,149 @@ elif page == "🔮 Future Expansion":
     والتحليلات البيئية المستقبلية.
     """)
 
+    # ==========================================================
+    # AGRICULTURAL ENCROACHMENT OFFICIAL REPORT
+    # ==========================================================
+
+    st.markdown("---")
+    st.header("🚜 Agricultural Encroachment — AI Report Integration")
+    st.subheader("تقرير التعديات الزراعية والأدلة الرسمية")
+
+    agr_root_candidates_ai = [
+        DATA_PATH / "ENVA-Agricultural-Encroachment",
+        DATA_PATH / "ENVA_Agricultural_Encroachment",
+        DATA_PATH / "Agricultural_Encroachment",
+        DATA_PATH / "agricultural_encroachment",
+    ]
+    agr_root_ai = first_existing(agr_root_candidates_ai)
+
+    if agr_root_ai is None:
+        st.info(
+            "ℹ️ حزمة نتائج التعديات الزراعية غير موجودة حاليًا داخل data/. "
+            "سيظهر التقرير تلقائيًا عند رفع مشروع ENVA-Agricultural-Encroachment."
+        )
+    else:
+        agr_config_ai = agr_root_ai / "config"
+        agr_results_ai = agr_root_ai / "results"
+        agr_evidence_ai = agr_root_ai / "evidence"
+        agr_exports_ai = agr_root_ai / "exports"
+
+        agr_change_meta_ai = agr_config_ai / "cell_5_change_detection_metadata.json"
+        agr_carbon_meta_ai = agr_config_ai / "cell_6_carbon_loss_metadata.json"
+        agr_hotspot_summary_ai = agr_evidence_ai / "hotspot_summary_current.json"
+        agr_hotspots_ai = agr_results_ai / "encroachment_hotspots.csv"
+        agr_pdf_ai = agr_exports_ai / "ENVA_Agricultural_Encroachment_Official_Report.pdf"
+        agr_export_index_ai = agr_exports_ai / "cell_10_export_index.json"
+
+        def _ai_read_json(path_obj):
+            try:
+                if path_obj.exists():
+                    with open(path_obj, encoding="utf-8") as fh:
+                        obj = json.load(fh)
+                    return obj if isinstance(obj, dict) else {}
+            except Exception:
+                pass
+            return {}
+
+        agr_change_ai = _ai_read_json(agr_change_meta_ai)
+        agr_carbon_ai = _ai_read_json(agr_carbon_meta_ai)
+        agr_hotspot_summary_obj_ai = _ai_read_json(agr_hotspot_summary_ai)
+
+        agr_area_km2_ai = agr_change_ai.get("precise_encroachment_area_km2")
+        agr_area_feddan_ai = agr_change_ai.get("precise_encroachment_area_feddan")
+        agr_lost_pct_ai = agr_change_ai.get("percent_of_2016_agricultural_land")
+        agr_city_pct_ai = agr_change_ai.get("percent_of_city_area")
+        agr_patch_count_ai = agr_hotspot_summary_obj_ai.get("summary", {}).get(
+            "patches_ranked", agr_change_ai.get("discrete_patches_identified")
+        )
+        agr_carbon_loss_ai = agr_carbon_ai.get(
+            "relative_carbon_loss_percent_of_city_2016_potential"
+        )
+
+        r1, r2, r3, r4, r5 = st.columns(5)
+        r1.metric("🚨 التعدي المرصود", f"{float(agr_area_km2_ai):.4f} km²" if isinstance(agr_area_km2_ai, (int, float)) else "N/A")
+        r2.metric("🌾 المساحة بالفدان", f"{float(agr_area_feddan_ai):.2f}" if isinstance(agr_area_feddan_ai, (int, float)) else "N/A")
+        r3.metric("📉 من خط الأساس الزراعي", f"{float(agr_lost_pct_ai):.2f}%" if isinstance(agr_lost_pct_ai, (int, float)) else "N/A")
+        r4.metric("🏙️ من مساحة المدينة", f"{float(agr_city_pct_ai):.2f}%" if isinstance(agr_city_pct_ai, (int, float)) else "N/A")
+        r5.metric("📍 البؤر", str(agr_patch_count_ai) if agr_patch_count_ai is not None else "N/A")
+
+        if agr_carbon_loss_ai is not None:
+            st.metric(
+                "🌱 الفقد النسبي لإمكانات الكربون",
+                f"{float(agr_carbon_loss_ai):.2f}%" if isinstance(agr_carbon_loss_ai, (int, float)) else str(agr_carbon_loss_ai),
+            )
+
+        st.markdown(
+            "**تعريف التعدي المستخدم:** `Agricultural 2016 AND Built-up 2026` — "
+            "أي رصد مكاني للأراضي الزراعية في خط الأساس 2016 التي ظهرت كمناطق مبنية في 2026. "
+            "هذه نتيجة تحليلية لدعم القرار وليست حكمًا قانونيًا نهائيًا."
+        )
+
+        if agr_hotspots_ai.exists():
+            try:
+                hotspots_ai_df = pd.read_csv(agr_hotspots_ai)
+                preferred_ai_cols = [
+                    "rank", "patch_id", "area_m2", "area_feddan",
+                    "centroid_lat", "centroid_lon", "size_class",
+                    "mean_carbon_potential", "relative_carbon_loss_share_pct",
+                ]
+                ai_display_cols = [c for c in preferred_ai_cols if c in hotspots_ai_df.columns]
+                st.markdown("### 📍 أهم بؤر التعدي")
+                st.dataframe(
+                    hotspots_ai_df[ai_display_cols].head(20) if ai_display_cols else hotspots_ai_df.head(20),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+            except Exception as exc:
+                st.warning(f"تعذر قراءة ملف البؤر داخل AI Report: {exc}")
+
+        if agr_pdf_ai.exists():
+            st.markdown("### 📄 التقرير الرسمي")
+            try:
+                pdf_bytes_ai = agr_pdf_ai.read_bytes()
+                st.download_button(
+                    label="⬇️ تحميل التقرير الرسمي للتعديات الزراعية",
+                    data=pdf_bytes_ai,
+                    file_name=agr_pdf_ai.name,
+                    mime="application/pdf",
+                    key="ai_report_agri_official_pdf",
+                )
+
+                # Embed the official PDF when it is reasonably small; otherwise keep a download-only path.
+                if len(pdf_bytes_ai) <= 12 * 1024 * 1024:
+                    pdf_b64_ai = base64.b64encode(pdf_bytes_ai).decode("ascii")
+                    components.html(
+                        f"""<iframe src="data:application/pdf;base64,{pdf_b64_ai}" width="100%" height="820" style="border:1px solid #ddd;border-radius:8px;"></iframe>""",
+                        height=840,
+                        scrolling=False,
+                    )
+                else:
+                    st.info(
+                        "ℹ️ التقرير الرسمي أكبر من الحد المفضل للعرض المدمج؛ "
+                        "استخدم زر التحميل لفتحه كاملًا."
+                    )
+            except Exception as exc:
+                st.warning(f"تعذر عرض التقرير الرسمي داخل AI Report: {exc}")
+        else:
+            st.warning("⚠️ التقرير الرسمي للتعديات غير موجود حاليًا داخل مجلد exports.")
+
+        if agr_export_index_ai.exists():
+            try:
+                st.download_button(
+                    label="⬇️ تحميل Export Index الخاص بالتعديات",
+                    data=agr_export_index_ai.read_bytes(),
+                    file_name=agr_export_index_ai.name,
+                    mime="application/json",
+                    key="ai_report_agri_export_index",
+                )
+            except Exception as exc:
+                st.warning(f"تعذر تجهيز Export Index: {exc}")
+
+        st.info(
+            "🛰️ نتائج التعديات الظاهرة هنا مأخوذة من حزمة Phase 1 الحالية. "
+            "التحديث الدوري الآلي للتغيرات الجديدة مخطط له في Phase 2، ولا تعتمد صفحة AI Report على مخرجات روبوت المتابعة القديمة."
+        )
+
     # ==================================================
     # FUTURE INTELLIGENCE FINAL VISION
     # ==================================================
@@ -4759,531 +4902,493 @@ elif page == "🔮 Future Expansion":
     )
 elif page == "🚜 Agricultural Encroachments":
 
-    st.title("🌾 Agricultural Encroachment Monitoring")
+    # ==========================================================
+    # ENVA — AGRICULTURAL ENCROACHMENT MONITORING
+    # Phase 1 results display only.
+    # The legacy notebook may still contain automation artifacts,
+    # but the platform page intentionally ignores monitoring-bot
+    # outputs and does not require them to render.
+    # ==========================================================
 
-    st.subheader(
-        "رصد التعديات والتغيرات على الأراضي الزراعية"
-    )
-
-    st.markdown("""
-    يهدف هذا الجزء من ENVA إلى رصد التغيرات التي تحدث
-    على الأراضي الزراعية من خلال مقارنة صور الأقمار
-    الصناعية في فترتين زمنيتين مختلفتين.
-
-    **Before Image → After Image → Change Detection**
-    """)
-
-    st.warning("""
-    ⚠️ **نموذج أولي تجريبي**
-
-    النتائج الحالية تمثل كشفًا أوليًا للتغيرات بين الصور،
-    ولا تعتبر إثباتًا نهائيًا لوجود تعديات.
-    """)
-
-    st.markdown("---")
-
-
-    # ==================================================
-    # PATHS
-    # ==================================================
-
-    from pathlib import Path
-    import numpy as np
     from PIL import Image
 
-    ENCROACHMENT_DIR = Path(
-        "data/agricultural_encroachment"
+    st.title("🌾 Agricultural Encroachment Monitoring")
+    st.subheader("رصد التعديات والتغيرات على الأراضي الزراعية")
+
+    st.markdown(
+        """
+        تعرض هذه الصفحة نتائج **المرحلة الأولى** من تحليل التعديات الزراعية
+        اعتمادًا على المقارنة المكانية بين خط الأساس **2016** وفترة المقارنة **2026**.
+
+        **التصنيف التحليلي المستخدم:**
+        الأراضي المصنفة زراعية في 2016 والتي أصبحت مبنية/عمرانية وفق بيانات 2026.
+        """
     )
 
-    ENCROACHMENT_DIR.mkdir(
-        parents=True,
-        exist_ok=True
+    st.info(
+        """
+        🛰️ **المرحلة الحالية: Phase 1 — Baseline 2016 → Comparison 2026**
+
+        نتائج هذه الصفحة هي نتائج رصد مكاني مستخرجة من النوتبوك التحليلي الموجود
+        في مستودع ENVA. وهي **مخرجات دعم قرار واستدلال من صور الأقمار الصناعية**
+        وليست بمفردها حكمًا قانونيًا نهائيًا على المخالفة.
+        """
     )
 
-    BEFORE_IMAGE = (
-        ENCROACHMENT_DIR / "before.png"
-    )
+    # ----------------------------------------------------------
+    # LOCATE PROJECT OUTPUTS
+    # ----------------------------------------------------------
 
-    AFTER_IMAGE = (
-        ENCROACHMENT_DIR / "after.png"
-    )
+    ENCROACHMENT_ROOT_CANDIDATES = [
+        DATA_PATH / "ENVA-Agricultural-Encroachment",
+        DATA_PATH / "ENVA_Agricultural_Encroachment",
+        DATA_PATH / "Agricultural_Encroachment",
+        DATA_PATH / "agricultural_encroachment",
+    ]
 
+    ENCROACHMENT_ROOT = first_existing(ENCROACHMENT_ROOT_CANDIDATES)
 
-    # ==================================================
-    # 1. BEFORE / AFTER SATELLITE IMAGES
-    # ==================================================
+    if ENCROACHMENT_ROOT is None:
+        st.error(
+            """
+            ❌ لم يتم العثور على مجلد مشروع التعديات داخل `data/`.
 
-    st.header(
-        "🛰️ Satellite Image Comparison"
-    )
-
-    st.write(
-        "تبدأ عملية اكتشاف التغير من مقارنة صور الأقمار "
-        "الصناعية للمنطقة نفسها في فترتين زمنيتين مختلفتين."
-    )
-
-    before_col, after_col = st.columns(2)
-
-
-    # --------------------------------------------------
-    # BEFORE
-    # --------------------------------------------------
-
-    with before_col:
-
-        st.markdown(
-            "### 🛰️ Before — الصورة السابقة"
+            المسار المتوقع:
+            `data/ENVA-Agricultural-Encroachment/`
+            """
         )
+        st.stop()
 
-        if BEFORE_IMAGE.exists():
+    CONFIG_DIR = ENCROACHMENT_ROOT / "config"
+    RAW_BASELINE_DIR = ENCROACHMENT_ROOT / "raw_data" / "baseline_2016"
+    RAW_COMPARISON_DIR = ENCROACHMENT_ROOT / "raw_data" / "comparison_2026"
+    PROCESSED_CHANGE_DIR = ENCROACHMENT_ROOT / "processed_data" / "change_detection"
+    PROCESSED_CARBON_DIR = ENCROACHMENT_ROOT / "processed_data" / "carbon"
+    MAPS_DIR = ENCROACHMENT_ROOT / "maps"
+    RESULTS_DIR = ENCROACHMENT_ROOT / "results"
+    EVIDENCE_DIR = ENCROACHMENT_ROOT / "evidence"
+    EXPORTS_DIR = ENCROACHMENT_ROOT / "exports"
 
-            before_preview = Image.open(
-                BEFORE_IMAGE
-            ).convert("RGB")
+    CHANGE_META_PATH = CONFIG_DIR / "cell_5_change_detection_metadata.json"
+    CARBON_META_PATH = CONFIG_DIR / "cell_6_carbon_loss_metadata.json"
+    HOTSPOT_CSV_PATH = RESULTS_DIR / "encroachment_hotspots.csv"
+    HOTSPOT_SUMMARY_PATH = EVIDENCE_DIR / "hotspot_summary_current.json"
+    EVIDENCE_LEDGER_PATH = EVIDENCE_DIR / "consolidated_evidence_ledger.json"
+    MAP_PATH = MAPS_DIR / "encroachment_before_after_map.html"
+    OFFICIAL_PDF_PATH = EXPORTS_DIR / "ENVA_Agricultural_Encroachment_Official_Report.pdf"
+    EXPORT_INDEX_PATH = EXPORTS_DIR / "cell_10_export_index.json"
 
-            st.image(
-                before_preview,
-                use_container_width=True,
-                caption="Previous Satellite Image"
-            )
+    BASELINE_RGB_PATH = RAW_BASELINE_DIR / "true_color_2016.tif"
+    COMPARISON_RGB_PATH = RAW_COMPARISON_DIR / "true_color_2026.tif"
+    NOTEBOOK_PATH = next(iter(sorted(ENCROACHMENT_ROOT.glob("*.ipynb"))), None)
 
-        else:
-
-            st.info("""
-            🛰️ **Before Image**
-
-            لم يتم إضافة الصورة السابقة بعد.
-
-            المسار المطلوب:
-
-            `data/agricultural_encroachment/before.png`
-            """)
-
-
-    # --------------------------------------------------
-    # AFTER
-    # --------------------------------------------------
-
-    with after_col:
-
-        st.markdown(
-            "### 🛰️ After — الصورة الحديثة"
-        )
-
-        if AFTER_IMAGE.exists():
-
-            after_preview = Image.open(
-                AFTER_IMAGE
-            ).convert("RGB")
-
-            st.image(
-                after_preview,
-                use_container_width=True,
-                caption="Recent Satellite Image"
-            )
-
-        else:
-
-            st.info("""
-            🛰️ **After Image**
-
-            لم يتم إضافة الصورة الحديثة بعد.
-
-            المسار المطلوب:
-
-            `data/agricultural_encroachment/after.png`
-            """)
-
-
-    st.markdown("---")
-
-
-    # ==================================================
-    # 2. CHANGE DETECTION
-    # ==================================================
-
-    st.header(
-        "🔄 Change Detection"
-    )
-
-    st.write(
-        "يتم هنا إجراء مقارنة أولية بين صورتي Before وAfter "
-        "لاكتشاف المناطق التي يظهر بها اختلاف مكاني."
-    )
-
-
-    # --------------------------------------------------
-    # Check images
-    # --------------------------------------------------
-
-    if BEFORE_IMAGE.exists() and AFTER_IMAGE.exists():
-
+    def _safe_json(path):
         try:
-
-            # ==========================================
-            # Load Images
-            # ==========================================
-
-            before = Image.open(
-                BEFORE_IMAGE
-            ).convert("RGB")
-
-            after = Image.open(
-                AFTER_IMAGE
-            ).convert("RGB")
-
-
-            # ==========================================
-            # Match Dimensions
-            # ==========================================
-
-            if before.size != after.size:
-
-                st.info(
-                    "ℹ️ أبعاد الصورتين مختلفة، "
-                    "سيتم توحيد أبعاد الصورة الحديثة."
-                )
-
-                after = after.resize(
-                    before.size
-                )
-
-
-            # ==========================================
-            # Convert to NumPy
-            # ==========================================
-
-            before_array = np.asarray(
-                before,
-                dtype=np.float32
-            )
-
-            after_array = np.asarray(
-                after,
-                dtype=np.float32
-            )
-
-
-            # ==========================================
-            # Pixel Difference
-            # ==========================================
-
-            difference = np.mean(
-                np.abs(
-                    before_array - after_array
-                ),
-                axis=2
-            )
-
-
-            # ==========================================
-            # Threshold
-            # ==========================================
-
-            threshold = st.slider(
-                "🔧 Change Detection Threshold",
-                min_value=5,
-                max_value=100,
-                value=35,
-                step=5,
-                help=(
-                    "القيم الأقل تكشف تغيرات أكثر، "
-                    "والقيم الأعلى تجعل الكشف أكثر تحفظًا."
-                )
-            )
-
-
-            # ==========================================
-            # Changed Pixels
-            # ==========================================
-
-            changed_pixels = (
-                difference >= threshold
-            )
-
-
-            # ==========================================
-            # Percentage
-            # ==========================================
-
-            changed_percentage = (
-                changed_pixels.mean() * 100
-            )
-
-
-            # ==========================================
-            # Normalize Difference Map
-            # ==========================================
-
-            max_difference = (
-                difference.max()
-            )
-
-            if max_difference > 0:
-
-                change_map = (
-                    difference
-                    / max_difference
-                    * 255
-                ).astype(np.uint8)
-
-            else:
-
-                change_map = np.zeros_like(
-                    difference,
-                    dtype=np.uint8
-                )
-
-
-            # ==========================================
-            # Change Mask
-            # ==========================================
-
-            change_mask = (
-                changed_pixels.astype(
-                    np.uint8
-                ) * 255
-            )
-
-
-            # ==================================================
-            # DISPLAY BEFORE / AFTER
-            # ==================================================
-
-            st.markdown(
-                "### 🛰️ Before / After"
-            )
-
-            result_col1, result_col2 = st.columns(2)
-
-            with result_col1:
-
-                st.image(
-                    before,
-                    caption="Before",
-                    use_container_width=True
-                )
-
-            with result_col2:
-
-                st.image(
-                    after,
-                    caption="After",
-                    use_container_width=True
-                )
-
-
-            # ==================================================
-            # CHANGE MAP
-            # ==================================================
-
-            st.markdown(
-                "### 🗺️ Detected Change Map"
-            )
-
-            st.image(
-                change_map,
-                caption=(
-                    "Pixel Difference — "
-                    "Higher intensity indicates greater change"
-                ),
-                use_container_width=True
-            )
-
-
-            # ==================================================
-            # SIGNIFICANT CHANGE MASK
-            # ==================================================
-
-            st.markdown(
-                "### 🔍 Significant Change Areas"
-            )
-
-            st.image(
-                change_mask,
-                caption=(
-                    "Thresholded Change Mask"
-                ),
-                use_container_width=True
-            )
-
-
-            # ==================================================
-            # STATISTICS
-            # ==================================================
-
-            st.markdown("---")
-
-            m1, m2, m3 = st.columns(3)
-
-            with m1:
-
-                st.metric(
-                    "Detected Change",
-                    f"{changed_percentage:.2f}%"
-                )
-
-            with m2:
-
-                st.metric(
-                    "Changed Pixels",
-                    f"{int(changed_pixels.sum()):,}"
-                )
-
-            with m3:
-
-                st.metric(
-                    "Threshold",
-                    threshold
-                )
-
-
-            # ==================================================
-            # INTERPRETATION
-            # ==================================================
-
-            if changed_percentage < 1:
-
-                st.success(
-                    f"""
-                    🟢 **Low Detected Change**
-
-                    نسبة البكسلات التي أظهرت تغيرًا:
-
-                    **{changed_percentage:.2f}%**
-                    """
-                )
-
-            elif changed_percentage < 10:
-
-                st.info(
-                    f"""
-                    🔵 **Moderate Detected Change**
-
-                    نسبة البكسلات التي أظهرت تغيرًا:
-
-                    **{changed_percentage:.2f}%**
-                    """
-                )
-
-            else:
-
-                st.warning(
-                    f"""
-                    🟡 **High Detected Change**
-
-                    نسبة البكسلات التي أظهرت تغيرًا:
-
-                    **{changed_percentage:.2f}%**
-
-                    هذه النسبة لا تعني تلقائيًا وجود تعديات.
-                    """
-                )
-
-
-            # ==================================================
-            # SCIENTIFIC WARNING
-            # ==================================================
-
-            st.markdown("---")
-
-            st.warning("""
-            ⚠️ **Important Scientific Interpretation**
-
-            اختلاف البكسلات بين الصورتين لا يعني تلقائيًا
-            وجود تعدٍ على الأراضي الزراعية.
-
-            يمكن أن ينتج التغير عن:
-
-            - اختلاف الإضاءة.
-            - اختلاف الموسم الزراعي.
-            - تغير الغطاء النباتي.
-            - الحصاد أو الزراعة الجديدة.
-            - اختلاف الرطوبة.
-            - السحب أو الظلال.
-            - اختلاف جودة أو ظروف التصوير.
-
-            لذلك تعتبر هذه النتيجة:
-
-            **Preliminary Change Detection**
-
-            وليست:
-
-            **Confirmed Agricultural Encroachment**
-            """)
-
-
-            # ==================================================
-            # SAVE RESULTS FOR PART 2
-            # ==================================================
-
-            st.session_state[
-                "encroachment_before"
-            ] = before
-
-            st.session_state[
-                "encroachment_after"
-            ] = after
-
-            st.session_state[
-                "changed_pixels"
-            ] = changed_pixels
-
-            st.session_state[
-                "change_map"
-            ] = change_map
-
-            st.session_state[
-                "change_mask"
-            ] = change_mask
-
-            st.session_state[
-                "change_percentage"
-            ] = changed_percentage
-
-            st.session_state[
-                "change_threshold"
-            ] = threshold
-
-
-            st.success(
-                "✅ Change Detection completed successfully."
-            )
-
-
-        except Exception as e:
-
-            st.error(
-                f"❌ Unable to perform Change Detection: {e}"
-            )
-
-            st.exception(e)
-
-
-    else:
-
-        st.info("""
-        🛰️ **Change Detection is waiting for imagery**
-
-        أضيفي صورتَي Before وAfter أولًا:
-
-        `data/agricultural_encroachment/before.png`
-
-        `data/agricultural_encroachment/after.png`
-        """)
-
-
-    # ==================================================
-    # PART 1 END
-    # ==================================================
+            if path.exists():
+                with open(path, encoding="utf-8") as fh:
+                    obj = json.load(fh)
+                return obj if isinstance(obj, dict) else {}
+        except Exception:
+            pass
+        return {}
+
+    CHANGE_META = _safe_json(CHANGE_META_PATH)
+    CARBON_META = _safe_json(CARBON_META_PATH)
+    HOTSPOT_SUMMARY = _safe_json(HOTSPOT_SUMMARY_PATH)
+    EVIDENCE_LEDGER = _safe_json(EVIDENCE_LEDGER_PATH)
+
+    # ----------------------------------------------------------
+    # 1) EXECUTIVE RESULTS
+    # ----------------------------------------------------------
 
     st.markdown("---")
+    st.header("📊 النتائج الأساسية — Phase 1")
+
+    area_m2 = CHANGE_META.get("precise_encroachment_area_m2")
+    area_km2 = CHANGE_META.get("precise_encroachment_area_km2")
+    area_feddan = CHANGE_META.get("precise_encroachment_area_feddan")
+    lost_agri_pct = CHANGE_META.get("percent_of_2016_agricultural_land")
+    city_pct = CHANGE_META.get("percent_of_city_area")
+    patch_count = HOTSPOT_SUMMARY.get("summary", {}).get(
+        "patches_ranked",
+        CHANGE_META.get("discrete_patches_identified")
+    )
+    carbon_loss_pct = CARBON_META.get(
+        "relative_carbon_loss_percent_of_city_2016_potential"
+    )
+
+    def _fmt(value, digits=2, suffix=""):
+        if value is None:
+            return "N/A"
+        try:
+            return f"{float(value):.{digits}f}{suffix}"
+        except (TypeError, ValueError):
+            return str(value)
+
+    m1, m2, m3, m4, m5 = st.columns(5)
+
+    with m1:
+        st.metric("🚨 التعدي المرصود", _fmt(area_km2, 4, " km²"))
+
+    with m2:
+        st.metric("🌾 المساحة بالفدان", _fmt(area_feddan, 2, ""))
+
+    with m3:
+        st.metric("📉 فقد من خط الأساس الزراعي", _fmt(lost_agri_pct, 2, "%"))
+
+    with m4:
+        st.metric("🏙️ من مساحة المدينة", _fmt(city_pct, 2, "%"))
+
+    with m5:
+        st.metric("📍 البؤر المرصودة", str(patch_count) if patch_count is not None else "N/A")
+
+    if carbon_loss_pct is not None:
+        st.metric(
+            "🌱 الفقد النسبي في إمكانات الكربون",
+            _fmt(carbon_loss_pct, 2, "%")
+        )
 
     st.caption(
-        "ENVA — Agricultural Encroachment Monitoring | Part 1"
+        "القيم المعروضة تُقرأ من ملفات النتائج والمصادقة التي ينتجها النوتبوك، "
+        "ولا يعاد حسابها داخل Streamlit."
     )
 
-# ======================================================
+    # ----------------------------------------------------------
+    # 2) METHODOLOGY / VALIDATION
+    # ----------------------------------------------------------
+
+    st.markdown("---")
+    st.header("🔬 منهجية الكشف والتحقق")
+
+    methodology_col, validation_col = st.columns(2)
+
+    with methodology_col:
+        st.markdown(
+            """
+            **تعريف التعدي في النموذج**
+
+            `Agricultural 2016 AND Built-up 2026`
+
+            أي أن البكسل كان ضمن المجال الزراعي في سنة الأساس 2016
+            ثم أصبح ضمن المجال المبني في سنة المقارنة 2026.
+
+            **الدقة المكانية المستخدمة في التحليل:** 10 m
+
+            **المخرجات الأساسية:** مساحة التعدي، البؤر المنفصلة،
+            الفقد النسبي لإمكانات الكربون، وخريطة تفاعلية موثقة.
+            """
+        )
+
+    with validation_col:
+        consistency = CHANGE_META.get("internal_consistency_check", "N/A")
+        confidence = CHANGE_META.get("confidence", "N/A")
+        definition = CHANGE_META.get("encroachment_definition", "N/A")
+
+        st.markdown(
+            f"""
+            **Internal consistency check:** `{consistency}`
+
+            **Confidence:** `{confidence}`
+
+            **Scientific definition:**
+
+            {definition}
+
+            **مهم:** النتيجة تمثل مؤشرًا مستخرجًا من الاستشعار عن بعد
+            وليست قرارًا قانونيًا أو إداريًا نهائيًا.
+            """
+        )
+
+    # ----------------------------------------------------------
+    # 3) BEFORE / AFTER TRUE-COLOR IMAGERY
+    # ----------------------------------------------------------
+
+    st.markdown("---")
+    st.header("🛰️ صور الأقمار الصناعية — 2016 مقابل 2026")
+
+    def _show_tif_preview(path, caption):
+        if not path.exists():
+            st.info(f"ℹ️ الملف غير موجود حاليًا: `{path.relative_to(DATA_PATH.parent)}`")
+            return
+
+        # Avoid loading very large GeoTIFFs into Streamlit memory.
+        if path.stat().st_size > 25 * 1024 * 1024:
+            st.info(
+                f"ℹ️ تم الاحتفاظ بالملف الأصلي دون تحميله كصورة داخل الصفحة "
+                f"لأن حجمه {path.stat().st_size / (1024 * 1024):.1f} MB. "
+                "يمكن استعراضه من خلال الخريطة التفاعلية أو تنزيله من GitHub."
+            )
+            return
+
+        try:
+            with Image.open(path) as img:
+                preview = img.convert("RGB")
+                preview.thumbnail((1200, 800))
+                st.image(
+                    preview.copy(),
+                    use_container_width=True,
+                    caption=caption
+                )
+        except Exception as exc:
+            st.warning(f"تعذر عرض المعاينة للصورة `{path.name}`: {exc}")
+
+    img_col1, img_col2 = st.columns(2)
+
+    with img_col1:
+        st.markdown("### 🟩 Before — 2016")
+        _show_tif_preview(
+            BASELINE_RGB_PATH,
+            "True Color — 2016 Baseline"
+        )
+
+    with img_col2:
+        st.markdown("### 🟦 After — 2026")
+        _show_tif_preview(
+            COMPARISON_RGB_PATH,
+            "True Color — 2026 Comparison"
+        )
+
+    st.caption(
+        "تم الاقتصار على صور True Color في المعاينة. "
+        "ملفات الـmask الثنائية لا تُعرض كصور مباشرة لأن فتحها بصريًا قد يظهرها "
+        "كسطح أسود/فارغ رغم أنها ملفات تحليلية ثنائية القيم. يتم الاعتماد على "
+        "الخريطة التفاعلية وملفات النتائج بدلًا من ذلك."
+    )
+
+    # ----------------------------------------------------------
+    # 4) OFFICIAL INTERACTIVE MAP
+    # ----------------------------------------------------------
+
+    st.markdown("---")
+    st.header("🗺️ الخريطة التفاعلية الرسمية")
+
+    if MAP_PATH.exists():
+        try:
+            map_size_mb = MAP_PATH.stat().st_size / (1024 * 1024)
+            if map_size_mb > 12:
+                st.warning(
+                    f"⚠️ ملف الخريطة الرسمية حجمه {map_size_mb:.1f} MB، "
+                    "لذلك لا يتم تضمينه مباشرة داخل Streamlit لتجنب بطء/تعطل التطبيق."
+                )
+                with open(MAP_PATH, "rb") as map_file:
+                    st.download_button(
+                        label="⬇️ تنزيل الخريطة التفاعلية الرسمية",
+                        data=map_file.read(),
+                        file_name=MAP_PATH.name,
+                        mime="text/html",
+                        key="agri_encroachment_map_download_large",
+                    )
+            else:
+                map_html = MAP_PATH.read_text(encoding="utf-8")
+                components.html(
+                    map_html,
+                    height=820,
+                    scrolling=False
+                )
+                st.caption(
+                    "الخريطة هي ملف HTML المنتج من النوتبوك وتحتوي على طبقات 2016 "
+                    "و2026 وحدود الدراسة والبؤر والتعديات المرصودة."
+                )
+        except Exception as exc:
+            st.error(f"❌ تعذر عرض الخريطة الرسمية: {exc}")
+    else:
+        st.warning(
+            f"⚠️ الخريطة الرسمية غير موجودة حاليًا: `{MAP_PATH}`"
+        )
+
+    # ----------------------------------------------------------
+    # 5) HOTSPOTS
+    # ----------------------------------------------------------
+
+    st.markdown("---")
+    st.header("📍 البؤر الأعلى للتعدي")
+
+    if HOTSPOT_CSV_PATH.exists():
+        try:
+            hotspots_df = pd.read_csv(HOTSPOT_CSV_PATH)
+
+            preferred_cols = [
+                "rank",
+                "patch_id",
+                "area_m2",
+                "area_feddan",
+                "centroid_lat",
+                "centroid_lon",
+                "size_class",
+                "mean_carbon_potential",
+                "relative_carbon_loss_share_pct",
+            ]
+            display_cols = [c for c in preferred_cols if c in hotspots_df.columns]
+
+            if display_cols:
+                st.dataframe(
+                    hotspots_df[display_cols].head(50),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+            else:
+                st.dataframe(
+                    hotspots_df.head(50),
+                    use_container_width=True,
+                    hide_index=True,
+                )
+
+            st.caption(
+                f"يتم عرض أول {min(50, len(hotspots_df))} سجلًا من ملف البؤر المصنف."
+            )
+        except Exception as exc:
+            st.error(f"❌ تعذر قراءة ملف البؤر: {exc}")
+    else:
+        st.info(
+            "ℹ️ ملف البؤر لم يتم رفعه إلى GitHub بعد. "
+            "سيظهر تلقائيًا عند توفر `results/encroachment_hotspots.csv`."
+        )
+
+    # ----------------------------------------------------------
+    # 6) CARBON LOSS
+    # ----------------------------------------------------------
+
+    st.markdown("---")
+    st.header("🌱 إمكانات احتجاز الكربون")
+
+    carbon_c1, carbon_c2, carbon_c3 = st.columns(3)
+
+    with carbon_c1:
+        st.metric(
+            "متوسط إمكانات 2016 الزراعية",
+            _fmt(
+                CARBON_META.get(
+                    "mean_carbon_potential_2016_agricultural_land"
+                ),
+                2,
+                " / 100"
+            )
+        )
+
+    with carbon_c2:
+        st.metric(
+            "متوسط الإمكانات على الأراضي المتعدى عليها",
+            _fmt(
+                CARBON_META.get(
+                    "mean_carbon_potential_on_encroached_land"
+                ),
+                2,
+                " / 100"
+            )
+        )
+
+    with carbon_c3:
+        st.metric(
+            "الفقد النسبي",
+            _fmt(carbon_loss_pct, 2, "%")
+        )
+
+    st.warning(
+        """
+        ⚠️ مؤشر الكربون هنا **نسبي** مبني على تطبيع NDVI،
+        وليس كمية مطلقة من أطنان CO₂. لا يتم عرض رقم مطلق للكربون
+        لأن النموذج الحالي لا يتضمن معامل كتلة حيوية/Allometric معتمدًا محليًا.
+        """
+    )
+
+    # ----------------------------------------------------------
+    # 7) EVIDENCE + OFFICIAL REPORT
+    # ----------------------------------------------------------
+
+    st.markdown("---")
+    st.header("📑 التقرير والأدلة")
+
+    files_to_show = [
+        ("📘 Notebook", NOTEBOOK_PATH),
+        ("⚙️ Change Detection Metadata", CHANGE_META_PATH),
+        ("🌱 Carbon Metadata", CARBON_META_PATH),
+        ("📍 Hotspot Results", HOTSPOT_CSV_PATH),
+        ("🧾 Evidence Ledger", EVIDENCE_LEDGER_PATH),
+        ("🗺️ Map Manifest", EVIDENCE_DIR / "map_manifest.json"),
+        ("📦 Export Index", EXPORT_INDEX_PATH),
+        ("📄 Official PDF Report", OFFICIAL_PDF_PATH),
+    ]
+
+    status_cols = st.columns(4)
+    for idx, (label, path) in enumerate(files_to_show):
+        with status_cols[idx % 4]:
+            if path is not None and path.exists():
+                st.success(f"{label}\n\n**Available**")
+            else:
+                st.info(f"{label}\n\n**Pending**")
+
+    if OFFICIAL_PDF_PATH.exists():
+        with open(OFFICIAL_PDF_PATH, "rb") as pdf_file:
+            st.download_button(
+                label="⬇️ تحميل التقرير الرسمي",
+                data=pdf_file.read(),
+                file_name=OFFICIAL_PDF_PATH.name,
+                mime="application/pdf",
+                key="agri_encroachment_official_report_download",
+            )
+
+    if EXPORT_INDEX_PATH.exists():
+        with open(EXPORT_INDEX_PATH, "rb") as index_file:
+            st.download_button(
+                label="⬇️ تحميل سجل المخرجات Export Index",
+                data=index_file.read(),
+                file_name=EXPORT_INDEX_PATH.name,
+                mime="application/json",
+                key="agri_encroachment_export_index_download",
+            )
+
+    # ----------------------------------------------------------
+    # 8) PHASE 2 NOTICE
+    # ----------------------------------------------------------
+
+    st.markdown("---")
+    st.header("🛰️ المرحلة الثانية — الرصد الدوري")
+
+    st.info(
+        """
+        **المرحلة الثانية المقررة:**
+
+        إضافة نظام رصد دوري للتغيرات الجديدة في مساحة الأراضي الزراعية
+        باستخدام صور الأقمار الصناعية الجديدة، مع تسجيل كل تشغيل ونتيجة
+        بصورة قابلة للمراجعة والتدقيق.
+
+        **الصفحة الحالية لا تعتمد على ناتج المراقبة الدورية لعرض نتائج Phase 1.**
+        لذلك لن تتسبب ملفات الـMonitoring Bot القديمة أو سجلاتها في تعطيل
+        الصفحة الحالية.
+
+        ⏳ **الحالة: مخطط للمرحلة الثانية — غير معتمد كجزء من نتائج Phase 1.**
+        """
+    )
+
+    # ----------------------------------------------------------
+    # 9) FILES THAT ARE INTENTIONALLY NOT RENDERED AS IMAGES
+    # ----------------------------------------------------------
+
+    with st.expander("🗂️ ملفات التحليل الثنائية التي لا تُعرض كصور مباشرة"):
+        st.markdown(
+            f"""
+            الملفات من نوع `*mask*.tif` أو أي Raster ثنائي مشابه تعتبر **بيانات تحليلية**
+            وليست صورًا فوتوغرافية للعرض.
+
+            لذلك الصفحة **لا تعرضها مباشرة** حتى لا تظهر للمستخدم كصور سوداء/فارغة.
+
+            أمثلة متوقعة:
+            - `{RAW_BASELINE_DIR / "agricultural_mask_2016.tif"}`
+            - `{RAW_BASELINE_DIR / "builtup_mask_2016.tif"}`
+            - `{RAW_COMPARISON_DIR / "agricultural_mask_2026.tif"}`
+            - `{RAW_COMPARISON_DIR / "builtup_mask_2026.tif"}`
+            - `{PROCESSED_CHANGE_DIR / "encroachment_mask.tif"}`
+
+            يتم تمثيل هذه البيانات بصريًا داخل **الخريطة التفاعلية الرسمية**
+            وبالأرقام/البؤر/الـGeoJSON بدل عرضها كصور خام.
+            """
+        )
+
+    st.markdown("---")
+    st.caption(
+        "ENVA — Agricultural Encroachment Monitoring | Phase 1 | 2016 → 2026"
+    )
+
 # EARLY WARNING (data-driven — built from real indicator risk classes)
 # ======================================================
 
@@ -5294,67 +5399,197 @@ elif page == "🚨 Early Warning":
 
     st.markdown(
         """
-يفحص هذا النظام نتائج المؤشرات البيئية السبعة تلقائيًا، ويصدر تنبيهات لأي
-منطقة تجاوزت عتبة الخطورة المحددة لكل مؤشر.
+        تعرض هذه الصفحة التنبيهات البيئية المبنية على الأدلة المتاحة في منصة ENVA،
+        مع إضافة **التعديات الزراعية المرصودة في Phase 1** كتنبيه مستقل.
 
-This system automatically screens the seven environmental indicators and
-raises alerts for any risk/pressure class exceeding its defined threshold.
-"""
+        التعديات المعروضة هنا هي نتائج تحليلية موثقة من حزمة 2016 → 2026،
+        وليست ناتجًا جديدًا من روبوت تغيير الصور كل خمسة أيام.
+        **الرصد الدوري للتغيرات الجديدة مخطط للمرحلة الثانية Phase 2.**
+        """
     )
 
     st.markdown("---")
 
-    if not INDICATORS_AVAILABLE:
-        st.info(
-            "ℹ️ No indicator data available yet — early warning screening "
-            "will activate automatically once indicator data is exported "
-            "from the ENVA Colab notebook."
-        )
-        st.stop()
-
-    ALERT_THRESHOLD_PERCENT = 15.0
-    HIGH_RISK_LABELS = {"high", "critical", "very_high", "high_pressure", "very_high_pressure"}
-
     alerts = []
 
-    for code in INDICATOR_ORDER:
-        meta = INDICATOR_INFO[code]
-        d = INDICATORS[code]["data"]
-        class_key = meta.get("class_key")
-        classes = d.get(class_key) if class_key else None
-        if not isinstance(classes, dict):
-            continue
+    # ------------------------------------------------------
+    # 1) AGRICULTURAL ENCROACHMENT ALERT
+    # ------------------------------------------------------
+    agri_root_candidates_ew = [
+        DATA_PATH / "ENVA-Agricultural-Encroachment",
+        DATA_PATH / "ENVA_Agricultural_Encroachment",
+        DATA_PATH / "Agricultural_Encroachment",
+        DATA_PATH / "agricultural_encroachment",
+    ]
+    agri_root_ew = first_existing(agri_root_candidates_ew)
 
-        for label, values in classes.items():
-            if not isinstance(values, dict) or label.lower() not in HIGH_RISK_LABELS:
-                continue
-            percent = values.get("percent_of_aoi", values.get("percent_of_vegetation", 0)) or 0
-            if percent >= ALERT_THRESHOLD_PERCENT:
-                alerts.append({
-                    "indicator": code, "icon": meta["icon"], "name": meta["title"],
-                    "class": label, "percent": percent,
-                    "area_km2": values.get("area_km2", 0),
-                })
+    agri_loaded_ew = False
+    agri_change_ew = {}
+    agri_hotspot_summary_ew = {}
+    agri_carbon_ew = {}
 
-    if alerts:
-        st.error(f"🚨 {len(alerts)} active alert(s) detected")
+    if agri_root_ew is not None:
+        agri_config_ew = agri_root_ew / "config"
+        agri_evidence_ew = agri_root_ew / "evidence"
+        agri_results_ew = agri_root_ew / "results"
 
-        for alert in sorted(alerts, key=lambda a: a["percent"], reverse=True):
-            st.markdown(
-                f"**{alert['icon']} {alert['indicator']} — {alert['name']}**"
-                f" &nbsp;|&nbsp; Class: `{alert['class']}`"
-                f" &nbsp;|&nbsp; Affected: **{alert['percent']:.1f}%**"
-                f" ({alert['area_km2']:.3f} km²)"
+        agri_change_path_ew = agri_config_ew / "cell_5_change_detection_metadata.json"
+        agri_carbon_path_ew = agri_config_ew / "cell_6_carbon_loss_metadata.json"
+        agri_hotspot_path_ew = agri_evidence_ew / "hotspot_summary_current.json"
+        agri_hotspots_csv_ew = agri_results_ew / "encroachment_hotspots.csv"
+
+        def _ew_json(path_obj):
+            try:
+                if path_obj.exists():
+                    with open(path_obj, encoding="utf-8") as fh:
+                        obj = json.load(fh)
+                    return obj if isinstance(obj, dict) else {}
+            except Exception:
+                pass
+            return {}
+
+        agri_change_ew = _ew_json(agri_change_path_ew)
+        agri_carbon_ew = _ew_json(agri_carbon_path_ew)
+        agri_hotspot_summary_ew = _ew_json(agri_hotspot_path_ew)
+        agri_area_ew = agri_change_ew.get("precise_encroachment_area_km2")
+        agri_feddan_ew = agri_change_ew.get("precise_encroachment_area_feddan")
+        agri_loss_pct_ew = agri_change_ew.get("percent_of_2016_agricultural_land")
+        agri_city_pct_ew = agri_change_ew.get("percent_of_city_area")
+        agri_patch_count_ew = agri_hotspot_summary_ew.get("summary", {}).get(
+            "patches_ranked", agri_change_ew.get("discrete_patches_identified")
+        )
+        agri_carbon_loss_ew = agri_carbon_ew.get(
+            "relative_carbon_loss_percent_of_city_2016_potential"
+        )
+
+        if isinstance(agri_area_ew, (int, float)) and agri_area_ew > 0:
+            agri_loaded_ew = True
+
+            st.error(
+                f"🚨 تم رصد تعديات زراعية ضمن حزمة Phase 1: "
+                f"**{agri_area_ew:.4f} km²** ({agri_feddan_ew:.2f} فدان إذا توفرت القيمة)."
+                if isinstance(agri_feddan_ew, (int, float))
+                else f"🚨 تم رصد تعديات زراعية ضمن حزمة Phase 1: **{agri_area_ew:.4f} km²**."
             )
-            st.progress(min(alert["percent"] / 100, 1.0))
-            st.markdown("---")
+
+            ew_a1, ew_a2, ew_a3, ew_a4 = st.columns(4)
+            ew_a1.metric("🚜 مساحة التعدي", f"{agri_area_ew:.4f} km²")
+            ew_a2.metric("🌾 بالفدان", f"{agri_feddan_ew:.2f}" if isinstance(agri_feddan_ew, (int, float)) else "N/A")
+            ew_a3.metric("📉 من الأراضي الزراعية 2016", f"{agri_loss_pct_ew:.2f}%" if isinstance(agri_loss_pct_ew, (int, float)) else "N/A")
+            ew_a4.metric("📍 البؤر", str(agri_patch_count_ew) if agri_patch_count_ew is not None else "N/A")
+
+            if isinstance(agri_carbon_loss_ew, (int, float)):
+                st.caption(
+                    f"الفقد النسبي لإمكانات الكربون المحسوب في الحزمة: {agri_carbon_loss_ew:.2f}% | "
+                    f"من مساحة المدينة: {agri_city_pct_ew:.2f}%"
+                    if isinstance(agri_city_pct_ew, (int, float))
+                    else f"الفقد النسبي لإمكانات الكربون المحسوب في الحزمة: {agri_carbon_loss_ew:.2f}%"
+                )
+
+            st.markdown(
+                "**تعريف الرصد:** `Agricultural 2016 AND Built-up 2026` — "
+                "أي أن المساحة كانت زراعية في خط الأساس 2016 وأصبحت ضمن الفئة المبنية في 2026."
+            )
+
+            if agri_hotspots_csv_ew.exists():
+                try:
+                    ew_hotspots_df = pd.read_csv(agri_hotspots_csv_ew)
+                    ew_pref = [
+                        "rank", "patch_id", "area_m2", "area_feddan",
+                        "centroid_lat", "centroid_lon", "size_class",
+                        "mean_carbon_potential", "relative_carbon_loss_share_pct",
+                    ]
+                    ew_cols = [c for c in ew_pref if c in ew_hotspots_df.columns]
+                    with st.expander("📍 عرض بؤر التعدي المرصودة", expanded=False):
+                        st.dataframe(
+                            ew_hotspots_df[ew_cols].head(20) if ew_cols else ew_hotspots_df.head(20),
+                            use_container_width=True,
+                            hide_index=True,
+                        )
+                except Exception as exc:
+                    st.warning(f"تعذر قراءة بؤر التعدي في Early Warning: {exc}")
+
+            st.info(
+                "⏳ هذا التنبيه يصف التعديات المثبتة في نتائج Phase 1 الحالية. "
+                "لا يمثل تشغيلًا جديدًا للروبوت القديم ولا يدّعي رصدًا تلقائيًا كل خمسة أيام. "
+                "سيتم ربط الرصد الدوري الجديد بالإنذار المبكر عند تنفيذ Phase 2."
+            )
+        else:
+            st.success(
+                "✅ لم تُسجل مساحة تعديات زراعية موجبة في حزمة النتائج المتاحة حاليًا."
+            )
     else:
-        st.success(f"✅ No indicator class currently exceeds the {ALERT_THRESHOLD_PERCENT:.0f}% alert threshold.")
+        st.info(
+            "ℹ️ حزمة نتائج التعديات الزراعية غير موجودة حاليًا؛ "
+            "سيظهر تنبيه التعديات تلقائيًا عند رفع مجلد ENVA-Agricultural-Encroachment."
+        )
+
+    st.markdown("---")
+
+    # ------------------------------------------------------
+    # 2) ENVIRONMENTAL INDICATOR ALERTS
+    # ------------------------------------------------------
+    if INDICATORS_AVAILABLE:
+        ALERT_THRESHOLD_PERCENT = 15.0
+        HIGH_RISK_LABELS = {
+            "high", "critical", "very_high", "high_pressure", "very_high_pressure"
+        }
+
+        for code in INDICATOR_ORDER:
+            meta = INDICATOR_INFO[code]
+            d = INDICATORS[code]["data"]
+            class_key = meta.get("class_key")
+            classes = d.get(class_key) if class_key else None
+            if not isinstance(classes, dict):
+                continue
+
+            for label, values in classes.items():
+                if not isinstance(values, dict) or label.lower() not in HIGH_RISK_LABELS:
+                    continue
+                percent = values.get(
+                    "percent_of_aoi", values.get("percent_of_vegetation", 0)
+                ) or 0
+                if percent >= ALERT_THRESHOLD_PERCENT:
+                    alerts.append({
+                        "indicator": code,
+                        "icon": meta["icon"],
+                        "name": meta["title"],
+                        "class": label,
+                        "percent": percent,
+                        "area_km2": values.get("area_km2", 0),
+                    })
+
+        if alerts:
+            st.error(f"🚨 {len(alerts)} active environmental indicator alert(s) detected")
+            for alert in sorted(alerts, key=lambda a: a["percent"], reverse=True):
+                st.markdown(
+                    f"**{alert['icon']} {alert['indicator']} — {alert['name']}**"
+                    f" &nbsp;|&nbsp; Class: `{alert['class']}`"
+                    f" &nbsp;|&nbsp; Affected: **{alert['percent']:.1f}%**"
+                    f" ({alert['area_km2']:.3f} km²)"
+                )
+                st.progress(min(alert["percent"] / 100, 1.0))
+                st.markdown("---")
+        else:
+            st.success(
+                f"✅ No environmental indicator class currently exceeds the "
+                f"{ALERT_THRESHOLD_PERCENT:.0f}% alert threshold."
+            )
+
+        st.caption(
+            f"Indicator alert threshold: {ALERT_THRESHOLD_PERCENT:.0f}% of AOI/vegetation area "
+            "in a high/critical/very-high class. This is a configurable screening parameter."
+        )
+    else:
+        st.info(
+            "ℹ️ لا تتوفر حاليًا بيانات مؤشرات بيئية كافية للتنبيهات السبعة. "
+            "سيظل تنبيه التعديات الزراعية ظاهرًا بصورة مستقلة عند توفر حزمة نتائجها."
+        )
 
     st.markdown("---")
     st.caption(
-        f"Alert threshold: {ALERT_THRESHOLD_PERCENT:.0f}% of AOI/vegetation area in a "
-        "high/critical/very-high class. This is a configurable prototype parameter."
+        "ENVA Early Warning — combines current indicator screening with the documented "
+        "Phase 1 agricultural encroachment evidence; periodic new-change monitoring is Phase 2."
     )
 
 # ======================================================
@@ -5475,3 +5710,4 @@ This page consolidates all downloadable reports and data files from the ENVA pla
 
 else:
     st.error("⚠️ Unknown page selected.")
+
