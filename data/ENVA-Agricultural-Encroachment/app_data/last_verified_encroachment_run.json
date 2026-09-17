@@ -1,0 +1,16 @@
+{
+  "run_id": "ENVA_AGRI_MONITOR_20260909_161614",
+  "checked_at": "2026-09-09T16:16:21.159408+00:00",
+  "encroachment_area_m2": 96891.2531764012,
+  "scene_ids": [
+    "20260830T083741_20260830T084957_T35RQQ",
+    "20260830T083741_20260830T084957_T36RTV",
+    "20260902T083559_20260902T084117_T35RQQ",
+    "20260902T083559_20260902T084117_T36RTV",
+    "20260907T083601_20260907T084303_T35RQQ",
+    "20260907T083601_20260907T084303_T36RTV"
+  ],
+  "latest_scene_time_ms": 1788771097859,
+  "mask_relative_path": "processed_data/change_detection/monitoring_history/encroachment_mask_ENVA_AGRI_MONITOR_20260909_161614.tif",
+  "true_color_relative_path": "processed_data/change_detection/monitoring_history/true_color_ENVA_AGRI_MONITOR_20260909_161614.tif"
+}

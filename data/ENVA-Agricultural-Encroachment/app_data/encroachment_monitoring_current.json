@@ -1,0 +1,29 @@
+{
+  "run_id": "ENVA_AGRI_MONITOR_20260909_184011",
+  "checked_at": "2026-09-09T18:40:12.276405+00:00",
+  "study_area": "Kafr El Dawwar City",
+  "scope": "CITY_ONLY",
+  "baseline_year": 2016,
+  "comparison_year": 2026,
+  "monitoring_status": "NO_NEW_VALID_IMAGERY",
+  "latest_scene_time_ms": 1788771097859,
+  "latest_scene_date": "2026-09-07",
+  "current_total_encroachment_area_m2": 0.0,
+  "current_total_encroachment_area_km2": 0.0,
+  "new_encroachment_since_last_run_m2": 0.0,
+  "new_encroachment_since_last_run_km2": 0.0,
+  "new_relative_carbon_loss_percent": 0.0,
+  "alert_triggered": false,
+  "severity": "NONE",
+  "alert_path": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/app_data/encroachment_alerts_current.json",
+  "true_color_history_path": null,
+  "mask_history_path": null,
+  "new_patches_count": 0,
+  "governance": {
+    "absolute_carbon_tons_co2_claimed": false,
+    "legal_encroachment_claimed": false,
+    "new_area_method": "pixelwise current verified monitoring mask minus previous verified monitoring mask",
+    "first_monitoring_run_is_baseline_only": true,
+    "alert_on_any_verified_change": true
+  }
+}

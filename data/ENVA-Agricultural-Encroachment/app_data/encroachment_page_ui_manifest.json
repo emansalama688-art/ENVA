@@ -1,0 +1,14 @@
+{
+  "page": "Agricultural Encroachments",
+  "icons": [
+    {
+      "key": "official_pdf_report",
+      "icon": "📄",
+      "label_ar": "تحميل التقرير الرسمي PDF",
+      "label_en": "Download Official PDF Report",
+      "file": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/reports/ENVA_Agricultural_Encroachment_Report.pdf",
+      "download": true
+    }
+  ],
+  "note": "This manifest is app-ready metadata for the Agricultural Encroachments page. The PDF itself is generated and verified by Cell 10."
+}

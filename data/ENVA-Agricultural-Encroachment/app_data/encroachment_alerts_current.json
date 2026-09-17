@@ -1,0 +1,14 @@
+{
+  "run_id": "ENVA_AGRI_MONITOR_20260909_184011",
+  "checked_at": "2026-09-09T18:40:12.269224+00:00",
+  "monitoring_status": "NO_NEW_VALID_IMAGERY",
+  "alert_triggered": false,
+  "severity": "NONE",
+  "alert_threshold_m2": 200.0,
+  "new_encroachment_area_m2": 0.0,
+  "new_encroachment_area_km2": 0.0,
+  "new_relative_carbon_loss_percent": 0.0,
+  "new_scenes_processed": 0,
+  "latest_scene_time_ms": 1788771097859,
+  "message_ar": "لا توجد تعديات جديدة تتجاوز حد الإنذار في هذا الفحص."
+}

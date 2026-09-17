@@ -1,0 +1,28 @@
+{
+  "run_id": "ENVA_AGRI_ENCROACH_20260909_181951",
+  "generated_at": "2026-09-09T19:36:25.498457+00:00",
+  "study_area": "Kafr El Dawwar City (CITY ONLY)",
+  "baseline_year": 2016,
+  "comparison_year": 2026,
+  "encroachment_area_m2": 81346.50545744055,
+  "encroachment_area_km2": 0.08134650545744056,
+  "encroachment_area_feddan": 19.364388813029937,
+  "encroachment_percent_of_2016_agricultural_land": 5.681807872378435,
+  "encroachment_percent_of_city": 1.3751616308786354,
+  "relative_carbon_loss_percent": 4.470168378345526,
+  "absolute_tons_co2_lost": null,
+  "absolute_carbon_quantification": "NOT_QUANTIFIED — validated local biomass/allometric factor unavailable",
+  "patches_identified": 186,
+  "monitoring_checks_logged": 3,
+  "alerts_triggered": 0,
+  "map_file": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/maps/encroachment_before_after_map.html",
+  "pdf_report_file": "/content/drive/MyDrive/ENVA/Agricultural_Encroachment/reports/ENVA_Agricultural_Encroachment_Report.pdf",
+  "recommendations": [
+    "The detected encroachment represents 5.7% of the city's 2016 agricultural land — a field verification campaign of the top-ranked hotspots (see Section 9) is recommended as a priority action.",
+    "The single largest detected patch (KED-ENCR-0176, 3.52 feddan) should be prioritized for the first site visit, given it represents the largest continuous land-use change.",
+    "Encroachment accounts for an estimated 4.5% of the city's 2016 agricultural carbon-sequestration potential — this should be factored into any afforestation/offsetting prioritization (see the ENVA 100 Million Trees initiative).",
+    "This analysis is a satellite-derived change-detection proxy and does not constitute a legal or administrative determination of illegal encroachment. Field verification and cadastral cross-checking are required before any enforcement or regulatory action."
+  ],
+  "confidence": "PROTOTYPE",
+  "field_verification_status": "Pending"
+}
