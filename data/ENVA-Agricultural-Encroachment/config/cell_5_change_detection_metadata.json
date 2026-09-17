@@ -1,0 +1,50 @@
+{
+  "run_id": "ENVA_AGRI_ENCROACH_20260911_002050",
+  "encroachment_definition": "A pixel is classified as AGRICULTURAL ENCROACHMENT if it was agricultural (NDVI >= threshold, NDBI-dominant=False) in the baseline year AND is built-up (NDBI-dominant) in the comparison year. This is a satellite-derived change-detection proxy, not a legal/administrative determination of illegal encroachment.",
+  "precise_encroachment_area_m2": 80823.52513768814,
+  "precise_encroachment_area_km2": 0.08082352513768813,
+  "precise_encroachment_area_feddan": 19.23989429176809,
+  "percent_of_2016_agricultural_land": 5.645279275591658,
+  "percent_of_city_area": 1.3663206552843679,
+  "calculation_method": "Pixel-level AND of baseline-agricultural and comparison-built-up masks, summed through ee.Image.pixelArea() at native 10 m resolution.",
+  "internal_consistency_check": "PASSED",
+  "full_change_matrix": {
+    "agricultural_2016_to_builtup_2026__ENCROACHMENT": {
+      "area_m2": 80823.52513768814,
+      "area_km2": 0.08082352513768813,
+      "area_feddan": 19.23989429176809,
+      "percent_of_city": 1.3663206552843679
+    },
+    "agricultural_2016_to_agricultural_2026__STABLE": {
+      "area_m2": 1048255.8961529302,
+      "area_km2": 1.0482558961529302,
+      "area_feddan": 249.53542422638628,
+      "percent_of_city": 17.720752472716782
+    },
+    "agricultural_2016_to_other_2026__NON_BUILTUP_LOSS": {
+      "area_m2": 302621.6725266999,
+      "area_km2": 0.3026216725266999,
+      "area_feddan": 72.03854298476728,
+      "percent_of_city": 5.115815490669888
+    },
+    "builtup_2016_to_builtup_2026__STABLE_URBAN": {
+      "area_m2": 1291807.4006868855,
+      "area_km2": 1.2918074006868854,
+      "area_feddan": 307.51242032809836,
+      "percent_of_city": 21.837987531487517
+    },
+    "other_2016_to_agricultural_2026__POSSIBLE_RECLAMATION": {
+      "area_m2": 131323.7470051485,
+      "area_km2": 0.1313237470051485,
+      "area_feddan": 31.261380966415803,
+      "percent_of_city": 2.220026257909461
+    }
+  },
+  "discrete_patches_identified": 182,
+  "confidence": "PROTOTYPE — satellite-derived change-detection proxy.",
+  "caveats": [
+    "Satellite-visible land-cover change consistent with encroachment is not a legal/administrative determination of illegal encroachment.",
+    "The agricultural baseline itself is a spectral proxy and should be validated against cadastral/agricultural authority data before legal action."
+  ],
+  "generated_at": "2026-09-11T00:23:08.466029+00:00"
+}
